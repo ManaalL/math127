@@ -125,7 +125,7 @@ M127.lecture({
               sub:`${qtex(Q(a,3))}(${x0})^3${b?` ${b<0?"-":"+"} ${Math.abs(b)}(${x0})`:""}`, val:{t:qtex(val),a:qasc(val),q:val}, C:{t:qtex(C),a:qasc(C),q:C}, x0T:String(x0), y0, dom:[-2,2]}; }
           else if(kind==="rt"){ const k=R.nz(-3,3), r=R.int(1,3), x0=r*r, y0=R.int(-8,8); const val=Q(2*k*r), C=qsub(Q(y0),val);
             P={it:`\\frac{${k}}{\\sqrt{x}}`.replace("\\frac{-","-\\frac{"), ia:`${k}/sqrt(x)`, Ft:`${2*k}\\sqrt{x}`, Fa:`${2*k}sqrt(x)`, sub:`${2*k}\\sqrt{${x0}}`, val:{t:qtex(val),a:qasc(val),q:val}, C:{t:qtex(C),a:qasc(C),q:C}, x0T:String(x0), y0, dom:[0.5,9], note:`Write $\\frac{1}{\\sqrt x} = x^{-1/2}$: the power rule gives $\\frac{x^{1/2}}{1/2} = 2\\sqrt{x}$.`}; }
-          else if(kind==="exp"){ const a=R.int(1,5), b=R.int(1,4), y0=R.int(-6,9); v=R.pick(["x","t"]); const val=Q(-b), C=qsub(Q(y0),val);
+          else if(kind==="exp"){ const a=R.int(1,5), b=R.int(1,4); let y0=R.int(-6,9); v=R.pick(["x","t"]); if(a===1&&b===3&&y0===5) y0=6;   /* dy/dx = 1 - 3e^x, y(0) = 5 is a real quiz question */ const val=Q(-b), C=qsub(Q(y0),val);
             P={it:`${a} - ${b===1?"":b}e^{${v}}`, ia:`${a} - ${b}e^(${v})`, Ft:`${a===1?"":a}${v} - ${b===1?"":b}e^{${v}}`, Fa:`${a}${v} - ${b}e^(${v})`, sub:`${a}(0) - ${b===1?"":b}e^{0}`, val:{t:qtex(val),a:qasc(val),q:val}, C:{t:qtex(C),a:qasc(C),q:C}, x0T:"0", y0, dom:[-2,2]}; }
           else { const k=R.int(1,4), isSin=R.int(0,1)===0, X=R.pick([["0",0],["\\pi",PI],["\\frac{\\pi}{2}",PI/2]]), y0=R.int(-6,8);
             const raw=isSin?-k*Math.cos(X[1]):k*Math.sin(X[1]); const val=Q(Math.round(raw)), C=qsub(Q(y0),val); const kk=k===1?"":k;

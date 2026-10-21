@@ -218,7 +218,7 @@ M.lecture({
         } else if(d===2){
           const kind=R.pick(["cosk","sinq","expk","sqrtl","recip","powl"]);
           if(kind==="cosk"){ const k=R.int(2,5), c=R.nz(-4,4); fT=X(`\\cos(${k}x) ${c<0?"-":"+"} ${Math.abs(c)===1?"":Math.abs(c)}x`); fA=X(`cos(${k}x)+${c}x`); dT=X(`${c} - ${k}\\sin(${k}x)`); dA=X(`${c}-${k}sin(${k}x)`); extra=X(`Chain rule: $\\frac{d}{dx}\\cos(${k}x) = -\\sin(${k}x)\\cdot ${k}$.`); }
-          if(kind==="sinq"){ const p=R.nz(-3,3), q=R.nz(-4,4); const inner=polyT([[p,2],[q,1]],v); fT=`\\sin(${inner})`; fA=X(`sin(${p}x^2+${q}x)`); dT=`(${polyT([[2*p,1],[q,0]],v)})\\cos(${inner})`; dA=X(`(${2*p}x+${q})*cos(${p}x^2+${q}x)`); br=false; extra=`Chain rule: the inside $${inner}$ has derivative $${polyT([[2*p,1],[q,0]],v)}$.`; }
+          if(kind==="sinq"){ const p=R.nz(-3,3); let q; do{ q=R.nz(-4,4); }while(p===1&&q===1);   /* sin(x^2 + x) is a real quiz question */ const inner=polyT([[p,2],[q,1]],v); fT=`\\sin(${inner})`; fA=X(`sin(${p}x^2+${q}x)`); dT=`(${polyT([[2*p,1],[q,0]],v)})\\cos(${inner})`; dA=X(`(${2*p}x+${q})*cos(${p}x^2+${q}x)`); br=false; extra=`Chain rule: the inside $${inner}$ has derivative $${polyT([[2*p,1],[q,0]],v)}$.`; }
           if(kind==="expk"){ const k=R.nz(-3,3); fT=X(`e^{${co(k)}x^2}`); fA=X(`e^(${k}x^2)`); dT=X(`${co(2*k)}xe^{${co(k)}x^2}`); dA=X(`${2*k}x*e^(${k}x^2)`); br=false; extra=X(`Chain rule: the inside $${co(k)}x^2$ has derivative $${2*k}x$.`); dom=[-1,1]; }
           if(kind==="sqrtl"){ const p=R.int(1,5), q=R.int(1,5); fT=X(`\\sqrt{${p===1?"":p}x + ${q}}`); fA=X(`sqrt(${p}x+${q})`); dT=X(`\\frac{${p}}{2\\sqrt{${p===1?"":p}x + ${q}}}`); dA=X(`${p}/(2sqrt(${p}x+${q}))`); br=false; extra=X(`Chain rule: $\\frac{1}{2}(${p===1?"":p}x+${q})^{-1/2}\\cdot ${p}$.`); dom=[0.2,2]; }
           if(kind==="recip"){ const c=R.nz(-5,5), n=R.int(1,3); fT=X(`\\frac{${c}}{${n===1?"x":`x^{${n}}`}}`); fA=X(`${c}/x^${n}`); dT=X(`${-c*n<0?"-":""}\\frac{${Math.abs(c*n)}}{x^{${n+1}}}`); dA=X(`${-c*n}/x^${n+1}`); br=false; extra=X(`Write it as $${c}x^{${-n}}$ and use the power rule.`); dom=[0.4,2]; }
@@ -371,7 +371,7 @@ M.lecture({
           if(err==="nodx"){ bad=0; L=[`$du = f'(x)$`,`$= ${raw}$`,`$= ${simp}$`]; why="The differential is missing: $du = f'(x)\\,dx$. Don't forget to multiply by the differential (Warning, p. 2). Quizzes give marks just for writing this line correctly."; }
           if(err==="nobr"){ bad=1; L[1]=`$= ${raw}\\,dx$`; L[2]=`$= ${simp}\\,dx$`; why="Without brackets, $dx$ only multiplies the last term. The brackets around the whole derivative are needed (Warning, p. 2)."; }
           if(err==="chain"){ bad=2; L[2]=`$= \\left(${nochain}\\right)dx$`; why=`The chain rule factor ${k} was lost when simplifying. It should be $\\left(${simp}\\right)dx$.`; }
-          return {prompt:`A problem and an answer are below. The answer would not get full marks. Which is the first line with a mistake?<p>Problem: Let $u = f(x) = ${fT}$. Find the differential $du$.</p>${box(L)}`,
+          return {prompt:`A problem and an answer are below. The answer would not get full marks. Which is the first line with a mistake?<p>Problem: Find $du$ for $u = f(x) = ${fT}$.</p>${box(L)}`,
             parts:[{answer:{type:"mc",options:lineOpts(3),correct:bad,keep:true}}],
             hint:"Check: is the differential there? Are there brackets around the whole derivative? Is each derivative right?",
             steps:[`Line (${bad+1}) is the first mistake.`,why,`Correct answer: $du = \\left(${simp}\\right)dx$.`],
@@ -399,23 +399,23 @@ M.lecture({
             steps:[`Line (${bad+1}) is the first mistake.`,why,`Correct conclusion: $y = ${yT}$ ${isSol?"is":"is not"} a solution.`],
             answerTeX:`Line (${bad+1})`};
         }
-        const p=R.nz(-3,3), q=R.nz(-4,4);
+        const p=R.nz(-3,3); let q; do{ q=R.nz(-4,4); }while(p===1&&q===1);   // e^(x^2 + x) is used on a real quiz
         const E=polyT([[p,2],[q,1]]), dE=polyT([[2*p,1],[q,0]]);
         const variant=R.pick(["ok","br","concl","ok2"]);
         let prob, L, correct, why;
         if(variant==="ok2"){ const c=R.nz(-5,5); const E2=polyT([[p,2]]);
-          prob=`Determine whether $y = e^{${E2}}$ is a solution of $\\frac{dy}{dx} = ${co(2*p)}xy ${c<0?"-":"+"} ${Math.abs(c)}$.`;
+          prob=`Check whether $y = e^{${E2}}$ is a solution of $\\frac{dy}{dx} = ${co(2*p)}xy ${c<0?"-":"+"} ${Math.abs(c)}$.`;
           L=[`The left hand side is $y' = e^{${E2}}\\cdot ${2*p}x = ${co(2*p)}xe^{${E2}}$.`,`The right hand side is $${co(2*p)}xy ${c<0?"-":"+"} ${Math.abs(c)} = ${co(2*p)}xe^{${E2}} ${c<0?"-":"+"} ${Math.abs(c)}$.`,`Since the left hand side does not equal the right hand side, $y = e^{${E2}}$ is not a solution.`];
           correct=0; why=`Every line is right. The right hand side has the extra ${c}, so $y$ is not a solution, and the answer says so.`;
         } else {
-          prob=`Determine whether $y = e^{${E}}$ is a solution of $\\frac{dy}{dx} = (${dE})y$.`;
+          prob=`Check whether $y = e^{${E}}$ is a solution of $\\frac{dy}{dx} = (${dE})y$.`;
           const good1=`The left hand side is $y' = e^{${E}}(${dE})$.`, rhs=`The right hand side is $(${dE})y = (${dE})e^{${E}}$.`;
           if(variant==="ok"){ L=[good1,rhs,`Since the left hand side equals the right hand side, $y = e^{${E}}$ is a solution.`]; correct=0; why="Chain rule with brackets, correct substitution, correct conclusion."; }
           if(variant==="br"){ L=[`The left hand side is $y' = e^{${E}}\\cdot ${p<0?`(${co(2*p)}x)`:`${co(2*p)}x`} ${q<0?"-":"+"} ${Math.abs(q)}$.`,rhs,`Since the left hand side does not equal the right hand side, $y = e^{${E}}$ is not a solution.`]; correct=1; why=`The derivative is missing brackets: $y' = e^{${E}}(${dE})$. With the brackets the two sides are equal, so $y$ is a solution.`; }
           if(variant==="concl"){ L=[good1,rhs,`Since the left hand side does not equal the right hand side, $y = e^{${E}}$ is not a solution.`]; correct=2; why="The derivative and the right hand side are right and they are the same expression, so the conclusion should be that $y$ is a solution."; }
         }
         const opts=["Yes, the answer is correct.","No. The derivative in the answer is wrong.","No. The derivative is right, but the conclusion is wrong."];
-        return {prompt:`Is the provided answer to this problem correct?<p>Problem: ${prob}</p>${box(L)}`,
+        return {prompt:`Here is a problem and a student's answer. Is the answer right?<p>Problem: ${prob}</p>${box(L)}`,
           parts:[{answer:{type:"mc",options:opts,correct,keep:true}}],
           hint:"Differentiate $y$ yourself with the chain rule (keep the brackets), substitute into the right hand side, and compare with the answer's conclusion.",
           steps:[why, `So the right choice is: ${opts[correct]}`],

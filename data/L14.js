@@ -237,7 +237,7 @@ M127.lecture({
         }
         if(d<=2){ // standard angles: in the range (cancels) or not (compute the value first)
           const ks=[];
-          for(let k=-12;k<=24;k++){ if(k%2!==0&&k%3!==0) continue; const v=k*P/12; if(fn==="arctan"&&Math.abs(Math.cos(v))<1e-9) continue; const inside=inRange(fn,v); if((d===1)===inside) ks.push(k); }
+          for(let k=-12;k<=24;k++){ if(k%2!==0&&k%3!==0) continue; const v=k*P/12; if(fn==="arctan"&&Math.abs(Math.cos(v))<1e-9) continue; const inside=inRange(fn,v); if(fn==="arcsin"&&k===-3) continue; if((d===1)===inside) ks.push(k); }
           const k=R.pick(ks), T=ang(k,12), X=exact(I.fn(T.v)), out=I.inv(X.v), A=ang(k12(out),12);
           const expr=`\\${fn}${par(`\\${f}${par(T.t)}`)}`;
           const steps= d===1 ? [`$${T.t}$ is in $${I.ran}$, the range of $\\${fn}$.`,`So by the Cancellation Property, $${expr} = ${T.t}$.`]

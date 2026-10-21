@@ -50,11 +50,11 @@ M127.lecture({
     {id:"L15.f.d-abs", name:"Derivative of an absolute value", tex:"\\frac{d}{dx}|u| = \\frac{u}{|u|}\\,u'", note:"Used with the chain rule on p. 1: $\\frac{d}{dx}\\ln(|u|) = \\frac{1}{|u|}\\cdot\\frac{u}{|u|}\\cdot u'$.", ref:"p. 1", blank:{tex:"\\frac{d}{dx}|u| = \\boxed{\\,?\\,}\\,u'", text:true, accept:["u/|u|","u/abs(u)","\\frac{u}{|u|}"]}},
     {id:"L15.f.i-sin", name:"Integral of sin", tex:"\\int \\sin(x)\\,dx = -\\cos(x) + C", ref:"p. 2", blank:{tex:"\\int \\sin(x)\\,dx = \\boxed{\\,?\\,} + C", answer:"-cos(x)", vars:["x"]}},
     {id:"L15.f.i-cos", name:"Integral of cos", tex:"\\int \\cos(x)\\,dx = \\sin(x) + C", ref:"p. 2", blank:{tex:"\\int \\cos(x)\\,dx = \\boxed{\\,?\\,} + C", answer:"sin(x)", vars:["x"]}},
-    {id:"L15.f.i-tan", name:"Integral of tan", tex:"\\int \\tan(x)\\,dx = \\ln(|\\sec(x)|) + C", ref:"p. 2", blank:{tex:"\\int \\tan(x)\\,dx = \\boxed{\\,?\\,} + C", answer:"ln(abs(sec(x)))", vars:["x"], domain:[-1.2,1.2]}},
-    {id:"L15.f.i-sec", name:"Integral of sec", tex:"\\int \\sec(x)\\,dx = \\ln(|\\sec(x)+\\tan(x)|) + C", ref:"p. 2", blank:{tex:"\\int \\sec(x)\\,dx = \\boxed{\\,?\\,} + C", answer:"ln(abs(sec(x)+tan(x)))", vars:["x"], domain:[-1.2,1.2]}},
+    {id:"L15.f.i-tan", name:"Integral of tan", tex:"\\int \\tan(x)\\,dx = \\ln(|\\sec(x)|) + C", ref:"p. 2", blank:{tex:"\\int \\tan(x)\\,dx = \\boxed{\\,?\\,} + C", answer:"ln(abs(sec(x)))", vars:["x"], domain:[1.7,3]}},
+    {id:"L15.f.i-sec", name:"Integral of sec", tex:"\\int \\sec(x)\\,dx = \\ln(|\\sec(x)+\\tan(x)|) + C", ref:"p. 2", blank:{tex:"\\int \\sec(x)\\,dx = \\boxed{\\,?\\,} + C", answer:"ln(abs(sec(x)+tan(x)))", vars:["x"], domain:[1.7,3]}},
     {id:"L15.f.i-sec2", name:"Integral of sec squared", tex:"\\int \\sec^2(x)\\,dx = \\tan(x) + C", ref:"p. 2", blank:{tex:"\\int \\sec^2(x)\\,dx = \\boxed{\\,?\\,} + C", answer:"tan(x)", vars:["x"], domain:[-1.2,1.2]}},
     {id:"L15.f.i-sectan", name:"Integral of sec times tan", tex:"\\int \\sec(x)\\tan(x)\\,dx = \\sec(x) + C", ref:"p. 2", blank:{tex:"\\int \\sec(x)\\tan(x)\\,dx = \\boxed{\\,?\\,} + C", answer:"sec(x)", vars:["x"], domain:[-1.2,1.2]}},
-    {id:"L15.f.i-csc", name:"Integral of csc", tex:"\\int \\csc(x)\\,dx = -\\ln(|\\csc(x)+\\cot(x)|) + C", ref:"p. 2", blank:{tex:"\\int \\csc(x)\\,dx = \\boxed{\\,?\\,} + C", answer:"-ln(abs(csc(x)+cot(x)))", vars:["x"], domain:[0.3,2.8]}},
+    {id:"L15.f.i-csc", name:"Integral of csc", tex:"\\int \\csc(x)\\,dx = -\\ln(|\\csc(x)+\\cot(x)|) + C", ref:"p. 2", blank:{tex:"\\int \\csc(x)\\,dx = \\boxed{\\,?\\,} + C", answer:"-ln(abs(csc(x)+cot(x)))", vars:["x"], domain:[3.4,6]}},
     {id:"L15.f.i-csc2", name:"Integral of csc squared", tex:"\\int \\csc^2(x)\\,dx = -\\cot(x) + C", ref:"p. 2", blank:{tex:"\\int \\csc^2(x)\\,dx = \\boxed{\\,?\\,} + C", answer:"-cot(x)", vars:["x"], domain:[0.3,2.8]}},
     {id:"L15.f.i-csccot", name:"Integral of csc times cot", tex:"\\int \\csc(x)\\cot(x)\\,dx = -\\csc(x) + C", ref:"p. 2", blank:{tex:"\\int \\csc(x)\\cot(x)\\,dx = \\boxed{\\,?\\,} + C", answer:"-csc(x)", vars:["x"], domain:[0.3,2.8]}},
     {id:"L15.f.d-arcsin", name:"Derivative of arcsin", tex:"\\frac{d}{dx}\\arcsin(x) = \\frac{1}{\\sqrt{1-x^2}}", ref:"p. 2", blank:{tex:"\\frac{d}{dx}\\arcsin(x) = \\boxed{\\,?\\,}", answer:"1/sqrt(1-x^2)", vars:["x"], domain:[-0.9,0.9]}},
@@ -295,7 +295,7 @@ M127.lecture({
         const intA=(c,k)=>`${c}*${E[k][1]}`;
         const basic=["sin","cos","sec2","sectan","csc2","csccot","atan","asin"];
         let terms=[], extra=null;
-        if(d===1){ terms=[[R.nz(-6,6),R.pick(basic),false]]; }
+        if(d===1){ let c1, k1; do{ c1=R.nz(-6,6); k1=R.pick(basic); }while(c1===1&&k1==="cos"); terms=[[c1,k1,false]]; }
         else if(d===2){ const ks=R.shuffle(basic.slice()); terms=[[R.nz(-5,5),ks[0],false],[R.nz(-5,5),ks[1],false]]; const n=R.int(0,3), m=R.nz(-4,4)*(n+1); extra={m,n}; }
         else { const lk=R.pick(["tan","sec","csc"]), rk=R.pick(Object.keys(REW).filter(k=>k!==lk)); terms=R.shuffle([[R.nz(-4,4),lk,false],[R.nz(-4,4),rk,true]]); }
         const pw=extra?(extra.n===0?String(Math.abs(extra.m)):`${Math.abs(extra.m)===1?"":Math.abs(extra.m)}x${extra.n===1?"":`^{${extra.n}}`}`):"";
@@ -312,7 +312,7 @@ M127.lecture({
         if(extra) steps.push(`Power rule: $\\int ${extra.m<0?"-":""}${pw}\\,dx = ${q===1?"":q===-1?"-":q}x${extra.n+1===1?"":`^{${extra.n+1}}`} + C$.`);
         steps.push(`Put it together, with one $+ C$: $${ansT}$.`);
         return {prompt:terms.length===1&&!extra?`Evaluate $\\int ${intT}\\,dx$.`:`Evaluate $\\int \\left(${intT}\\right)dx$.`,
-          answer:{answer:ansA,vars:["x"],domain:[0.2,0.9],plusC:true,consts:[]}, verify:{antideriv:intAsc},
+          answer:{answer:ansA,vars:["x"],domain:d===3?[3.3,4.5]:[0.2,0.9],plusC:true,consts:[]}, verify:{antideriv:intAsc},
           hint:"Match each term to a row of the tables on pp. 2 to 3. "+(d===3?"Rewrite fractions of sin and cos as sec, csc, tan or cot first. ":"")+"Keep the absolute value bars in any ln, and end with + C.",
           steps, answerTeX:`$${ansT}$`};
       }},
@@ -516,7 +516,7 @@ M127.lecture({
       ["$3\\sin(x) - 2\\arctan(x)$",0,"Missing $+ C$."]]}
   ],
   steps:[
-    {type:"read", title:"The trig derivative table", body:`<p>These six derivatives are on p. 1. You need them memorized for the midterm.</p>$$\\begin{aligned}\\frac{d}{dx}\\sin(x) &= \\cos(x) \\\\ \\frac{d}{dx}\\cos(x) &= -\\sin(x) \\\\ \\frac{d}{dx}\\tan(x) &= \\sec^2(x) \\\\ \\frac{d}{dx}\\cot(x) &= -\\csc^2(x) \\\\ \\frac{d}{dx}\\sec(x) &= \\sec(x)\\tan(x) \\\\ \\frac{d}{dx}\\csc(x) &= -\\csc(x)\\cot(x)\\end{aligned}$$<div class="box note"><b class="t">A way to remember them</b>Each row on the right is the row on the left with every function swapped for its "co" partner (sin and cos, tan and cot, sec and csc), plus a minus sign. So you only need to learn sin, tan and sec.</div><p class="muted small">Review question 3 (p. 1): $\\arcsin\\left(\\frac{\\sqrt{3}}{2}\\right) = \\frac{\\pi}{3}$ and $\\arccos\\left(-\\frac{1}{2}\\right) = \\frac{2\\pi}{3}$.</p>`, ref:"p. 1"},
+    {type:"read", title:"The trig derivative table", body:`<p>These six derivatives are on p. 1. You need them memorized for the midterm.</p>$$\\begin{aligned}\\frac{d}{dx}\\sin(x) &= \\cos(x) \\\\ \\frac{d}{dx}\\cos(x) &= -\\sin(x) \\\\ \\frac{d}{dx}\\tan(x) &= \\sec^2(x) \\\\ \\frac{d}{dx}\\cot(x) &= -\\csc^2(x) \\\\ \\frac{d}{dx}\\sec(x) &= \\sec(x)\\tan(x) \\\\ \\frac{d}{dx}\\csc(x) &= -\\csc(x)\\cot(x)\\end{aligned}$$<div class="box note"><b class="t">A way to remember them</b>Take the rule for sin, tan or sec, swap every function for its "co" partner (sin and cos, tan and cot, sec and csc), and add a minus sign. That gives the rule for cos, cot or csc. So you only need to learn sin, tan and sec.</div><p class="muted small">Review question 3 (p. 1): $\\arcsin\\left(\\frac{\\sqrt{3}}{2}\\right) = \\frac{\\pi}{3}$ and $\\arccos\\left(-\\frac{1}{2}\\right) = \\frac{2\\pi}{3}$.</p>`, ref:"p. 1"},
     {type:"explore", title:"See the table on a graph", fig:"slope", body:`<p>The derivative at a point is the slope of the tangent line there. The bottom graph is the formula from the table. If the table is right, the dot on the bottom graph sits at the height of the slope on top.</p><p><b>Try it.</b> With tan, drag the point to $x = 0$: the slope is 1, and $\\sec^2(0) = 1$. Drag it toward 1.2 and watch $\\sec^2(x)$ shoot up. Then switch to arccos and check that every slope is negative, which is where the minus sign in its derivative comes from.</p>`, ref:"pp. 1 to 2"},
     {type:"example", title:"Chain rule with csc", ex:{q:"Find the derivative of $f(x) = \\csc(x^2+1)$.", ref:"p. 1",
       steps:[{t:"The outside function is $\\csc(u)$ and the inside is $u = x^2+1$, so $u' = 2x$.",why:"Chain rule: outside, then inside."},

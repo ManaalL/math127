@@ -33,6 +33,8 @@ function evalPolyTeX(coefs,a){
 }
 const evalPoly=(coefs,a)=>coefs.reduce((s,c)=>s*a+c,0);
 const hasY=s=>/^\s*y\s*=/.test(s);
+/* (n, hn) for (1+x)^(1/n) approximations; skips the two combinations used on real quizzes ((1.1)^(1/3) and (0.9)^(1/4)) */
+const pickNH=(R,H)=>{ let n,hn; do{ n=R.pick([2,3,4,5]); hn=R.pick(H); }while((n===3&&hn===10)||(n===4&&hn===-10)); return [n,hn]; };
 const lineSpec=(ans,c,m,aNum,f)=>({answer:ans,vars:["x"],domain:[-2,2],form:hasY,
   formWhy:"Same line, but write it as an equation that starts with y = (Warning, p. 3).",placeholder:"e.g. y = 3 + 2(x - 1)",
   help:"Start with y =. Point-slope form is fine; it is checked by value."});
@@ -248,9 +250,9 @@ M.lecture({
               steps:[`Tangent line approximation: $f(x) \\approx ${tl.slice(4)}$ for $x$ near $${a}$.`,`$f(${dec(X)}) \\approx ${c} + (${qT(m)})(${dec(X)} - (${a})) = ${c} + (${qT(m)})(${dec(hn/10)})$`,`$= ${qT(ans)}$${ans.d>1?` $\\approx ${dec(qV(ans))}$`:""}.`],
               answerTeX:`$f(${dec(X)}) \\approx ${qT(ans)}$`};
           }
-          const n=R.pick([2,3,4,5]), hn=R.pick(H), h=hn/100, base=dec(1+h), ans=qadd(Q(1),Q(hn,100*n));
+          const [n,hn]=pickNH(R,H), h=hn/100, base=dec(1+h), ans=qadd(Q(1),Q(hn,100*n));
           const fT=n===2?"\\sqrt{1+x}":`(1+x)^{1/${n}}`, tgt=n===2?`\\sqrt{${base}}`:`(${base})^{1/${n}}`;
-          return {prompt:`The tangent line to $f(x) = ${fT}$ at $a = 0$ is $y = 1 + \\frac{1}{${n}}x$. Use it to approximate $${tgt}$.`,
+          return {prompt:`For $f(x) = ${fT}$, the tangent line at $a = 0$ is $y = 1 + \\frac{1}{${n}}x$. Approximate $${tgt}$ with this line.`,
             answer:{type:"num",answer:qA(ans)}, verify:{value:1+h/n},
             hint:`Which $x$ makes $f(x) = ${tgt}$? It is not ${base}.`,
             steps:[`Tangent line approximation: $f(x) \\approx 1 + \\frac{1}{${n}}x$ for $x$ near 0.`,`Take $x = ${dec(h)}$ (not ${base}) because $f(${dec(h)}) = ${n===2?`\\sqrt{1 + (${dec(h)})}`:`(1 + (${dec(h)}))^{1/${n}}`} = ${tgt}$.`,`$${tgt} = f(${dec(h)}) \\approx 1 + \\frac{1}{${n}}(${dec(h)}) = ${qT(ans)}$.`],
@@ -258,7 +260,7 @@ M.lecture({
         }
         if(d===2){
           const kind=R.pick(["root0","sqrtsq","pow23"]);
-          if(kind==="root0"){ const n=R.pick([2,3,4,5]), hn=R.pick(H), h=hn/100, base=dec(1+h), ans=qadd(Q(1),Q(hn,100*n));
+          if(kind==="root0"){ const [n,hn]=pickNH(R,H), h=hn/100, base=dec(1+h), ans=qadd(Q(1),Q(hn,100*n));
             const fT=n===2?"\\sqrt{1+x}":`(1+x)^{1/${n}}`, tgt=n===2?`\\sqrt{${base}}`:`(${base})^{1/${n}}`;
             return {prompt:`Use the tangent line of $f(x) = ${fT}$ at $a = 0$ to approximate $${tgt}$.`,
               answer:{type:"num",answer:qA(ans)}, verify:{value:1+nd(x=>Math.pow(1+x,1/n),0)*h},
@@ -317,7 +319,8 @@ M.lecture({
         if(d===1){
           if(R.pick([true,false])){ // only the derivative is known
             const k=R.nz(-3,4); let a; do{ a=R.pick([1,2,4,5]); }while(a+k===0);
-            const dn=R.pick(DX), fpa=Q(a+k,a), ans=qmul(fpa,Q(dn,10)), b=(a*10+dn)/10;
+            let dn; do{ dn=R.pick(DX); }while(k===1&&a===2&&dn===1);   // f'(x) = (x+1)/x from 2 to 2.1 is a real quiz question
+            const fpa=Q(a+k,a), ans=qmul(fpa,Q(dn,10)), b=(a*10+dn)/10;
             return {prompt:`All you know about $y = f(x)$ is its derivative, $f'(x) = \\frac{x ${k<0?"-":"+"} ${Math.abs(k)}}{x}$. Approximate $\\Delta y$ when $x$ changes from $x = ${a}$ to $x = ${dec(b)}$.`,
               answer:{type:"num",answer:qA(ans)}, verify:{value:(a+k)/a*(b-a)},
               hint:"You do not need $f$ itself. $\\Delta y \\approx f'(a)\\Delta x$ with $a$ the original $x$ value.",
@@ -395,10 +398,10 @@ M.lecture({
         if(d===1||d===2){
           let L, bad, why, fix, prob;
           if(d===1||R.pick([true,false])){
-            const n=R.pick([2,3,4,5]), hn=R.pick([10,20,5,-10]), h=dec(hn/100), base=dec(1+hn/100);
+            const [n,hn]=pickNH(R,[10,20,5,-10]), h=dec(hn/100), base=dec(1+hn/100);
             const fT=`(1+x)^{1/${n}}`, tgt=`(${base})^{1/${n}}`, ans=qadd(Q(1),Q(hn,100*n));
             const err=d===1?R.pick(["noy","shift"]):R.pick(["exp","slope","noy","shift"]);
-            prob=`Let $f(x) = ${fT}$. Find the equation of the tangent line to $f$ at $a = 0$ and use it to approximate $${tgt}$.`;
+            prob=`Write the tangent line to $f(x) = ${fT}$ at $a = 0$, then use it to approximate $${tgt}$.`;
             L=[`$f'(x) = \\frac{1}{${n}}(1+x)^{-\\frac{${n-1}}{${n}}}$`,`So the slope at $a = 0$ is $f'(0) = \\frac{1}{${n}}(1)^{-\\frac{${n-1}}{${n}}} = \\frac{1}{${n}}$`,
                `The tangent line is $y = f(0) + f'(0)(x - 0) = 1 + \\frac{1}{${n}}x$`,`Take $x = ${h}$: $${tgt} = f(${h}) \\approx 1 + \\frac{1}{${n}}(${h}) = ${qT(ans)}$`];
             if(err==="exp"){ bad=0; L[0]=`$f'(x) = \\frac{1}{${n}}(1+x)^{\\frac{${n+1}}{${n}}}$`; L[1]=`So the slope at $a = 0$ is $f'(0) = \\frac{1}{${n}}(1)^{\\frac{${n+1}}{${n}}} = \\frac{1}{${n}}$`; why=`The power rule subtracts 1 from the power: $\\frac{1}{${n}} - 1 = -\\frac{${n-1}}{${n}}$. Line (1) adds 1 instead. The slope still comes out as $\\frac{1}{${n}}$ because 1 to any power is 1, but line (1) is wrong.`; }

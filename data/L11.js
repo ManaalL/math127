@@ -241,7 +241,7 @@ M.lecture({
         const lnm=v=>`\\ln(\\lvert ${v}\\rvert)`;
         if(d===1){ let k=R.nz(-5,5); if(k===1&&x0===-2&&y0===4) k=2;
           const Cv=m===1?`${y0}`:`${y0} ${k>0?"-":"+"} ${Math.abs(k)===1?"":Math.abs(k)}\\ln(${m})`;
-          const yT=`y = ${sgnLn(k,"\\lvert x\\rvert",true)} ${m===1?M.pm(y0):`${M.pm(y0)} ${k>0?"-":"+"} ${Math.abs(k)===1?"":Math.abs(k)}\\ln(${m})`}`;
+          const yT=`y = ${sgnLn(k,"\\lvert x\\rvert",true)} ${m===1?(y0===0?"":M.pm(y0)):`${y0===0?"":M.pm(y0)+" "}${k>0?"-":"+"} ${Math.abs(k)===1?"":Math.abs(k)}\\ln(${m})`}`.trimEnd();
           return {prompt:`Solve the initial value problem $y' = ${kx(k)}$, $y(${x0}) = ${y0}$.`, answer:{answer:`${k}*ln(abs(x)) + ${y0} - ${k}*ln(${m})`,vars:["x"],domain:dom}, verify:{antideriv:`${k}/x`},
             hint:"All solutions are $y=\\int "+kx(k)+"\\,dx$. Use $\\ln(\\lvert x\\rvert)$: the starting point "+(x0<0?"is negative":"may be anywhere")+".",
             steps:[`All solutions of the differential equation are given by $y = \\displaystyle\\int ${kx(k)}\\,dx = ${sgnLn(k,"\\lvert x\\rvert",true)} + C$.`,`The initial condition says that $y = ${y0}$ when $x = ${x0}$. Hence, $${y0} = ${cc(k)}${lnm(x0)} + C$.`,m===1?`$\\ln(1) = 0$, so $${y0} = C$.`:`$${lnm(x0)} = \\ln(${m})$, so $C = ${Cv}$.`,`Hence, the solution is $${yT}$.`],
@@ -260,7 +260,7 @@ M.lecture({
         const a=R.pick([2,3,5]), j=R.int(0,2), c=R.nz(-3,3), sgn=x0<0?-1:1, X=sgn*Math.pow(a,j);
         const dom3=X<0?[-30,-0.3]:[0.3,30];
         const Cv=y0-c*j;
-        const yT=`y = ${cc(c)}\\log_{${a}}(\\lvert x\\rvert) ${M.pm(Cv)}`;
+        const yT=`y = ${cc(c)}\\log_{${a}}(\\lvert x\\rvert)${Cv===0?"":` ${M.pm(Cv)}`}`;
         return {prompt:`Solve the initial value problem $y' = \\frac{${c}}{x\\ln(${a})}$, $y(${X}) = ${y0}$.`, answer:{answer:`${c}*log_${a}(abs(x)) + ${Cv}`,vars:["x"],domain:dom3}, verify:{antideriv:`${c}/(x*ln(${a}))`},
           hint:"$\\int\\frac{1}{x\\ln(a)}\\,dx = \\log_a(\\lvert x\\rvert)+C$.",
           steps:[`All solutions of the differential equation are given by $y = \\displaystyle\\int\\frac{${c}}{x\\ln(${a})}\\,dx = ${cc(c)}\\log_{${a}}(\\lvert x\\rvert) + C$.`,`The initial condition says that $y = ${y0}$ when $x = ${X}$. Hence, $${y0} = ${c}\\log_{${a}}(\\lvert ${X}\\rvert) + C = ${c}\\cdot ${j} + C$.`,`So $C = ${Cv}$.`,`Hence, the solution is $${yT}$.`],

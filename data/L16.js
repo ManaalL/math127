@@ -42,7 +42,7 @@ const IMP={
   T3:R=>{ const a=R.nz(-5,5), b=R.int(-6,6), rhs=S([[1,"x^3"],[a,"x"],[b,""]]), top=S([[3,"x^2"],[a,""]]);
     return {eq:`y^2 = ${rhs}`, F:`y^2-(x^3+(${a})x+(${b}))`, rule:"Chain rule on $y^2$ gives $2yy'$. The right side has no $y$, so differentiate it as usual.",
       lines:[`2yy' = ${top}`], ansT:`\\frac{${top}}{2y}`, ansA:`(3x^2+(${a}))/(2y)`, cond:"y"}; },
-  T4:R=>{ const a=R.nz(-4,4), c=R.int(1,9), rhs=S([[-2,"x"],[-a,"y"]]), den=S([[a,"x"],[2,"y"]]);
+  T4:R=>{ const a=R.pick([-4,-3,-1,1,3,4]), c=R.int(1,9), rhs=S([[-2,"x"],[-a,"y"]]), den=S([[a,"x"],[2,"y"]]);
     return {eq:`${S([[1,"x^2"],[a,"xy"],[1,"y^2"]])} = ${c}`, F:`x^2+(${a})x*y+y^2-${c}`, rule:`Product rule on $${co(a)}xy$, chain rule on $y^2$.`,
       lines:[`${S([[2,"x"],[a,"(y + xy')"],[2,"yy'"]])} = 0`, `${S([[2,"x"],[a,"y"],[a,"xy'"],[2,"yy'"]])} = 0`, `${S([[a,"xy'"],[2,"yy'"]])} = ${rhs}`, `y'(${den}) = ${rhs}`],
       ansT:`\\frac{${rhs}}{${den}}`, ansA:`(-2x-(${a})y)/((${a})x+2y)`, cond:den}; },

@@ -159,12 +159,12 @@ M127.lecture({
     {id:"L01.g.meaning", title:"What does $f'(a)=b$ mean?", skill:"Interpret a derivative value in words", ref:"p. 5",
       gen(R,d){
         const S=R.pick([
-          ["D","T","the cost of extracting $T$ tons of ore","dollars","tons","extracting","tons of ore","the cost"],
-          ["W","t","the weight of a puppy $t$ weeks after birth","kg","weeks","at","weeks","the puppy's weight"],
-          ["P","n","the profit from selling $n$ phones","dollars","phones","selling","phones","the profit"],
-          ["H","t","the height of a tree $t$ years after planting","m","years","at","years","the tree's height"]]);
+          ["D","T","the cost of extracting $T$ tons of ore","dollars","tons","extracting","tons of ore","the cost",[500,1000,2000,5000],[40,80,100,150]],
+          ["W","t","the weight of a puppy $t$ weeks after birth","kg","weeks","at","weeks","the puppy's weight",[4,6,8,10,12],[0.2,0.3,0.4,0.5]],
+          ["P","n","the profit from selling $n$ phones","dollars","phones","selling","phones","the profit",[100,200,500,1000],[12,15,40,60]],
+          ["H","t","the height of a tree $t$ years after planting","m","years","at","years","the tree's height",[2,3,5,8,10],[0.3,0.4,0.5,0.8]]]);
         const [F,v,desc,fu,vu,verb,vn,what]=S;
-        const a=R.pick([10,20,50,100,200,2000]), b=R.pick([3,4,5,12,15,40]);
+        const a=R.pick(S[8]), b=R.pick(S[9]);
         const at=verb==="at"?`At ${a} ${vn}`:`When ${verb} ${a} ${vn}`;
         const atb=verb==="at"?`At ${b} ${vn}`:`When ${verb} ${b} ${vn}`;
         const right=`${at}, ${what} is increasing at a rate of ${b} ${fu}/${vu.replace(/s$/,"")}.`;

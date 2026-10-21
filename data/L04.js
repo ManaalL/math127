@@ -296,9 +296,9 @@ M127.lecture({
     {id:"L04.g.netchange", title:"Net change from a rate", skill:"Use a definite integral of a rate, or check which $f$ fits $\\int_a^b f'(x)\\,dx$", ref:"pp. 4 to 6",
       gen(R,d){
         if(d===1){
-          const C=R.pick([["a balloon's volume","cm³/s","s","V","cm³"],["the volume of water in a pool","L/min","min","W","L"],["the mass of a growing crystal","mg/h","h","m","mg"],["the height of a rising tide","cm/h","h","h","cm"]]);
+          const C=R.pick([["the volume of air in a syringe","cm³/s","s","V","cm³"],["the volume of water in a pool","L/min","min","W","L"],["the mass of a crystal","mg/h","h","m","mg"],["the height of the tide","cm/h","h","h","cm"]]);
           const k=R.int(2,12), a=R.int(0,4), b=a+R.int(1,6); const val=k*(b-a);
-          return {prompt:`Assume ${C[0]} changes at a constant rate of ${k} ${C[1]} from $t = ${a}$ ${C[2]} to $t = ${b}$ ${C[2]}. Use a definite integral to find the net change.`,
+          return {prompt:`Between $t = ${a}$ ${C[2]} and $t = ${b}$ ${C[2]}, ${C[0]} grows at a steady ${k} ${C[1]}. Write the net change as a definite integral and evaluate it.`,
             answer:{type:"num",answer:String(val)}, verify:{value:simpson(()=>k,a,b)},
             hint:"Write the rate as a function, $"+C[3]+"'(t) = "+k+"$, and find a function with that derivative.",
             steps:[`The rate of change is $${C[3]}'(t) = ${k}$ ${C[1]}.`,`An antiderivative of $${C[3]}'(t)$ is $${C[3]}(t) = ${k}t$.`,`The net change is $\\int_{${a}}^{${b}} ${k}\\,dt = ${k}t\\Big|_{${a}}^{${b}} = ${k}(${b}) - ${k}(${a}) = ${val}$ ${C[4]}.`],
@@ -347,7 +347,7 @@ M127.lecture({
             3:`Line (3) has the limits upside down. $F(t)\\Big|_0^{${b}}$ means $F(${b}) - F(0)$; writing $\\Big|_{${b}}^{0}$ means $F(0) - F(${b})$.`,
             4:`Line (4) subtracts in the wrong order. FTC Part 2 gives $Q(b) - Q(a) = Q(${b}) - Q(0)$.`,
             5:`Line (5) has an arithmetic slip: $Q(${b}) = ${j===1?"":j}(${b})^{${m+1}} = ${val}$, not ${wrongVal}.`};
-          return {prompt:`A problem and answer are shown. The answer would not get a perfect score. Select the first line that has a mistake.<div class="box note"><b class="t">Problem</b>If the rate of change of a quantity $Q$ is $Q'(t) = ${rate}$, what is the net change in $Q$ from $t = 0$ to $t = ${b}$?</div><div class="box note"><b class="t">Answer</b><ol>${L.map(s=>`<li>${s}</li>`).join("")}</ol></div>`,
+          return {prompt:`A problem and answer are shown. The answer would not get a perfect score. Select the first line that has a mistake.<div class="box note"><b class="t">Problem</b>A quantity $Q$ changes at the rate $Q'(t) = ${rate}$. Find the net change in $Q$ between $t = 0$ and $t = ${b}$.</div><div class="box note"><b class="t">Answer</b><ol>${L.map(s=>`<li>${s}</li>`).join("")}</ol></div>`,
             parts:[{answer:{type:"mc",options:lineOpts(5),correct:e-1,keep:true}}],
             hint:"Check each line on its own: is the antiderivative right, is every integral written with $dt$, and is the subtraction $Q(b) - Q(a)$?",
             steps:[why[e],`The correct solution: $Q(t) = ${Qt}$, $\\Delta Q = \\int_0^{${b}} ${rate}\\,dt = ${Qt}\\Big|_0^{${b}} = Q(${b}) - Q(0) = ${val}$.`],
