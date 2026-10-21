@@ -358,3 +358,7 @@ select,input[type=search],input[type=date],input[type=number]{font:inherit;paddi
   .big{font-size:2.4rem}
 }
 @media (prefers-reduced-motion: reduce){ *{transition:none!important;animation:none!important} html{scroll-behavior:auto} }
+/* tables inside questions (course-notes data tables) */
+.cn-table,.rq table,.stmt table,.ex-q table{border-collapse:collapse;margin:8px 0;font-size:.95rem;display:block;overflow-x:auto;max-width:100%}
+.cn-table td,.cn-table th,.rq table td,.rq table th,.stmt table td,.stmt table th,.ex-q table td,.ex-q table th{border:1px solid var(--rule);padding:4px 10px;text-align:center}
+.cn-table th,.rq table th,.stmt table th,.ex-q table th{background:var(--fig-soft);font-weight:600}

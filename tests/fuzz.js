@@ -22,6 +22,7 @@ const li=process.argv.indexOf("--lec");
 if(li>0){ load("data/course.js"); process.argv[li+1].split(",").forEach(id=>load(`data/${id}.js`)); } else load("assets/js/studydata.js");
 const M=ctx.M127, MC=ctx.MC;
 const fails=[]; let nProb=0, nTex=0;
+const F2=(w,m)=>F(w,m);
 const F=(w,m)=>{ if(fails.length<400) fails.push(`${w}: ${m}`); };
 function texCheck(s,w){
   if(!katex||s==null) return; s=String(s);
@@ -37,6 +38,14 @@ function bad(s){ return /undefined|NaN|\[object|Infinity|function\s*\(/.test(Str
 function numDeriv(ast,v,x,env={}){ const h=1e-5*Math.max(1,Math.abs(x)); const e1={...env,[v]:x+h}, e2={...env,[v]:x-h}; return (MC.evaluate(ast,e1)-MC.evaluate(ast,e2))/(2*h); }
 let nVer=0;
 function verify(p,w){ nVer++;
+  if(p.implicitF && !p.verify){ // y' must equal -F_x/F_y at random (x, y)
+    const part=p.parts.find(x=>(x.answer.type||"expr")==="expr"); if(!part) return;
+    const F=MC.parse(String(p.implicitF).replace(/=\s*0\s*$/,"")), A=MC.parse(String(part.answer.answer).replace(/^\s*(y'|dy\/dx)\s*=\s*/,""));
+    let ok=0;
+    for(let k=0;k<40&&ok<6;k++){ const x=0.3+1.7*Math.random(), y=0.3+1.7*Math.random(); let fx,fy,a; try{ fx=numDeriv(F,"x",x,{y}); fy=numDeriv(F,"y",y,{x}); a=MC.evaluate(A,{x,y}); }catch(e){ continue; }
+      if(!isFinite(fx)||!isFinite(fy)||!isFinite(a)||Math.abs(fy)<1e-6) continue; ok++; const b=-fx/fy;
+      if(Math.abs(a-b)>1e-4*Math.max(1,Math.abs(b))){ F2(w,`implicit verify failed at (${x.toFixed(2)},${y.toFixed(2)}): answer ${a}, -Fx/Fy ${b}`); return; } }
+    return; }
   const V=p.verify; if(!V) return;
   const part=p.parts[0].answer; const v=V.v||"x";
   const dom=Array.isArray(part.domain)?part.domain:[-2,2];
@@ -92,7 +101,7 @@ for(const L of M.lectures){
           if(t==="expr"||t==="num"){ const wrong=t==="num"?`(${a.answer})+1`:`(${a.answer})+x^2+1`; const r2=MC.check(wrong,{...a,vars:a.vars}); if(r2.ok) F(w,`part ${pi}: a wrong answer was accepted ("${wrong}")`); }
           if(t==="num"){ try{ const v=MC.evaluate(MC.parse(String(a.answer)),{}); if(!isFinite(v)) F(w,"num answer not finite"); }catch(e){ F(w,"num answer unparseable "+a.answer); } }
         });
-        if(p.verify) verify(p,w);
+        if(p.verify||p.implicitF) verify(p,w);
       }
       if(seen.size<Math.min(5,N/10)) F(`${g.id} d${d}`,`only ${seen.size} distinct problems in ${N} seeds`);
     }
