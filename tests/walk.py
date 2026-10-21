@@ -28,7 +28,7 @@ with sync_playwright() as p:
             for i in range(n):
                 errs.clear()
                 pg.evaluate(f"UNIT_OPEN('{lid}',{i})"); pg.wait_for_timeout(250)
-                info=pg.evaluate("""()=>{ const svg=[...document.querySelectorAll('.plate svg')]; const paths=svg.map(s=>s.querySelectorAll('path,line,circle,rect').length);
+                info=pg.evaluate("""()=>{ const svg=[...document.querySelectorAll('.plate svg.fig')]; const paths=svg.map(s=>s.querySelectorAll('path,line,circle,rect').length);
                   const txt=document.querySelector('#app').innerText; const raw=[...document.querySelectorAll('.panel')].map(p=>p.innerHTML).join(' ');
                   return {paths, bad:/undefined|NaN|\\[object/.test(txt), dollars:(txt.match(/\\$/g)||[]).length, katexErr:document.querySelectorAll('.katex-error').length, overflow:document.documentElement.scrollWidth>window.innerWidth+1}; }""")
                 problems=[]
