@@ -7,7 +7,7 @@ const NS="http://www.w3.org/2000/svg";
 const PI=Math.PI;
 function sv(tag, attrs={}, parent){ const e=document.createElementNS(NS,tag); for(const k in attrs){ if(attrs[k]!=null) e.setAttribute(k,attrs[k]); } if(parent) parent.append(e); return e; }
 function niceStep(range, target=8){ const raw=range/target; const p=Math.pow(10,Math.floor(Math.log10(raw))); const m=raw/p; return (m<1.5?1:m<3?2:m<7?5:10)*p; }
-function fmtTick(v,step){ const dp=Math.max(0,-Math.floor(Math.log10(step)+1e-9)); return (+v.toFixed(dp)).toString().replace("-","−"); }
+function fmtTick(v,step){ const dp=Math.min(4,(String(+step.toPrecision(6)).split(".")[1]||"").length); return (+v.toFixed(dp)).toString().replace("-","\u2212"); }
 function piLabel(v){ const k=Math.round(v/(PI/2)); if(k===0) return "0"; const n=k%2===0?k/2:k; const d=k%2===0?1:2; const s=(n<0?"−":"")+(Math.abs(n)===1?"":Math.abs(n))+"π"+(d===2?"/2":""); return s; }
 
 function graph(host, o={}){
