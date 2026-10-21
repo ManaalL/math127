@@ -142,7 +142,7 @@ M.lecture({
   gens:[
     {id:"L10.g.lrs-ln", title:"Left Riemann Sum for ln", skill:"Approximate $\\ln(b)$ from $\\ln(x)=\\int_1^x\\frac1t\\,dt$", ref:"pp. 5 to 6",
       gen(R,d){
-        const P = d===1?[[2,2],[3,2],[4,3],[5,2],[5,4],[7,3],[4,2]] : d===2?[[2,3],[2,4],[3,3],[3,4],[4,4],[5,3],[7,4],[6,5]] : [[2,5],[3,5],[4,6],[7,6],[6,4],[9,4],[3,6],[5,5],[8,5]];
+        const P = d===1?[[2,2],[3,2],[4,3],[5,2],[5,4],[7,3],[4,2]] : d===2?[[2,3],[3,3],[3,4],[4,4],[5,3],[7,4],[6,5]] : [[2,5],[3,5],[4,6],[7,6],[6,4],[9,4],[3,6],[5,5],[8,5]];
         const [b,n]=R.pick(P);
         const dt=F(b-1,n), [p,q]=dt;
         const ts=[], terms=[]; let sum=[0,1], fl=0;
@@ -182,7 +182,7 @@ M.lecture({
         }
         if(d===2){
           const kind=R.pick(["ekln","logsum","condense"]);
-          if(kind==="ekln"){ const k=R.int(2,3), m=R.int(2,5), v=Math.pow(m,k);
+          if(kind==="ekln"){ let k, m; do{ k=R.int(2,3); m=R.int(2,5); }while(k===2&&m===3); const v=Math.pow(m,k);
             return {prompt:`Simplify $e^{${k}\\ln(${m})}$.`, answer:{answer:String(v),vars:[],form:noLogs,formWhy:"Simplify fully: no $e$ or $\\ln$ left."},
               hint:"There must be no coefficient in front of $\\ln$ before you cancel. Move it inside first.",
               steps:[`Power rule for logs: $${k}\\ln(${m}) = \\ln(${m}^{${k}})$.`,`So $e^{${k}\\ln(${m})} = e^{\\ln(${m}^{${k}})} = ${m}^{${k}} = ${v}$.`], answerTeX:`$${v}$`}; }
@@ -407,7 +407,7 @@ M.lecture({
           return wrap(`Let $f(x) = ${fT}$. Use properties of logarithms to write $\\ln(f(x))$ as a sum and difference of logarithms.`,{good,badLines:bad,at,why,okWhy:"Quotient rule, product rule inside a bracket, then the power rule with the minus sign distributed."});
         }
         // Left Riemann Sum for ln(b)
-        const [b,n]=R.pick([[2,2],[3,2],[2,3],[3,3],[4,3],[5,4],[3,4],[2,4]]);
+        const [b,n]=R.pick([[2,2],[3,2],[2,3],[3,3],[4,3],[5,4],[3,4],[2,5]]);
         const build=mode=>{ // mode: null (correct), "integrand", "dt", "right", "heights", "arith"
           const width = mode==="dt"?F(b,n):F(b-1,n);
           const ts=[]; for(let i=0;i<=n;i++) ts.push(Fadd([1,1],F(i*width[0],width[1])));

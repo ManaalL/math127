@@ -243,18 +243,19 @@ M.lecture({
       }},
     {id:"L03.g.units", title:"Units of a differential", skill:"Units of $dy$ are the units of $f$", ref:"p. 1",
       gen(R,d){
-        const S=R.pick([["force","Newtons","w","mass","kg"],["position","m","t","time","s"],["mass","kg","t","time","min"],["volume","mL","t","time","s"],["temperature","°C","t","time","min"],["cost","dollars","T","ore extracted","tons"],["concentration","mg/L","t","time","h"],["pressure","kPa","h","depth","m"]]);
-        const [qn,qu,v,vn,vu]=S; const a=R.nz(-5,5), b=R.nz(-6,6), n=R.int(2,3);
+        const S=R.pick([["force","Newtons","w","mass","kg","kg"],["position","m","t","time","s","s"],["mass","kg","t","time","min","min"],["volume","mL","t","time","s","s"],["temperature","°C","t","time","min","min"],["cost","dollars","T","ore extracted","tons","ton"],["concentration","mg/L","t","time","h","h"],["pressure","kPa","h","depth","m","m"]]);
+        const [qn,qu,v,vn,vu,v1]=S; const a=R.nz(-5,5), b=R.nz(-6,6), n=R.int(2,3);
+        const qb=qu.includes("/")?`(${qu})`:qu, rate=`${qb}/${v1}`;
         const fT=polyT([[a,n],[b,1]],v), dT=polyT([[a*n,n-1],[b,0]],v);
-        const uDy=R.shuffle([qu,`${qu}/${vu}`,vu,`${qu}·${vu}`]), uFp=R.shuffle([`${qu}/${vu}`,qu,`${vu}/${qu}`,`${qu}·${vu}`]);
+        const uDy=R.shuffle([qu,rate,vu,`${qb}·${vu}`]), uFp=R.shuffle([rate,qu,`${v1}/${qb}`,`${qb}·${vu}`]);
         const pDy={label:"Units of $dy$",answer:{type:"mc",options:uDy,correct:uDy.indexOf(qu)}};
-        const pFp={label:`Units of $f'(${v})$`,answer:{type:"mc",options:uFp,correct:uFp.indexOf(`${qu}/${vu}`)}};
+        const pFp={label:`Units of $f'(${v})$`,answer:{type:"mc",options:uFp,correct:uFp.indexOf(rate)}};
         const pEx={label:"$dy =$",answer:{answer:`(${a*n}${v}^${n-1}+${b})*d${v}`,vars:[v,"d"],domain:[-2,2],placeholder:`e.g. (2${v} + 1) d${v}`,help:`Include d${v} and brackets.`}};
         const parts=d===1?[pDy]:d===2?[pFp,pDy]:[pEx,pDy];
         return {prompt:`Let $y = f(${v}) = ${fT}$, where $f$ is the ${qn} in ${qu} and $${v}$ is the ${vn} in ${vu}.`+(d===1?" What are the units of $dy$?":d===2?" Give the units of $f'("+v+")$ and of $dy$.":" Find $dy$ and give its units."),
-          parts, hint:`$dy = f'(${v})\\,d${v}$. $f'(${v})$ is in ${qu} per ${vu}, and $d${v}$ is a change in $${v}$, so it is in ${vu}.`,
-          steps:[`$dy = f'(${v})\\,d${v} = \\left(${dT}\\right)d${v}$.`,`Units of $f'(${v})$: ${qu}/${vu}. Units of $d${v}$: ${vu} (it is a change in $${v}$).`,`Units of $dy$: ${qu}/${vu} × ${vu} = ${qu}.`,`This makes sense: $dy$ is a change in $f$, which is measured in ${qu} (p. 1).`],
-          answerTeX:(d===3?`$dy = \\left(${dT}\\right)d${v}$, in `:d===2?`$f'(${v})$ in ${qu}/${vu}; $dy$ in `:"$dy$ is in ")+qu};
+          parts, hint:`$dy = f'(${v})\\,d${v}$. $f'(${v})$ is in ${qu} per ${v1}, and $d${v}$ is a change in $${v}$, so it is in ${vu}.`,
+          steps:[`$dy = f'(${v})\\,d${v} = \\left(${dT}\\right)d${v}$.`,`Units of $f'(${v})$: ${rate}. Units of $d${v}$: ${vu} (it is a change in $${v}$).`,`Units of $dy$: ${rate} × ${vu} = ${qu}.`,`This makes sense: $dy$ is a change in $f$, which is measured in ${qu} (p. 1).`],
+          answerTeX:(d===3?`$dy = \\left(${dT}\\right)d${v}$, in `:d===2?`$f'(${v})$ in ${rate}; $dy$ in `:"$dy$ is in ")+qu};
       }},
     {id:"L03.g.verify", title:"Is it a solution?", skill:"Check a function against a DE: left side, right side, conclusion", ref:"pp. 3 to 4",
       gen(R,d){
