@@ -115,7 +115,7 @@ M.lecture({
         const curve=G.fn(f,{cls:"cv c"});
         const amp=G.line(0,0,0,0,{cls:"ln"}); amp.style.strokeWidth=2.2;
         const per=G.line(0,0,0,0,{cls:"ln"}), pe1=G.line(0,0,0,0,{cls:"ln"}), pe2=G.line(0,0,0,0,{cls:"ln"});
-        const la=G.label(0,0,"amplitude",{cls:"lblc",dx:5}), lp=G.label(0,0,"period",{cls:"lblc",anchor:"middle",dy:-5}), lav=G.label(4*PI,0,"average",{cls:"lblc",anchor:"end",dy:-5});
+        const la=G.label(0,0,"amplitude",{cls:"lblc",dx:5}), lp=G.label(0,0,"period",{cls:"lblc",anchor:"middle",dy:-5}), lav=G.label(-PI,0,"average",{cls:"lblc",dx:4,dy:-5});
         const ctl=PLOT.controls(host), ro=PLOT.readout(host);
         const fseg=PLOT.seg(ctl,{label:"Function",items:[["sin","sin"],["cos","cos"]],value:fn,onchange:v=>{ fn=v; draw(); }});
         const sa=PLOT.slider(ctl,{label:"a",min:-4,max:4,step:0.5,value:a,fmt:v=>String(v),oninput:v=>{ a=v; draw(); }});
@@ -128,11 +128,11 @@ M.lecture({
         function draw(){
           const b=BL[bi], c=cj*PI/12, P=2*PI/Math.abs(b), A=Math.abs(a);
           base.update(F); curve.update(f);
-          avg.set(-PI,d,4*PI,d); mx.set(-PI,d+A,4*PI,d+A); mn.set(-PI,d-A,4*PI,d-A); lav.set(4*PI,d);
+          avg.set(-PI,d,4*PI,d); mx.set(-PI,d+A,4*PI,d+A); mn.set(-PI,d-A,4*PI,d-A); lav.set(-PI,d);
           const show=A>0; [amp,per,pe1,pe2,la,lp].forEach(e=>e.style.display=show?"":"none");
           if(show){
             const th=fn==="sin"?(a>0?PI/2:3*PI/2):(a>0?0:PI);
-            let xp=null; for(let m=-12;m<=12;m++){ const x=c+(th+2*PI*m)/b; if(x>=-PI+0.25&&(xp===null||x<xp)) xp=x; }
+            let xp=null; for(let m=-12;m<=12;m++){ const x=c+(th+2*PI*m)/b; if(x>=0.5&&(xp===null||x<xp)) xp=x; }
             const yb=d+A+0.7<=7.2?d+A+0.7:d-A-0.7;
             amp.set(xp,d,xp,d+A); la.set(xp,d+A/2);
             const x2=Math.min(xp+P,4*PI); per.set(xp,yb,x2,yb); pe1.set(xp,yb-0.3,xp,yb+0.3); pe2.set(x2,yb-0.3,x2,yb+0.3); lp.set((xp+x2)/2,yb);
@@ -163,7 +163,7 @@ M.lecture({
           curve.update(T); avg.set(0,d,48,d); pmin.set(tmin,Tmin); pmax.set(tmax,Tmax); lmin.set(tmin,Tmin); lmax.set(tmax,Tmax);
           const g=M.gcd(2,P), bT=`\\frac{${2/g===1?"":2/g}\\pi}{${P/g}}`.replace("\\frac{\\pi}{1}","\\pi").replace(/\\frac\{(\d*)\\pi\}\{1\}/,"$1\\pi");
           const cT=dec(c), aT=dec(a), dT=dec(d);
-          ro.innerHTML=`${M.tex(`d = \\frac{${Tmax} + ${Tmin}}{2} = ${dT}`)} &nbsp; ${M.tex(`a = \\frac{${Tmax} - ${Tmin}}{2} = ${aT}`)}<br>period ${M.tex(`= 2\\cdot|${tmax} - ${tmin}| = ${P}`)}, so ${M.tex(`b = \\frac{2\\pi}{${P}} = ${bT}`)} &nbsp; ${fn==="sin"?`sine minimum sits ${M.tex("\\frac{P}{4}")} before ${M.tex("c")}, so ${M.tex(`c = ${tmin} + ${P/4}`)}`:`cosine maximum sits at ${M.tex("t = c")}, so ${M.tex(`c = ${tmax}`)}`}${(fn==="sin"?tmin+P/4:tmax)!==c?` (reduced by a period to ${M.tex(cT)})`:""}<br>${M.tex(`T(t) = ${aT}\\${fn}\\left(${bT}(t - ${cT})\\right) + ${dT}`)} &nbsp; check: ${M.tex(`T(${tmax}) = ${dec(T(tmax))}`)}`;
+          ro.innerHTML=`${M.tex(`d = \\frac{${Tmax} + ${Tmin}}{2} = ${dT}`)} &nbsp; ${M.tex(`a = \\frac{${Tmax} - ${Tmin}}{2} = ${aT}`)}<br>period ${M.tex(`= 2\\cdot|${tmax} - ${tmin}| = ${P}`)}, so ${M.tex(`b = \\frac{2\\pi}{${P}} = ${bT}`)} &nbsp; ${fn==="sin"?`sine minimum sits ${M.tex("\\frac{P}{4}")} before ${M.tex("c")}, so ${M.tex(`c = ${tmin} + ${P/4} = ${tmin+P/4}`)}`:`cosine maximum sits at ${M.tex("t = c")}, so ${M.tex(`c = ${tmax}`)}`}${(fn==="sin"?tmin+P/4:tmax)!==c?` (reduced by a period to ${M.tex(cT)})`:""}<br>${M.tex(`T(t) = ${aT}\\${fn}\\left(${bT}(t - ${cT})\\right) + ${dT}`)} &nbsp; check: ${M.tex(`T(${tmax}) = ${dec(T(tmax))}`)}`;
         }
         draw();
       }}

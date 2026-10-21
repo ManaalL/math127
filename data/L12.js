@@ -183,13 +183,13 @@ M.lecture({
           P.set(A,O); hyp.set(0,0,A,O); la.set(0,0,A,0); lo.set(A,0,A,O);
           const e=0.3, sx=A>0?-e:e, sy=O>0?e:-e; sq1.set(A+sx,0,A+sx,sy); sq2.set(A+sx,sy,A,sy);
           let t0=Math.atan2(O,A); if(t0<0) t0+=2*PI; let d=""; for(let i=0;i<=40;i++){ const t=t0*i/40; d+=(i?"L":"M")+G.X(0.7*Math.cos(t)).toFixed(1)+" "+G.Y(0.7*Math.sin(t)).toFixed(1)+" "; } arc.setAttribute("d",d);
-          ta.set(A/2,0,`a = ${A}`.replace("-","−")); ta.setAttribute("y",G.Y(0)+(O>0?16:-8));
+          ta.set(A/2,0,`a = ${A}`.replace("-","−")); ta.setAttribute("y",G.Y(0)+(O>0?32:-22));
           tob.set(A,O/2,`o = ${O}`.replace("-","−")); tob.setAttribute("x",G.X(A)+(A>0?8:-58));
           const h2=A*A+O*O; th.set(A/2,O/2,"h"); th.setAttribute("x",G.X(A/2)+(A*O>0?-14:14)); th.setAttribute("y",G.Y(O/2)+(O>0?-6:14));
           const q=A>0?(O>0?1:4):(O>0?2:3);
           const a=V(String(A),"",A), o=V(String(O),"",O), h=V(sqT(h2),"",Math.sqrt(h2)); const S={a,o,h};
           const r=fn=>{ const [n,dd]=RATIO[fn]; return `\\${fn}\\theta = ${ratioTeX(S[n],S[dd])}`; };
-          ro.innerHTML=`Quadrant ${QN[q]}: ${TX(`a = ${A},\\ o = ${O},\\ h = \\sqrt{(${A})^2 + (${O})^2} = ${sqT(h2)}`)}<br>${TX(r("sin"))} &nbsp; ${TX(r("cos"))} &nbsp; ${TX(r("tan"))}<br>${TX(r("csc"))} &nbsp; ${TX(r("sec"))} &nbsp; ${TX(r("cot"))}`;
+          ro.innerHTML=`Quadrant ${QN[q]}: ${TX(`a = ${A},\\ o = ${O},\\ h^2 = (${A})^2 + (${O})^2 = ${h2},\\ h = ${sqT(h2)}`)}<br>${TX(r("sin"))} &nbsp; ${TX(r("cos"))} &nbsp; ${TX(r("tan"))}<br>${TX(r("csc"))} &nbsp; ${TX(r("sec"))} &nbsp; ${TX(r("cot"))}`;
         }
         draw();
       }},

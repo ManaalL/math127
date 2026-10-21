@@ -252,7 +252,7 @@ const CONST_LETTERS=["C","K","A","B","D"];
 function sameExpr(userAst, rightAst, spec={}){
   let vlist = spec.vars || [...vars(rightAst)].filter(v=>!CONST_LETTERS.includes(v));
   if(!spec.vars && !vlist.length) vlist=[...vars(userAst)].filter(v=>!CONST_LETTERS.includes(v)); // answer is a constant: any variables must cancel
-  const consts = spec.consts || [...vars(rightAst)].filter(v=>CONST_LETTERS.includes(v));
+  const consts = spec.consts || [...vars(rightAst)].filter(v=>CONST_LETTERS.includes(v) && !(spec.plusC && v==="C")); // with plusC, a "+ C" in the stored answer is the arbitrary constant
   const uv=[...vars(userAst)];
   // rename the user's own arbitrary constant to match the expected one (A e^{2x} vs C e^{2x})
   let ren={};
