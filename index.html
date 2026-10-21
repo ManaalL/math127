@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MATH 127 Interactive</title>
+<meta name="description" content="Interactive study site for MATH 127 Calculus 1 at Waterloo: lecture chapters with graphs you can drag, endless practice, a formula sheet with flashcards, quiz prep and midterm prep.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<link rel="stylesheet" href="assets/css/site.css">
+</head>
+<body>
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <p class="mono" style="margin:0 0 10px">MATH 127 · Calculus 1 for the Sciences · Waterloo · Fall 2026</p>
+      <h1>Calculus you can <em>drag</em>, slide and check.</h1>
+      <p class="lede">Every lecture is a short chapter: the key ideas in plain words, a worked example you step through, a graph you can move, and problems with new numbers every time. The formula sheet drills what you need to memorize. Quiz and midterm prep show you exactly what to go back to.</p>
+      <div class="btns">
+        <a class="btn" id="continueBtn" href="unit-1.html">Start with Lecture 1</a>
+        <a class="btn ghost" href="midterm.html">Midterm prep</a>
+      </div>
+      <div class="counts" id="counts"></div>
+    </div>
+    <figure class="plate" id="plate"></figure>
+  </div>
+</section>
+
+<section class="sec" id="units"><div class="wrap">
+  <h2>The units</h2>
+  <p class="sub">Units are grouped by topic. Inside each unit, lectures are grouped by the quiz that first tests them. Your progress saves in this browser.</p>
+  <div class="mods" id="mods"></div>
+</div></section>
+
+<section class="sec" id="timeline"><div class="wrap">
+  <h2>Lecture timeline</h2>
+  <p class="sub">Every lecture so far, grouped by quiz. Filled means you finished the chapter. Click one to open it.</p>
+  <div class="tl-wrap"><div class="tl" id="tl"></div><div class="tl-legend"><span><i class="f"></i>chapter done</span><span><i></i>not done yet</span><span><i class="x"></i>coming up</span><span><span class="pill new">New</span> this week</span></div></div>
+</div></section>
+
+<section class="sec"><div class="wrap">
+  <div class="qod">
+    <div><span class="pill">Question of the day</span><h3 style="margin-top:10px">One question, every day</h3><p class="sub" style="margin-bottom:0">Pulled from every lecture's exam questions. Get it wrong and you get a link to the lecture that covers it.</p><p class="small muted" id="qodmeta"></p></div>
+    <div id="qod"></div>
+  </div>
+</div></section>
+
+<section class="sec"><div class="wrap">
+  <h2>What's inside</h2>
+  <p class="sub">Predict, try, then check. Every answer box accepts any equivalent form, so $2x(x+1)$ and $2x^2+2x$ both count.</p>
+  <div class="how">
+    <div><span class="n">01</span><b>Lecture chapters</b>Short chapters that follow the lecture notes, with page numbers. Your first-try score is saved so you can beat it.</div>
+    <div><span class="n">02</span><b>Formula sheet</b>Every formula, searchable. Flashcards with spaced repetition and fill-in-the-blank, plus a readiness score for each unit.</div>
+    <div><span class="n">03</span><b>Practice and prep</b>Endless problems by lecture and difficulty, timed quiz prep, and a practice midterm in the real format with a study plan.</div>
+    <div><span class="n">04</span><b>Tan</b>The point in the corner. Drag it along its curve to see the slope change, or tap it to look up a formula, get quizzed, or see what to study next.</div>
+  </div>
+</div></section>
+
+<section class="sec"><div class="wrap">
+  <h2>What changed</h2>
+  <div class="log"><ul id="log" style="margin:0;padding-left:18px"></ul><p class="small muted" id="built" style="margin:8px 0 0"></p></div>
+</div></section>
+
+<script src="assets/js/core.js"></script>
+<script src="assets/js/mathcheck.js"></script>
+<script src="assets/js/studydata.js"></script>
+<script src="assets/js/icons.js"></script>
+<script src="assets/js/plot.js"></script>
+<script src="assets/js/engine.js"></script>
+<script src="assets/js/exam.js"></script>
+<script src="assets/js/guide.js"></script>
+<script src="assets/js/home.js"></script>
+</body>
+</html>
