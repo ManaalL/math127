@@ -115,7 +115,7 @@ M.lecture({
         const curve=G.fn(f,{cls:"cv c"});
         const amp=G.line(0,0,0,0,{cls:"ln"}); amp.style.strokeWidth=2.2;
         const per=G.line(0,0,0,0,{cls:"ln"}), pe1=G.line(0,0,0,0,{cls:"ln"}), pe2=G.line(0,0,0,0,{cls:"ln"});
-        const la=G.label(0,0,"amplitude",{cls:"lblc",dx:5}), lp=G.label(0,0,"period",{cls:"lblc",anchor:"middle",dy:-5}), lav=G.label(-PI,0,"average",{cls:"lblc",dx:4,dy:-5});
+        const la=G.label(0,0,"amplitude",{cls:"lblc",dx:5}), lp=G.label(0,0,"period",{cls:"lblc",anchor:"middle",dy:-5});
         const ctl=PLOT.controls(host), ro=PLOT.readout(host);
         const fseg=PLOT.seg(ctl,{label:"Function",items:[["sin","sin"],["cos","cos"]],value:fn,onchange:v=>{ fn=v; draw(); }});
         const sa=PLOT.slider(ctl,{label:"a",min:-4,max:4,step:0.5,value:a,fmt:v=>String(v),oninput:v=>{ a=v; draw(); }});
@@ -128,7 +128,7 @@ M.lecture({
         function draw(){
           const b=BL[bi], c=cj*PI/12, P=2*PI/Math.abs(b), A=Math.abs(a);
           base.update(F); curve.update(f);
-          avg.set(-PI,d,4*PI,d); mx.set(-PI,d+A,4*PI,d+A); mn.set(-PI,d-A,4*PI,d-A); lav.set(-PI,d);
+          avg.set(-PI,d,4*PI,d); mx.set(-PI,d+A,4*PI,d+A); mn.set(-PI,d-A,4*PI,d-A);
           const show=A>0; [amp,per,pe1,pe2,la,lp].forEach(e=>e.style.display=show?"":"none");
           if(show){
             const th=fn==="sin"?(a>0?PI/2:3*PI/2):(a>0?0:PI);

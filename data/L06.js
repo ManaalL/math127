@@ -92,7 +92,7 @@ M127.lecture({
         setup();
         const H=G.handle(xv,0,{axis:"x",bounds:[-4,6.5],snap:0.25,label:"x value",onMove:x=>{ xv=x; draw(); }});
         function draw(){
-          const s=S[key]; const lo=s.x[0]+0.2, hi=s.x[1]-0.2; if(xv<lo||xv>hi){ xv=Math.max(lo,Math.min(hi,xv)); }
+          const s=S[key]; const lo=s.x[0]+0.2, hi=s.x[1]-0.2; if(xv<lo||xv>hi){ H.move(Math.max(lo,Math.min(hi,xv))); return; }
           const p=s.pieces.find(q=>q.cond(xv));
           if(!p){ vl.set(xv,0,xv,0); pt.style.display="none"; ro.innerHTML=`x = <b>${xv.toFixed(2)}</b>: no condition includes this x, so it is not in the domain. f(${xv}) is undefined.`; return; }
           const y=p.f(xv); pt.style.display=""; pt.set(xv,y); vl.set(xv,0,xv,y);
@@ -131,7 +131,7 @@ M127.lecture({
             const raw=isSin?-k*Math.cos(X[1]):k*Math.sin(X[1]); const val=Q(Math.round(raw)), C=qsub(Q(y0),val); const kk=k===1?"":k;
             P={it:`${kk}\\${isSin?"sin":"cos"}(x)`, ia:`${k}*${isSin?"sin":"cos"}(x)`, Ft:isSin?`-${kk}\\cos(x)`:`${kk}\\sin(x)`, Fa:isSin?`-${k}*cos(x)`:`${k}*sin(x)`, sub:isSin?`-${kk}\\cos\\left(${X[0]}\\right)`:`${kk}\\sin\\left(${X[0]}\\right)`, val:{t:qtex(val),a:qasc(val),q:val}, C:{t:qtex(C),a:qasc(C),q:C}, x0T:X[0], y0, dom:[-2,2]}; } }
         else { const kind=R.pick(["cos","frac","split","exp2"]);
-          if(kind==="cos"){ const k=R.int(1,2), X=R.pick([["\\frac{\\pi}{3}",["\\frac{\\sqrt{3}}{2}","sqrt(3)/2"],["\\sqrt{3}","sqrt(3)"]],["\\frac{\\pi}{6}",["\\frac{1}{2}","1/2",Q(1,2)],["1","1",Q(1)]],["\\frac{\\pi}{4}",["\\frac{1}{\\sqrt{2}}","1/sqrt(2)"],["\\sqrt{2}","sqrt(2)"]]]); const y0=R.int(-4,8);
+          if(kind==="cos"){ const k=R.int(1,2), X=R.pick([["\\frac{\\pi}{3}",["\\frac{\\sqrt{3}}{2}","sqrt(3)/2"],["\\sqrt{3}","sqrt(3)"]],["\\frac{\\pi}{6}",["\\frac{1}{2}","1/2",Q(1,2)],["1","1",Q(1)]],["\\frac{\\pi}{4}",["\\frac{1}{\\sqrt{2}}","1/sqrt(2)"],["\\sqrt{2}","sqrt(2)"]]]); const y0=R.nz(-4,8);
             const V=X[k]; const val={t:V[0],a:V[1],q:V[2]};
             const C=V[2]?{t:qtex(qsub(Q(y0),V[2])),a:qasc(qsub(Q(y0),V[2])),q:qsub(Q(y0),V[2])}:{t:`${y0} - ${V[0]}`,a:`${y0} - ${V[1]}`};
             P={it:`${k===1?"":k}\\cos(x)`, ia:`${k}*cos(x)`, Ft:`${k===1?"":k}\\sin(x)`, Fa:`${k}*sin(x)`, sub:`${k===1?"":k}\\sin\\left(${X[0]}\\right)`, val, C, x0T:X[0], y0, dom:[-2,2]}; }
@@ -281,9 +281,9 @@ M127.lecture({
         }
         if(R.int(0,1)===0){ const k=R.pick([4,9,16,25,36,5,7,10]), c=R.int(-6,6), rhs=k+c;
           const r=Number.isInteger(Math.sqrt(k))?String(Math.sqrt(k)):`\\sqrt{${k}}`, ra=Number.isInteger(Math.sqrt(k))?String(Math.sqrt(k)):`sqrt(${k})`;
-          return {prompt:`Solve $x^2 ${c<0?"+":"-"} ${Math.abs(c)} = ${rhs}$ for $x$, showing all steps.`.replace(" - 0 ="," =").replace(" + 0 ="," ="), answer:{type:"list",answer:`${ra}, -${ra}`},
+          return {prompt:`Solve $x^2 ${c<0?"-":"+"} ${Math.abs(c)} = ${rhs}$ for $x$, showing all steps.`.replace(" - 0 ="," =").replace(" + 0 ="," ="), answer:{type:"list",answer:`${ra}, -${ra}`},
             hint:"Isolate $x^2$, take square roots of both sides, and use $\\sqrt{x^2} = |x|$. Then property (iii).",
-            steps:[`$x^2 = ${k}$`,`$\\sqrt{x^2} = \\sqrt{${k}}$`,`$|x| = ${r}$ by property (i).`,`$x = \\pm ${r}$ by property (iii).`],
+            steps:[`${c?`Isolate $x^2$: `:""}$x^2 = ${k}$`,`$\\sqrt{x^2} = \\sqrt{${k}}$`,`$|x| = ${r}$ by property (i).`,`$x = \\pm ${r}$ by property (iii).`],
             answerTeX:`$x = ${r}$ or $x = -${r}$`}; }
         const a=R.nz(-5,5), b=R.int(1,6);
         return {prompt:`Solve $(x ${a<0?"+":"-"} ${Math.abs(a)})^2 = ${b*b}$ for $x$, showing all steps.`, answer:{type:"list",answer:`${a+b}, ${a-b}`},
