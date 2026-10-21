@@ -510,7 +510,7 @@ M.lecture({
         return {prompt:`A problem and an answer are shown. The answer would not get a perfect score. Select the first line that has a mistake.<br><b>Problem.</b> ${prob}<br><b>Answer.</b>${lines(L)}`,
           parts:[{answer:{type:"mc",options:opts,correct:bad-1,keep:true}}],
           hint:"Check each line against the one before it. Watch for leftover bars, missing brackets, $\\sqrt{x^2}$ written as $x$, and signs that should flip.",
-          steps:[`The first mistake is in line (${bad}).`,note].concat(bad>1?[`Lines (1) to (${bad-1}) are correct.`.replace("(1) to (1)","(1)").replace("Lines (1) are","Line (1) is")]:[]),
+          steps:[`The first mistake is in line (${bad}).`,note].concat(bad===2?["Line (1) is correct."]:bad===3?["Lines (1) and (2) are correct."]:bad>3?[`Lines (1) to (${bad-1}) are correct.`]:[]),
           answerTeX:`Line (${bad})`};
       }}
   ],

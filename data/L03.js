@@ -40,18 +40,15 @@ function tplKy(R){
 function tplMono(R,kind){
   let s, rhs, de, cands;
   const mk=(terms)=>{ const y1=dP(terms), sy=terms.map(([c,e])=>[s*c,e-1]); const lhs=comb([...y1,...sy]);
-    const lines=[`$\\frac{dy}{dx} = ${polyT(y1)}$.`];
+    const lines=s===0?[]:[`$\\frac{dy}{dx} = ${polyT(y1)}$.`];
     if(s!==0) lines.push(`$\\frac{${Math.abs(s)===1?"":Math.abs(s)}y}{x} = \\frac{${Math.abs(s)}}{x}\\left(${polyT(terms)}\\right) = ${polyT(terms.map(([c,e])=>[Math.abs(s)*c,e-1]))}$.`);
     lines.push(s===0?`Left hand side: $\\frac{dy}{dx} = ${polyT(y1)}$. Right hand side: $${polyT(rhs)}$.`:
       `Left hand side: $${s<0?`\\frac{dy}{dx} - \\frac{${Math.abs(s)===1?"":Math.abs(s)}y}{x}`:`\\frac{dy}{dx} + \\frac{${s===1?"":s}y}{x}`} = ${polyT(lhs)}$. Right hand side: $${polyT(rhs)}$.`);
     return {y:polyT(terms), ok:sameP(lhs,rhs), lines, Y:x=>evP(terms,x), Y1:x=>evP(y1,x)}; };
   if(kind==="poly"){ s=0; const k=R.int(1,4), P=R.nz(-3,3), C=R.nz(-6,6); rhs=[[(k+1)*P,k]];
     de=`\\frac{dy}{dx} = ${polyT(rhs)}`;
-    cands=[mk([[P,k+1],[C,0]]), mk([[(k+1)*P,k+1],[C,0]]), mk([[P,k+1],[C,1]]), mk([[k*(k+1)*P,k-1],[C,0]])];
-    if(k===1) cands[3]=mk([[P,k+1],[C,2]]);
-  } else if(kind==="power"){ const n=R.int(2,4), A=R.nz(-4,4), B=R.nz(-5,5); s=-n; rhs=null;
-    // y' = (n/x) y written as y' - (n/x)y = 0
-    rhs=[];
+    cands=[mk([[P,k+1],[C,0]]), mk([[(k+1)*P,k+1],[C,0]]), mk([[P,k+1],[C,1]]), mk([[P,k+2],[C,0]])];
+  } else if(kind==="power"){ const n=R.int(2,4), A=R.nz(-4,4), B=R.nz(-5,5);
     de=`\\frac{dy}{dx} = \\frac{${n}y}{x}`;
     const mk2=terms=>{ const y1=dP(terms), ny=terms.map(([c,e])=>[n*c,e-1]);
       return {y:polyT(terms), ok:sameP(y1,ny), Y:x=>evP(terms,x), Y1:x=>evP(y1,x),
@@ -84,7 +81,7 @@ function tplSecond(R){
   return {de, cands:c, res:(C,x)=>C.Y2(x)+k2*C.Y(x)};
 }
 function tplSecond2(R){
-  let m; do{ m=R.pick([2,3,-1,-2]); }while(false);
+  const m=R.pick([2,3,-1,-2]);
   const A=R.nz(-4,4), B=R.nz(-4,4), em=ekx(m), en=ekx(-m), m2=m*m;
   const de=`\\frac{d^2y}{dx^2} = ${co(m)}\\frac{dy}{dx}`;
   const c=[
@@ -185,7 +182,7 @@ M.lecture({
         function draw(){
           const y=C*xp*xp, lhs=2*C*xp; tan.at(xp,y,lhs);
           const rhs=Math.abs(xp)<0.05?null:2*y/xp;
-          ro.innerHTML=`y = ${C.toFixed(2)}x² &nbsp; at x = <b>${xp.toFixed(2)}</b>: &nbsp; LHS dy/dx = 2Cx = <b>${lhs.toFixed(3)}</b> &nbsp; RHS 2y/x = <b>${rhs==null?"undefined at x = 0":rhs.toFixed(3)}</b>`;
+          ro.innerHTML=`y = ${C.toFixed(2)}x² &nbsp; at x = <b>${xp.toFixed(2)}</b>: &nbsp; LHS dy/dx = 2Cx = <b>${lhs.toFixed(3)}</b> &nbsp; RHS 2y/x = <b>${rhs==null?"no value at x = 0":rhs.toFixed(3)}</b>`;
         }
         draw();
       }},
@@ -197,14 +194,14 @@ M.lecture({
         const gap=G.between(L,Rr,0,2*Math.PI,{});
         G.fn(L,{cls:"cv c",width:2.4});
         const rc=G.fn(Rr,{cls:"cv",dash:"6 4"});
-        const lL=G.label(2*Math.PI,L(2*Math.PI),"LHS = −cos x",{cls:"lblc",anchor:"end",dy:-8});
-        const lR=G.label(2*Math.PI,Rr(2*Math.PI),"RHS = −cos x − C",{cls:"lbl",anchor:"end",dy:16});
+        const lL=G.label(Math.PI,L(Math.PI),"LHS = −cos x",{cls:"lblc",anchor:"middle"});
+        const lR=G.label(0.1,Rr(0.1),"RHS = −cos x − C",{cls:"lbl",anchor:"start"});
         const ctl=PLOT.controls(host), ro=PLOT.readout(host);
         PLOT.slider(ctl,{label:"C",min:-2,max:2,step:0.25,value:C,fmt:v=>v.toFixed(2),oninput:v=>{ C=v; draw(); }});
         function draw(){
-          rc.update(Rr); gap.update(L,Rr,0,2*Math.PI); lR.set(2*Math.PI,Rr(2*Math.PI));
-          lR.setAttribute("dy", C>=0?16:-8); lL.setAttribute("dy", C>=0?-8:16);
-          ro.innerHTML=`LHS − RHS = <b>${C.toFixed(2)}</b> for every x &nbsp; ${Math.abs(C)<1e-9?"<b>equal: y = cos(x) is a solution</b>":"not equal: not a solution"}`;
+          rc.update(Rr); gap.update(L,Rr,0,2*Math.PI); lR.set(0.1,Rr(0.1));
+          lR.setAttribute("dy", C>=0?18:-8); lL.setAttribute("dy", C>=0?-8:18);
+          ro.innerHTML=`LHS − RHS = <b>${C.toFixed(2)}</b> for every x &nbsp; ${Math.abs(C)<1e-9?"equal: y = cos(x) is a solution":"not equal: not a solution"}`;
         }
         draw();
       }}
@@ -221,11 +218,11 @@ M.lecture({
         } else if(d===2){
           const kind=R.pick(["cosk","sinq","expk","sqrtl","recip","powl"]);
           if(kind==="cosk"){ const k=R.int(2,5), c=R.nz(-4,4); fT=X(`\\cos(${k}x) ${c<0?"-":"+"} ${Math.abs(c)===1?"":Math.abs(c)}x`); fA=X(`cos(${k}x)+${c}x`); dT=X(`${c} - ${k}\\sin(${k}x)`); dA=X(`${c}-${k}sin(${k}x)`); extra=X(`Chain rule: $\\frac{d}{dx}\\cos(${k}x) = -\\sin(${k}x)\\cdot ${k}$.`); }
-          if(kind==="sinq"){ const p=R.nz(-3,3), q=R.nz(-4,4); const inner=polyT([[p,2],[q,1]],v); fT=`\\sin(${inner})`; fA=X(`sin(${p}x^2+${q}x)`); dT=`(${polyT([[2*p,1],[q,0]],v)})\\cos(${inner})`; dA=X(`(${2*p}x+${q})*cos(${p}x^2+${q}x)`); br=true; extra=`Chain rule: the inside $${inner}$ has derivative $${polyT([[2*p,1],[q,0]],v)}$.`; }
+          if(kind==="sinq"){ const p=R.nz(-3,3), q=R.nz(-4,4); const inner=polyT([[p,2],[q,1]],v); fT=`\\sin(${inner})`; fA=X(`sin(${p}x^2+${q}x)`); dT=`(${polyT([[2*p,1],[q,0]],v)})\\cos(${inner})`; dA=X(`(${2*p}x+${q})*cos(${p}x^2+${q}x)`); br=false; extra=`Chain rule: the inside $${inner}$ has derivative $${polyT([[2*p,1],[q,0]],v)}$.`; }
           if(kind==="expk"){ const k=R.nz(-3,3); fT=X(`e^{${co(k)}x^2}`); fA=X(`e^(${k}x^2)`); dT=X(`${co(2*k)}xe^{${co(k)}x^2}`); dA=X(`${2*k}x*e^(${k}x^2)`); br=false; extra=X(`Chain rule: the inside $${co(k)}x^2$ has derivative $${2*k}x$.`); dom=[-1,1]; }
           if(kind==="sqrtl"){ const p=R.int(1,5), q=R.int(1,5); fT=X(`\\sqrt{${p===1?"":p}x + ${q}}`); fA=X(`sqrt(${p}x+${q})`); dT=X(`\\frac{${p}}{2\\sqrt{${p===1?"":p}x + ${q}}}`); dA=X(`${p}/(2sqrt(${p}x+${q}))`); br=false; extra=X(`Chain rule: $\\frac{1}{2}(${p===1?"":p}x+${q})^{-1/2}\\cdot ${p}$.`); dom=[0.2,2]; }
           if(kind==="recip"){ const c=R.nz(-5,5), n=R.int(1,3); fT=X(`\\frac{${c}}{${n===1?"x":`x^{${n}}`}}`); fA=X(`${c}/x^${n}`); dT=X(`${-c*n<0?"-":""}\\frac{${Math.abs(c*n)}}{x^{${n+1}}}`); dA=X(`${-c*n}/x^${n+1}`); br=false; extra=X(`Write it as $${c}x^{${-n}}$ and use the power rule.`); dom=[0.4,2]; }
-          if(kind==="powl"){ const p=R.nz(-3,3), q=R.nz(-4,4), n=R.int(2,5); const inn=X(`${co(p)}x ${q<0?"-":"+"} ${Math.abs(q)}`); fT=`(${inn})^{${n}}`; fA=X(`(${p}x+${q})^${n}`); dT=`${n*p}(${inn})^{${n-1===1?"":n-1}}`.replace("^{}",""); dA=X(`${n*p}(${p}x+${q})^${n-1}`); br=false; extra=`Chain rule: ${n}(inside)$^{${n-1}}$ times the derivative of the inside, ${p}.`; dom=[-1,1]; }
+          if(kind==="powl"){ const p=R.nz(-3,3), q=R.nz(-4,4), n=R.int(2,5); const inn=X(`${co(p)}x ${q<0?"-":"+"} ${Math.abs(q)}`); fT=`(${inn})^{${n}}`; fA=X(`(${p}x+${q})^${n}`); dT=`${n*p}(${inn})^{${n-1===1?"":n-1}}`.replace("^{}",""); dA=X(`${n*p}(${p}x+${q})^${n-1}`); br=false; extra=`Chain rule: bring down the ${n}, lower the power by 1, and multiply by the derivative of the inside, ${p}.`; dom=[-1,1]; }
         } else {
           const kind=R.pick(["prodexp","prodsin","quot","expsqrt"]);
           if(kind==="prodexp"){ const n=R.int(1,3), k=R.nz(-3,3); const xn=n===1?"x":`x^{${n}}`, xn1=n===1?"":n===2?"2x":`${n}x^{${n-1}}`;
@@ -246,7 +243,7 @@ M.lecture({
       }},
     {id:"L03.g.units", title:"Units of a differential", skill:"Units of $dy$ are the units of $f$", ref:"p. 1",
       gen(R,d){
-        const S=R.pick([["force","Newtons","w","mass","kg"],["position","m","t","time","s"],["mass","kg","t","time","min"],["volume","mL","t","time","s"],["temperature","°C","t","time","min"],["cost","dollars","T","ore extracted","tons"],["area","cm²","r","radius","cm"],["pressure","kPa","h","depth","m"]]);
+        const S=R.pick([["force","Newtons","w","mass","kg"],["position","m","t","time","s"],["mass","kg","t","time","min"],["volume","mL","t","time","s"],["temperature","°C","t","time","min"],["cost","dollars","T","ore extracted","tons"],["concentration","mg/L","t","time","h"],["pressure","kPa","h","depth","m"]]);
         const [qn,qu,v,vn,vu]=S; const a=R.nz(-5,5), b=R.nz(-6,6), n=R.int(2,3);
         const fT=polyT([[a,n],[b,1]],v), dT=polyT([[a*n,n-1],[b,0]],v);
         const uDy=R.shuffle([qu,`${qu}/${vu}`,vu,`${qu}·${vu}`]), uFp=R.shuffle([`${qu}/${vu}`,qu,`${vu}/${qu}`,`${qu}·${vu}`]);
@@ -282,7 +279,7 @@ M.lecture({
     {id:"L03.g.order", title:"Order of a DE", skill:"Find the highest derivative; ignore powers", ref:"p. 4",
       gen(R,d){
         const [Y,X]=d===3?R.pick([["y","x"],["P","t"],["x","t"]]):["y","x"];
-        const n=R.int(1,3); const st=()=>d===1?R.pick(["p","l"]):R.pick(["p","l"]);
+        const n=R.int(1,3); const sty=R.pick(["p","l"]), st=()=>sty;
         const coefs=["",X+" ",`${X}^{2}`,`e^{${X}}`,"3"];
         const terms=[];
         const ph=d===1?1:d===2?R.pick([1,2]):R.pick([2,3,4].filter(p=>p!==n));
@@ -290,12 +287,12 @@ M.lecture({
         const nl=d===1?1:2;
         for(let i=0;i<nl;i++){ const j=R.int(0,n-1); let p=d===1?1:R.pick([1,2,3,4,5]); if(d>=2&&i===0) p=Math.max(n+1,R.int(2,5)); terms.push({t:powT(j,Y,X,st(),p), j, p}); }
         const extra=R.pick([`${X}^{${R.int(2,5)}}`,`e^{${X}}`,`\\sin(${X})`,`${R.int(2,9)}`]);
-        const parts=R.shuffle(terms.map(z=>{ const c=R.pick(coefs); return (c&&c!=="3"&&z.j>0&&R.pick([true,false]))?`${c}${z.t}`:z.t; }));
+        const parts=R.shuffle([...new Set(terms.map(z=>{ const c=R.pick(coefs); return (c&&c!=="3"&&z.j>0&&R.pick([true,false]))?`${c}${z.t}`:z.t; }))]);
         const cut=R.int(1,parts.length);
         let lhs=parts.slice(0,cut).join(" + "), rhs=parts.slice(cut).join(" + ");
         rhs = rhs? `${rhs} + ${extra}` : extra;
         const de=`${lhs} = ${rhs}`;
-        const listed=terms.map(z=>`$${dTeX(z.j,Y,X,"l")}$ (order ${z.j})`).filter((s,i,a)=>a.indexOf(s)===i);
+        const listed=terms.filter(z=>z.j>0).map(z=>`$${dTeX(z.j,Y,X,"l")}$ (order ${z.j})`).filter((s,i,a)=>a.indexOf(s)===i);
         const powNote=terms.some(z=>z.p>1)?"Exponents such as $(\\cdot)^2$ or $"+Y+"^4$ are powers. They do not change the order (p. 4).":"No derivative is higher than this one.";
         return {prompt:`What is the order of the differential equation $$${de}$$`,
           parts:[{answer:{type:"mc",options:["The order is 1.","The order is 2.","The order is 3.","The order is 4."],correct:n-1,keep:true}}],
@@ -319,10 +316,10 @@ M.lecture({
           if(R.pick([true,false])){ const k=R.nz(-3,3), A=R.nz(-4,4), T=R.nz(-9,9);
             const res=C=>k*A*Math.exp(k*x0)-k*(A*Math.exp(k*x0)+C-T);
             const yT=sumT([[A,ekx(k)]]);
-            return {prompt:`For which value of $C$ is $y = ${yT} + C$ a solution of $\\frac{dy}{dx} = ${k}(y ${T<0?"+":"-"} ${Math.abs(T)})$?`,
+            return {prompt:`For which value of $C$ is $y = ${yT} + C$ a solution of $\\frac{dy}{dx} = ${co(k)}(y ${T<0?"+":"-"} ${Math.abs(T)})$?`,
               answer:{type:"num",answer:String(T)}, verify:{value:-res(0)/(res(1)-res(0))},
               hint:"Left hand side from the derivative, right hand side by substituting $y$. Compare the constant terms.",
-              steps:[`Left hand side: $\\frac{dy}{dx} = ${sumT([[k*A,ekx(k)]])}$.`,`Right hand side: $${k}\\left(${yT} + C ${T<0?"+":"-"} ${Math.abs(T)}\\right) = ${sumT([[k*A,ekx(k)]])} + ${k}(C ${T<0?"+":"-"} ${Math.abs(T)})$.`,`Equal exactly when $${k}(C ${T<0?"+":"-"} ${Math.abs(T)}) = 0$, so $C = ${T}$.`],
+              steps:[`Left hand side: $\\frac{dy}{dx} = ${sumT([[k*A,ekx(k)]])}$.`,`Right hand side: $${co(k)}\\left(${yT} + C ${T<0?"+":"-"} ${Math.abs(T)}\\right) = ${sumT([[k*A,ekx(k)]])} ${k<0?"-":"+"} ${Math.abs(k)===1?"":Math.abs(k)}(C ${T<0?"+":"-"} ${Math.abs(T)})$.`,`Equal exactly when $${co(k)}(C ${T<0?"+":"-"} ${Math.abs(T)}) = 0$, so $C = ${T}$.`],
               answerTeX:`$C = ${T}$`};
           }
           const k=R.nz(-4,4), A=R.nz(-4,4), b=R.nz(-9,9); const ans=Q(-b,k);
@@ -331,7 +328,7 @@ M.lecture({
           return {prompt:`For which value of $C$ is $y = ${yT} + C$ a solution of $\\frac{dy}{dx} = ${co(k)}y ${b<0?"-":"+"} ${Math.abs(b)}$?`,
             answer:{type:"num",answer:qA(ans)}, verify:{value:-res(0)/(res(1)-res(0))},
             hint:"Substitute into both sides. The exponential parts match, so the constants must match too.",
-            steps:[`Left hand side: $\\frac{dy}{dx} = ${sumT([[k*A,ekx(k)]])}$.`,`Right hand side: $${k}\\left(${yT} + C\\right) ${b<0?"-":"+"} ${Math.abs(b)} = ${sumT([[k*A,ekx(k)]])} + ${k}C ${b<0?"-":"+"} ${Math.abs(b)}$.`,`Equal exactly when $${k}C ${b<0?"-":"+"} ${Math.abs(b)} = 0$, so $C = ${qT(ans)}$.`],
+            steps:[`Left hand side: $\\frac{dy}{dx} = ${sumT([[k*A,ekx(k)]])}$.`,`Right hand side: $${co(k)}\\left(${yT} + C\\right) ${b<0?"-":"+"} ${Math.abs(b)} = ${sumT([[k*A,ekx(k)],[k,"C"],[b,""]])}$.`,`Equal exactly when $${sumT([[k,"C"],[b,""]])} = 0$, so $C = ${qT(ans)}$.`],
             answerTeX:`$C = ${qT(ans)}$`};
         }
         if(R.pick([true,false])){
@@ -346,7 +343,7 @@ M.lecture({
             hint:"Find $\\frac{dy}{dx}$ and $\\frac{d^2y}{dx^2}$, substitute, and collect the $e$ terms. They cancel, leaving a constant.",
             steps:[`$\\frac{dy}{dx} = ${sumT([[r*A,er]])}$ and $\\frac{d^2y}{dx^2} = ${sumT([[r*r*A,er]])}$.`,
               `Left hand side: $${sumT([[r*r*A,er]])} ${p===0?"":`${-p<0?"-":"+"} ${Math.abs(p)===1?"":Math.abs(p)}\\left(${sumT([[r*A,er]])}\\right)`} ${q<0?"-":"+"} ${Math.abs(q)===1?"":Math.abs(q)}\\left(${yT} + C\\right)$.`,
-              `The $${er}$ terms add to $(${r*r} ${-p*r<0?"-":"+"} ${Math.abs(p*r)} ${q<0?"-":"+"} ${Math.abs(q)})${yT.replace(er,"")}${er} = 0$, leaving $${q}C$.`,
+              `The $${er}$ terms cancel, because $${r*r} ${-p*r<0?"-":"+"} ${Math.abs(p*r)} ${q<0?"-":"+"} ${Math.abs(q)} = 0$. That leaves $${q}C$.`,
               `So $${q}C = ${m}$ and $C = ${qT(ans)}$.`],
             answerTeX:`$C = ${qT(ans)}$`};
         }
@@ -390,7 +387,7 @@ M.lecture({
           let L=[`The left hand side is $\\frac{dy}{dx} = ${lhs}$.`,`The right hand side is $${k}y = ${rhsFull}$.`,
             isSol?`Since the left hand side equals the right hand side, $y = ${yT}$ is a solution.`:`Since the left hand side does not equal the right hand side, $y = ${yT}$ is not a solution.`];
           let bad, why;
-          if(variant==="chain"){ bad=0; L[0]=`The left hand side is $\\frac{dy}{dx} = ${sumT([[A,e]])}$.`; L[2]=`Since the left hand side does not equal the right hand side, $y = ${yT}$ is not a solution.`; why=`The chain rule factor is missing: $\\frac{d}{dx}${sumT([[A,e]])} = ${lhs}$. With that fixed, both sides are $${lhs}$ and $y$ is a solution.`; }
+          if(variant==="chain"){ bad=0; L[0]=`The left hand side is $\\frac{dy}{dx} = ${sumT([[A,e]])}$.`; L[2]=`Since the left hand side does not equal the right hand side, $y = ${yT}$ is not a solution.`; why=`The chain rule factor is missing: $\\frac{d}{dx}\\left(${sumT([[A,e]])}\\right) = ${lhs}$. With that fixed, both sides are $${lhs}$ and $y$ is a solution.`; }
           if(variant==="concl1"){ bad=2; L[2]=`Since the left hand side does not equal the right hand side, $y = ${yT}$ is not a solution.`; why=`Both sides are $${lhs}$, so they are equal and $y$ is a solution.`; }
           if(variant==="br"){ bad=1; L[1]=`The right hand side is $${k}y = ${sumT([[k*A,e],[B,""]])}$.`; why=`$${k}y$ means ${k} times all of $y$: $${k}\\left(${yT}\\right) = ${sumT([[k*A,e],[k*B,""]])}$. The brackets are missing. (The final conclusion happens to be right.)`; }
           if(variant==="const"){ bad=0; L[0]=`The left hand side is $\\frac{dy}{dx} = ${sumT([[k*A,e],[B,""]])}$.`; why=`The derivative of the constant ${B} is 0, so $\\frac{dy}{dx} = ${lhs}$. (The final conclusion happens to be right.)`; }
@@ -413,7 +410,7 @@ M.lecture({
           prob=`Determine whether $y = e^{${E}}$ is a solution of $\\frac{dy}{dx} = (${dE})y$.`;
           const good1=`The left hand side is $y' = e^{${E}}(${dE})$.`, rhs=`The right hand side is $(${dE})y = (${dE})e^{${E}}$.`;
           if(variant==="ok"){ L=[good1,rhs,`Since the left hand side equals the right hand side, $y = e^{${E}}$ is a solution.`]; correct=0; why="Chain rule with brackets, correct substitution, correct conclusion."; }
-          if(variant==="br"){ L=[`The left hand side is $y' = e^{${E}}\\cdot ${co(2*p)}x ${q<0?"-":"+"} ${Math.abs(q)}$.`,rhs,`Since the left hand side does not equal the right hand side, $y = e^{${E}}$ is not a solution.`]; correct=1; why=`The derivative is missing brackets: $y' = e^{${E}}(${dE})$. With the brackets the two sides are equal, so $y$ is a solution.`; }
+          if(variant==="br"){ L=[`The left hand side is $y' = e^{${E}}\\cdot ${p<0?`(${co(2*p)}x)`:`${co(2*p)}x`} ${q<0?"-":"+"} ${Math.abs(q)}$.`,rhs,`Since the left hand side does not equal the right hand side, $y = e^{${E}}$ is not a solution.`]; correct=1; why=`The derivative is missing brackets: $y' = e^{${E}}(${dE})$. With the brackets the two sides are equal, so $y$ is a solution.`; }
           if(variant==="concl"){ L=[good1,rhs,`Since the left hand side does not equal the right hand side, $y = e^{${E}}$ is not a solution.`]; correct=2; why="The derivative and the right hand side are right and they are the same expression, so the conclusion should be that $y$ is a solution."; }
         }
         const opts=["Yes, the answer is correct.","No. The derivative in the answer is wrong.","No. The derivative is right, but the conclusion is wrong."];
@@ -442,7 +439,7 @@ M.lecture({
   ],
   steps:[
     {type:"read", title:"From $\\Delta$ to $d$", body:`<p>The differential approximation from Lecture 2 estimates $\\Delta y$ from some $\\Delta x$. In many real problems it is not accurate enough. Next lecture the definite integral will give better approximations, and sometimes the exact value. To build it, you need new notation (p. 1).</p><div class="box def"><b class="t">Definition (p. 1)</b>Assume $y = f(x)$ is differentiable. The differential $dx$ is an infinitely small change in $x$, and the differential $dy$ is $$dy = f'(x)\\,dx$$</div><p>Since $dx$ is infinitely small, $dy$ is also infinitely small. You cannot calculate them as numbers, but you can do algebra with them, including adding up infinitely many of them (p. 1).</p>`, ref:"p. 1"},
-    {type:"explore", title:"$dy$ next to $\\Delta y$", fig:"dyfig", body:`<p>$dy = f'(w)\\,dw$ is the rise along the tangent line over a run of $dw$. $\\Delta y$ is the real rise along the curve.</p><p><b>Try it.</b> Slide $dw$ down toward 0.02 and watch $dy$ and $\\Delta y$ become almost equal. Check the units in the readout: N/kg times kg is N.</p>`},
+    {type:"explore", title:"$dy$ next to $\\Delta y$", fig:"dyfig", ref:"p. 1", body:`<p>$dy = f'(w)\\,dw$ is the rise along the tangent line over a run of $dw$. $\\Delta y$ is the real rise along the curve.</p><p><b>Try it.</b> Slide $dw$ down toward 0.02 and watch $dy$ and $\\Delta y$ become almost equal. Check the units in the readout: N/kg times kg is N.</p>`},
     {type:"example", title:"$dy$ with units", ex:{q:"Find $dy$ given that $y = f(w) = w^3 + w^2$. If the units of $f$ are Newtons and the units of $w$ are kg, determine the units of $dy$.", ref:"p. 1",
       steps:[{t:"$dy = f'(w)\\,dw$",why:"The definition, written with the variable $w$."},{t:"$dy = (3w^2 + 2w)\\,dw$",why:"Power rule. The brackets are needed because $dw$ multiplies the whole derivative."},{t:"Units of $f'(w)$: Newtons/kg. Units of $dw$: kg.",why:"$f'(w)$ is a change in $f$ over a change in $w$. $dw$ is a change in $w$."},{t:"Units of $dy$: Newtons/kg × kg = Newtons",why:"This makes sense: $dy$ is a change in $f$, and $f$ is in Newtons."}],
       ans:"$dy = (3w^2 + 2w)\\,dw$, in Newtons"}},
@@ -455,11 +452,11 @@ M.lecture({
     {type:"example", title:"A whole family of solutions", ex:{q:"Show that $y = Cx^2$ is a solution of the differential equation $\\frac{dy}{dx} = \\frac{2y}{x}$ for any real number $C$.", ref:"p. 3",
       steps:[{t:"Left hand side: $\\frac{dy}{dx} = 2Cx$",why:"$C$ is a constant, so the power rule gives $2Cx$."},{t:"Right hand side: $\\frac{2y}{x} = \\frac{2Cx^2}{x} = 2Cx$",why:"Substitute $y = Cx^2$; cancel one $x$, which is allowed since $x \\neq 0$."},{t:"Left hand side equals right hand side, so $y = Cx^2$ is a solution for any real number $C$.",why:"Always finish with the conclusion."},{t:"$C$ is a parameter and $y = Cx^2$ is a family of solutions.",why:"A DE can have infinitely many solutions (p. 3)."}],
       ans:"Both sides are $2Cx$, so every $y = Cx^2$ is a solution."}},
-    {type:"explore", title:"Solutions follow the slope marks", fig:"field", body:`<p>At every point $(x, y)$ the DE $\\frac{dy}{dx} = \\frac{2y}{x}$ says what the slope must be. The short marks draw those slopes.</p><p><b>Try it.</b> Move the $C$ slider: every parabola $y = Cx^2$ runs along the marks. Drag the point and compare LHS and RHS in the readout; they are always equal (except at $x = 0$, where $\\frac{2y}{x}$ is undefined).</p>`},
+    {type:"explore", title:"Solutions follow the slope marks", fig:"field", ref:"p. 3", body:`<p>At every point $(x, y)$ the DE $\\frac{dy}{dx} = \\frac{2y}{x}$ says what the slope must be. The short marks draw those slopes.</p><p><b>Try it.</b> Move the $C$ slider: every parabola $y = Cx^2$ runs along the marks. Drag the point and compare LHS and RHS in the readout; they are always equal (except at $x = 0$, where $\\frac{2y}{x}$ has no value).</p>`},
     {type:"example", title:"When a family fails", ex:{q:"Is $y = \\cos(x) + C$ a solution of the differential equation $\\frac{d^2y}{dx^2} = -y$ for all real numbers $C$?", ref:"p. 3",
       steps:[{t:"$\\frac{dy}{dx} = -\\sin(x)$, so $\\frac{d^2y}{dx^2} = -\\cos(x)$",why:"Differentiate twice. The constant $C$ disappears."},{t:"Right hand side: $-y = -(\\cos(x) + C) = -\\cos(x) - C$",why:"The minus sign goes on every term, so the brackets matter."},{t:"Left hand side does not equal right hand side, so $y = \\cos(x) + C$ is not a solution for all real numbers $C$.",why:"They differ by $C$."},{t:"It works for $C = 0$: then $-y = -\\cos(x)$, which equals the left hand side.",why:"The notes write $-y = \\cos(x)$ here. That is a sign slip; with $y = \\cos(x)$, $-y = -\\cos(x)$ (see the flag)."}],
       ans:"Not a solution for all $C$. Only $C = 0$ works."}},
-    {type:"explore", title:"Watch the two sides", fig:"cosC", body:`<p>The solid curve is the left hand side, $\\frac{d^2y}{dx^2} = -\\cos(x)$. The dashed curve is the right hand side, $-y = -\\cos(x) - C$. The shaded strip is the gap between them.</p><p><b>Try it.</b> Move $C$ to 0. The curves lie on top of each other and the gap vanishes. Any other $C$ shifts the dashed curve, so the two sides are never equal.</p>`},
+    {type:"explore", title:"Watch the two sides", fig:"cosC", ref:"p. 3", body:`<p>The solid curve is the left hand side, $\\frac{d^2y}{dx^2} = -\\cos(x)$. The dashed curve is the right hand side, $-y = -\\cos(x) - C$. The shaded strip is the gap between them.</p><p><b>Try it.</b> Move $C$ to 0. The curves lie on top of each other and the gap vanishes. Any other $C$ shifts the dashed curve, so the two sides are never equal.</p>`},
     {type:"try", title:"Your turn: is it a solution?", gen:"L03.g.verify"},
     {type:"read", title:"The order of a DE", body:`<div class="box def"><b class="t">Definition (p. 4)</b>The order of a differential equation is the order of the highest derivative of the unknown function in the equation.</div><div class="box"><b class="t">Example (p. 4)</b>(a) $y'' + x^2y = x^4 + (y')^3$ has order 2.<br>(b) $x\\frac{d^3y}{dx^3} = \\frac{dy}{dx} + e^x$ has order 3.</div><div class="box warn"><b class="t">Watch for this</b>Powers are not orders. In (a), $(y')^3$ is a first derivative cubed, and $x^4$ is not a derivative at all.</div>`, ref:"p. 4"},
     {type:"mcq", title:"Power or order?", q:"What is the order of $\\left(\\frac{d^2y}{dx^2}\\right)^3 = y^3\\frac{dy}{dx}$? (p. 4 exercise)", keep:true,

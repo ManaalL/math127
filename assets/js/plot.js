@@ -16,6 +16,9 @@ function graph(host, o={}){
   const svg=sv("svg",{viewBox:`0 0 ${W} ${H}`,class:"fig",role:"img","aria-label":o.label||"Interactive graph"});
   if(o.c) svg.style.setProperty("--c",o.c);
   host.append(svg);
+  /* keep labels readable on phones: when the figure is drawn much smaller than its viewBox, scale the text up */
+  const fit=()=>{ const w=svg.getBoundingClientRect().width||host.clientWidth||W; const s=w/W; svg.style.setProperty("--ts", s<0.85?Math.min(1.7,0.85/s).toFixed(2):"1"); };
+  fit(); if(window.ResizeObserver) new ResizeObserver(fit).observe(svg);
   const X=x=>pad.l+(x-x0)/(x1-x0)*(W-pad.l-pad.r);
   const Y=y=>H-pad.b-(y-y0)/(y1-y0)*(H-pad.t-pad.b);
   const iX=px=>x0+(px-pad.l)/(W-pad.l-pad.r)*(x1-x0);

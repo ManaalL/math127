@@ -2,6 +2,8 @@
 (function(){
 const M=M127;
 const PI=Math.PI;
+/* KaTeX draws \\sqrt with an inline svg; inside a figure plate use the surd glyph instead */
+const TX=t=>M127.tex(String(t).replace(/\\sqrt\{([^{}]*)\}/g,"\\surd{$1}"));
 
 /* ---------- exact values ---------- */
 /* angles are stored as j = angle in twelfths of pi, so pi/6 is j=2, pi/4 is j=3, pi/3 is j=4, pi/2 is j=6 */
@@ -98,7 +100,7 @@ M.lecture({
       blank:{tex:"\\sin\\left(\\tfrac{\\pi}{3}\\right)=\\boxed{\\,?\\,}", answer:"sqrt(3)/2", type:"num"}},
     {id:"L12.f.cosvals", name:"Cosine at the basic angles", tex:"\\cos(0)=1,\\ \\cos\\left(\\tfrac{\\pi}{6}\\right)=\\tfrac{\\sqrt{3}}{2},\\ \\cos\\left(\\tfrac{\\pi}{4}\\right)=\\tfrac{1}{\\sqrt{2}},\\ \\cos\\left(\\tfrac{\\pi}{3}\\right)=\\tfrac{1}{2},\\ \\cos\\left(\\tfrac{\\pi}{2}\\right)=0", note:"Cosine runs through the sine values backwards.", ref:"p. 1",
       blank:{tex:"\\cos\\left(\\tfrac{\\pi}{6}\\right)=\\boxed{\\,?\\,}", answer:"sqrt(3)/2", type:"num"}},
-    {id:"L12.f.tanvals", name:"Tangent at the basic angles", tex:"\\tan(0)=0,\\ \\tan\\left(\\tfrac{\\pi}{6}\\right)=\\tfrac{1}{\\sqrt{3}},\\ \\tan\\left(\\tfrac{\\pi}{4}\\right)=1,\\ \\tan\\left(\\tfrac{\\pi}{3}\\right)=\\sqrt{3},\\ \\tan\\left(\\tfrac{\\pi}{2}\\right)\\text{ undefined}", note:"$\\tan = \\frac{\\sin}{\\cos}$. $\\frac{1}{\\sqrt{3}} = \\frac{\\sqrt{3}}{3}$.", ref:"p. 1",
+    {id:"L12.f.tanvals", name:"Tangent at the basic angles", tex:"\\tan(0)=0,\\ \\tan\\left(\\tfrac{\\pi}{6}\\right)=\\tfrac{1}{\\sqrt{3}},\\ \\tan\\left(\\tfrac{\\pi}{4}\\right)=1,\\ \\tan\\left(\\tfrac{\\pi}{3}\\right)=\\sqrt{3},\\ \\tan\\left(\\tfrac{\\pi}{2}\\right)\\text{ not defined}", note:"$\\tan = \\frac{\\sin}{\\cos}$. $\\frac{1}{\\sqrt{3}} = \\frac{\\sqrt{3}}{3}$.", ref:"p. 1",
       blank:{tex:"\\tan\\left(\\tfrac{\\pi}{3}\\right)=\\boxed{\\,?\\,}", answer:"sqrt(3)", type:"num"}},
     {id:"L12.f.sin", name:"Sine as a ratio", tex:"\\sin\\theta = \\frac{o}{h}", note:"$o$ = opposite side, $h$ = hypotenuse.", ref:"p. 1", blank:{tex:"\\sin\\theta = \\boxed{\\,?\\,}", answer:"o/h", vars:["o","h"], domain:[1,3]}},
     {id:"L12.f.cos", name:"Cosine as a ratio", tex:"\\cos\\theta = \\frac{a}{h}", note:"$a$ = adjacent side.", ref:"p. 2", blank:{tex:"\\cos\\theta = \\boxed{\\,?\\,}", answer:"a/h", vars:["a","h"], domain:[1,3]}},
@@ -158,13 +160,13 @@ M.lecture({
           lt.set(0.3*Math.cos(th/2)+0.02,0.3*Math.sin(th/2)-0.03);
           lc.set(c/2, 0); lc.setAttribute("y",G.Y(0)+(s>=0?16:-8));
           ls.set(c,s/2); ls.setAttribute("x",G.X(c)+(c>=0?6:-48));
-          if(j!=null){ const I=jinfo(j); const f=fn=>{ const e=exact(fn,j); return e?e.t:"\\text{undefined}"; };
-            ro.innerHTML=`${M.tex(`\\theta = ${jT(j)}`)} &nbsp; ${I.q?`quadrant ${QN[I.q]}, reference angle ${M.tex(jT(I.ref))}`:"on an axis"}<br>${M.tex(`\\cos\\theta = ${f("cos")}`)} &nbsp; ${M.tex(`\\sin\\theta = ${f("sin")}`)} &nbsp; ${M.tex(`\\tan\\theta = ${f("tan")}`)}`;
-          } else ro.innerHTML=`θ = <b>${th.toFixed(3)}</b> rad (${(th*180/PI).toFixed(1)}°) &nbsp; cos θ = <b>${c.toFixed(3)}</b> &nbsp; sin θ = <b>${s.toFixed(3)}</b> &nbsp; tan θ = <b>${Math.abs(c)<1e-9?"undefined":(s/c).toFixed(3)}</b>`;
+          if(j!=null){ const I=jinfo(j); const f=fn=>{ const e=exact(fn,j); return e?e.t:"\\text{not defined}"; };
+            ro.innerHTML=`${TX(`\\theta = ${jT(j)}`)} &nbsp; ${I.q?`quadrant ${QN[I.q]}, reference angle ${TX(jT(I.ref))}`:"on an axis"}<br>${TX(`\\cos\\theta = ${f("cos")}`)} &nbsp; ${TX(`\\sin\\theta = ${f("sin")}`)} &nbsp; ${TX(`\\tan\\theta = ${f("tan")}`)}`;
+          } else ro.innerHTML=`θ = <b>${th.toFixed(3)}</b> rad (${(th*180/PI).toFixed(1)}°) &nbsp; cos θ = <b>${c.toFixed(3)}</b> &nbsp; sin θ = <b>${s.toFixed(3)}</b> &nbsp; tan θ = <b>${Math.abs(c)<1e-9?"not defined":(s/c).toFixed(3)}</b>`;
         }
         set(th);
       }},
-    triangle:{title:"One ratio to another", cap:"<b>Fig. 12.2</b> Drag the corner of the triangle into any quadrant. The legs $a$ and $o$ take the signs of the coordinates; the hypotenuse $h = \\sqrt{o^2+a^2}$ is always positive. (Lecture 12, pp. 2 to 3)",
+    triangle:{title:"One ratio to another", cap:"<b>Fig. 12.2</b> Drag the corner of the triangle into any quadrant. The legs $a$ and $o$ take the signs of the coordinates; the hypotenuse, from $h^2 = o^2 + a^2$, is always positive. (Lecture 12, pp. 2 to 3)",
       build(host,{PLOT,M}){
         const G=PLOT.graph(host,{x:[-5.5,5.5],y:[-4.5,4.5],w:560,h:459,c:"var(--u5)",xstep:1,ystep:1,xlabel:"x",ylabel:"y"});
         const hyp=G.line(0,0,1,1,{cls:"tan"}); hyp.style.strokeWidth=2.4;
@@ -187,7 +189,7 @@ M.lecture({
           const q=A>0?(O>0?1:4):(O>0?2:3);
           const a=V(String(A),"",A), o=V(String(O),"",O), h=V(sqT(h2),"",Math.sqrt(h2)); const S={a,o,h};
           const r=fn=>{ const [n,dd]=RATIO[fn]; return `\\${fn}\\theta = ${ratioTeX(S[n],S[dd])}`; };
-          ro.innerHTML=`Quadrant ${QN[q]}: ${M.tex(`a = ${A},\\ o = ${O},\\ h = \\sqrt{(${A})^2 + (${O})^2} = ${sqT(h2)}`)}<br>${M.tex(r("sin"))} &nbsp; ${M.tex(r("cos"))} &nbsp; ${M.tex(r("tan"))}<br>${M.tex(r("csc"))} &nbsp; ${M.tex(r("sec"))} &nbsp; ${M.tex(r("cot"))}`;
+          ro.innerHTML=`Quadrant ${QN[q]}: ${TX(`a = ${A},\\ o = ${O},\\ h = \\sqrt{(${A})^2 + (${O})^2} = ${sqT(h2)}`)}<br>${TX(r("sin"))} &nbsp; ${TX(r("cos"))} &nbsp; ${TX(r("tan"))}<br>${TX(r("csc"))} &nbsp; ${TX(r("sec"))} &nbsp; ${TX(r("cot"))}`;
         }
         draw();
       }},
@@ -204,14 +206,14 @@ M.lecture({
         const dots=[]; for(let i=0;i<9;i++){ const d=G.dot(0,0,{filled:true}); d.style.display="none"; dots.push(d); }
         const ctl=PLOT.controls(host), ro=PLOT.readout(host);
         PLOT.seg(ctl,{label:"Function",items:[["sin1","sin(x)"],["sin2","sin(2x)"],["cos1","cos(x)"],["cos2","cos(2x)"]],value:key,onchange:v=>{ key=v; draw(); }});
-        PLOT.slider(ctl,{label:"k",min:0,max:8,step:1,value:ki,fmt:i=>M.tex(KV[KS[i]].t),oninput:v=>{ ki=v; draw(); }});
+        PLOT.slider(ctl,{label:"k",min:0,max:8,step:1,value:ki,fmt:i=>TX(KV[KS[i]].t),oninput:v=>{ ki=v; draw(); }});
         function draw(){
           const [f,n,t]=fns[key]; const k=KV[KS[ki]];
           curve.update(cur,0,2*PI); hl.set(-0.35,k.v,2*PI+0.35,k.v);
           const xs=solveB(f,n,k.v);
           dots.forEach((d,i)=>{ if(i<xs.length){ d.style.display=""; d.set(xs[i]*PI/24,k.v); } else d.style.display="none"; });
           const th=thetaList(f,n,k.v).map(jT);
-          ro.innerHTML=`${M.tex(`${t} = ${k.t}`)} &nbsp; ${xs.length} solution${xs.length===1?"":"s"} in ${M.tex("[0,2\\pi]")}: ${M.tex(xs.map(k24T).join(",\\ ")||"\\text{none}")}`+(n===2?`<br>With ${M.tex("\\theta = 2x")}, ${M.tex("\\theta")} runs over ${M.tex("[0,4\\pi]")}: ${M.tex("\\theta = "+(th.join(",\\ ")||"\\text{none}"))}`:"");
+          ro.innerHTML=`${TX(`${t} = ${k.t}`)} &nbsp; ${xs.length} solution${xs.length===1?"":"s"} in ${TX("[0,2\\pi]")}: ${TX(xs.map(k24T).join(",\\ ")||"\\text{none}")}`+(n===2?`<br>With ${TX("\\theta = 2x")}, ${TX("\\theta")} runs over ${TX("[0,4\\pi]")}: ${TX("\\theta = "+(th.join(",\\ ")||"\\text{none}"))}`:"");
         }
         draw();
       }}

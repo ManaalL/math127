@@ -29,7 +29,7 @@ M.lecture({
   summary:"Exponential functions and their properties, the special base $e$, the derivative and integral of $a^x$, logarithms and their properties, and the original definition $\\ln(x)=\\int_1^x \\frac{1}{t}\\,dt$ that lets you estimate $\\ln$ with a Left Riemann Sum.",
   flags:[
     {ref:"p. 3", text:"The Logarithm Properties box says \"For $a > 1$ and $b > 1$\". There is no $b$ in any of the six properties, and the conditions that matter are missing. It should say: for $a > 1$, $x > 0$ and $y > 0$. The product and quotient rules need both $x > 0$ and $y > 0$, the power rule $\\log_a(x^y) = y\\log_a(x)$ needs $x > 0$ (any real $y$), and $\\log_a(a^y) = y$ holds for every real $y$. The properties themselves are correct."},
-    {ref:"p. 4", text:"The examples write $e^{\\ln(2x)} = 2x$ and $e^{3\\ln(x)} = x^3$ with no domain. Both are only true for $x > 0$, because $\\ln$ of a number that is 0 or negative is undefined. The same goes for the $\\ln(f(x))$ expansion on p. 4: every factor has to be positive, so it holds for $x > 1$."}
+    {ref:"p. 4", text:"The examples write $e^{\\ln(2x)} = 2x$ and $e^{3\\ln(x)} = x^3$ with no domain. Both are only true for $x > 0$, because $\\ln$ of a number that is 0 or negative is not defined. The same goes for the $\\ln(f(x))$ expansion on p. 4: every factor has to be positive, so it holds for $x > 1$."}
   ],
   formulas:[
     {id:"L10.f.exp-def", name:"Exponential function", tex:"f(x) = a^x,\\quad a > 0", note:"The variable is in the exponent. Compare $x^2$, where the variable is in the base.", ref:"p. 1"},
@@ -115,11 +115,11 @@ M.lecture({
       build(host,{PLOT}){
         let x=3, n=3;
         const g=t=>1/t;
-        const G=PLOT.graph(host,{x:[0,6.2],y:[0,2.6],h:250,c:"var(--u4)",xlabel:"t",ylabel:"y = 1/t",xstep:1,ystep:1});
+        const G=PLOT.graph(host,{x:[0,6.2],y:[0,2.6],w:460,h:230,c:"var(--u4)",xlabel:"t",ylabel:"y = 1/t",xstep:1,ystep:1});
         const rect=G.rects([]);
         const area=G.area(g,1,x,{noNeg:true});
         G.fn(g,{cls:"cv c",from:0.05});
-        const H=PLOT.graph(host,{x:[0,6.2],y:[-1.6,2],h:220,c:"var(--u4)",xlabel:"x",ylabel:"y = ln(x)",xstep:1,ystep:1});
+        const H=PLOT.graph(host,{x:[0,6.2],y:[-1.6,2],w:460,h:200,c:"var(--u4)",xlabel:"x",ylabel:"y = ln(x)",xstep:1,ystep:1});
         H.fn(Math.log,{cls:"cv c",from:0.05});
         const drop=H.line(x,0,x,Math.log(x),{cls:"lt dash"});
         const sumDot=H.open(x,0), lnDot=H.dot(x,Math.log(x),{filled:true});
@@ -477,7 +477,7 @@ M.lecture({
       ["Its graph passes through $(0,1)$.",0,"That is $y=a^x$. The log passes through $(1,0)$ because $\\log_a(1)=0$."],
       ["As $x\\to 0^+$, $\\log_a(x)\\to 0$.",0,"It goes to $-\\infty$ (p. 3)."]]},
     {id:"L10.q9", ref:"p. 3", keep:true, q:"Is the provided answer correct?<br>Problem: Find all $x$ such that $\\ln(x) + \\ln(x+3) = \\ln(4)$.<br>Answer: $\\ln(x(x+3)) = \\ln(4)$, so $x^2+3x-4=0$, so $(x+4)(x-1)=0$. The solutions are $x=1$ and $x=-4$.", opts:[
-      ["No, the solution is not correct.",1,"$x=-4$ is not allowed: $\\ln(-4)$ is undefined. The only solution is $x=1$."],
+      ["No, the solution is not correct.",1,"$x=-4$ is not allowed: $\\ln(-4)$ is not defined. The only solution is $x=1$."],
       ["Yes, the solution is correct.",0,"Check each answer in the original equation. $\\ln(x)$ needs $x>0$."]]},
     {id:"L10.q10", ref:"p. 3", q:"$\\log_2(12) - \\log_2(3) = $", opts:[
       ["$2$",1,"$\\log_2\\left(\\frac{12}{3}\\right) = \\log_2(4) = 2$."],

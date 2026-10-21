@@ -169,12 +169,11 @@ M.lecture({
           const tan=G.tangent(a,D.f(a),D.df(a),{cls:"tan dash"});
           const v1=G.line(x,0,x,1,{cls:"lt dash"});
           const pt=G.dot(x,D.f(x),{r:4}), pl=G.dot(x,0,{r:4,filled:true});
-          const la=G.label(a,0,"a",{cls:"lblc",anchor:"middle",dy:-8});
-          const P=G.handle(a,D.f(a),{f:D.f,bounds:D.ba,label:"Point of tangency a",clickToMove:false,onMove:v=>{ a=v; draw(); }});
+                    const P=G.handle(a,D.f(a),{f:D.f,bounds:D.ba,label:"Point of tangency a",clickToMove:false,onMove:v=>{ a=v; draw(); }});
           const X=G.handle(x,0,{axis:"x",bounds:D.bx,label:"x value",onMove:v=>{ x=v; draw(); }});
           function draw(){
             const fa=D.f(a), m=D.df(a), L=fa+m*(x-a), fv=D.f(x);
-            tan.at(a,fa,m); v1.set(x,Math.min(0,fv,L),x,Math.max(0,fv,L)); pt.set(x,fv); pl.set(x,L); la.set(a,0);
+            tan.at(a,fa,m); v1.set(x,Math.min(0,fv,L),x,Math.max(0,fv,L)); pt.set(x,fv); pl.set(x,L);
             ro.innerHTML=`a = <b>${a.toFixed(2)}</b> &nbsp; x = <b>${x.toFixed(2)}</b> &nbsp; Δx = x − a = ${(x-a).toFixed(2)}<br>true f(x) = <b>${fv.toFixed(4)}</b> &nbsp; tangent line gives <b>${L.toFixed(4)}</b> &nbsp; error ${Math.abs(L-fv).toFixed(4)}`;
           }
           draw();
@@ -184,7 +183,7 @@ M.lecture({
     diffapprox:{title:"The differential approximation", cap:"<b>Fig. 2.3</b> $f(x) = x^3 + x + 3$. The true change $\\Delta y$ is the rise along the curve. The differential approximation $f'(a)\\Delta x$ is the rise along the tangent line. Smaller $\\Delta x$, smaller gap. (Lecture 2, p. 5)",
       build(host,{PLOT}){
         const f=x=>x*x*x+x+3, df=x=>3*x*x+1;
-        const G=PLOT.graph(host,{x:[1.4,4],y:[0,72],c:"var(--u1)",xlabel:"x",ylabel:"y",xstep:0.5,ystep:10});
+        const G=PLOT.graph(host,{x:[1.95,3.85],y:[8,62],c:"var(--u1)",xlabel:"x",ylabel:"y",xstep:0.5,ystep:10});
         G.fn(f,{cls:"cv"});
         let a=3, dx=-0.2;
         const tan=G.tangent(a,f(a),df(a),{cls:"tan dash"});
@@ -192,8 +191,8 @@ M.lecture({
         const q=G.dot(0,0,{r:4}), qt=G.dot(0,0,{r:3.5,filled:true});
         const l1=G.label(0,0,"Δy",{cls:"lbl",dx:8}), l2=G.label(0,0,"f′(a)Δx",{cls:"lblc",dx:-8,anchor:"end"});
         const ctl=PLOT.controls(host), ro=PLOT.readout(host);
-        G.handle(a,f(a),{f,bounds:[2.2,3.2],snap:0.1,step:0.1,label:"Original x value a",clickToMove:false,onMove:v=>{ a=v; draw(); }});
-        PLOT.slider(ctl,{label:"Δx",min:-0.8,max:0.8,step:0.05,value:dx,fmt:v=>v.toFixed(2),oninput:v=>{ dx=Math.abs(v)<1e-9?0.05:v; draw(); }});
+        G.handle(a,f(a),{f,bounds:[2.6,3.2],snap:0.1,step:0.1,label:"Original x value a",clickToMove:false,onMove:v=>{ a=v; draw(); }});
+        PLOT.slider(ctl,{label:"Δx",min:-0.6,max:0.6,step:0.05,value:dx,fmt:v=>v.toFixed(2),oninput:v=>{ dx=Math.abs(v)<1e-9?0.05:v; draw(); }});
         function draw(){
           const b=a+dx, fa=f(a), est=df(a)*dx, tru=f(b)-fa;
           tan.at(a,fa,df(a)); run.set(a,fa,b,fa); rc.set(b,fa,b,f(b)); rt.set(b,fa,b,fa+est);
@@ -481,7 +480,7 @@ M.lecture({
       ans:"$y = \\frac{\\sqrt{3}}{2} + \\frac{1}{2}\\left(x - \\frac{\\pi}{3}\\right)$"}},
     {type:"try", title:"Your turn: tangent lines", gen:"L02.g.tanline"},
     {type:"read", title:"Using the tangent line to approximate", body:`<p>Close to $a$, the tangent line and the curve are almost the same. So you can use the line's height in place of the function's value (p. 4):</p><div class="box def"><b class="t">Tangent line (linear) approximation (p. 4)</b>$$f(x) \\approx f(a) + f'(a)(x - a)$$ when $x$ is close to $a$.</div><div class="box warn"><b class="t">Warning (p. 4)</b>Keep these apart:<br>the tangent line: $y = f(a) + f'(a)(x - a)$<br>the tangent line approximation: $f(x) \\approx f(a) + f'(a)(x - a)$</div><p>To approximate a number, pick the $x$ that makes $f(x)$ equal to that number (Warning, p. 5). This is the step quizzes test most.</p>`, ref:"pp. 4 to 5"},
-    {type:"explore", title:"How good is the tangent line?", fig:"tanapprox", body:`<p>The dashed line is the tangent line at $a$. The hollow dot is the true value $f(x)$ and the filled dot is what the tangent line gives.</p><p><b>Try it.</b> On the first function, leave $a = -2$ and set $x = -1.9$: that is the example on p. 4, where $f(-1.9) = (1.1)^{1/4}$. Then drag $x$ far from $a$ and watch the error grow. Switch to $\\sqrt{x+1}$ with $a = 8$ and $x = 7$ for the p. 5 exercise.</p>`},
+    {type:"explore", title:"How good is the tangent line?", fig:"tanapprox", ref:"pp. 4 to 5", body:`<p>The dashed line is the tangent line at $a$. The hollow dot is the true value $f(x)$ and the filled dot is what the tangent line gives.</p><p><b>Try it.</b> On the first function, leave $a = -2$ and set $x = -1.9$: that is the example on p. 4, where $f(-1.9) = (1.1)^{1/4}$. Then drag $x$ far from $a$ and watch the error grow. Switch to $\\sqrt{x+1}$ with $a = 8$ and $x = 7$ for the p. 5 exercise.</p>`},
     {type:"example", title:"Approximate $(1.1)^{1/4}$", ex:{q:"Use the tangent line for $f(x) = (x+3)^{1/4}$ at $a = -2$ to approximate $(1.1)^{1/4}$.", ref:"p. 4",
       steps:[{t:"$f(x) \\approx f(a) + f'(a)(x - a)$",why:"The tangent line approximation."},{t:"$f'(x) = \\frac{1}{4}(x + 3)^{-3/4}$",why:"Power rule; the inside $x + 3$ has derivative 1."},{t:"$f(x) \\approx f(-2) + f'(-2)(x + 2) = 1 + \\frac{1}{4}(x + 2)$",why:"$f(-2) = 1^{1/4} = 1$ and $f'(-2) = \\frac{1}{4}(1)^{-3/4} = \\frac{1}{4}$."},{t:"Take $x = -1.9$",why:"$f(-1.9) = (-1.9 + 3)^{1/4} = (1.1)^{1/4}$. The $x$ must make $f(x)$ the value you want. $x = 1.1$ would give $(4.1)^{1/4}$."},{t:"$(1.1)^{1/4} = f(-1.9) \\approx 1 + \\frac{1}{4}(-1.9 + 2) = 1 + \\frac{1}{4}(0.1)$",why:"Substitute."},{t:"$= 1 + \\frac{1}{40} = \\frac{41}{40}$",why:"Arithmetic. The true value is about 1.0241, and $\\frac{41}{40} = 1.025$."}],
       ans:"$(1.1)^{1/4} \\approx \\frac{41}{40}$"}},
@@ -490,7 +489,7 @@ M.lecture({
       after:"So $\\sqrt{1.2} \\approx 1 + \\frac{1}{2}(0.2) = 1.1$. The true value is about 1.0954."},
     {type:"try", title:"Your turn: approximate a value", gen:"L02.g.approx"},
     {type:"read", title:"Approximating a change", body:`<p>In science you often care how much something changes, not its exact value. A scientist studying a drug's effect on stomach acid cannot measure a fixed starting or ending amount, since that varies from person to person. They want to know by how much the drug changes it (p. 5).</p><p>Start from the linear approximation and subtract $f(a)$ from both sides:</p>$$f(x) - f(a) \\approx f'(a)(x - a)$$<p>The left side is the change in the $y$-values, $\\Delta y$. The bracket is the change in the $x$-values, $\\Delta x$.</p><div class="box def"><b class="t">Differential approximation (p. 5)</b>$$\\Delta y \\approx f'(a)\\Delta x$$ $a$ is the original $x$ value and $\\Delta x = x - a$.</div><p>In words: change in output ≈ slope at the start × change in input.</p>`, ref:"p. 5"},
-    {type:"explore", title:"Rise along the curve vs rise along the tangent", fig:"diffapprox", body:`<p>The thin vertical segment is the true change $\\Delta y$. The thick coloured segment is $f'(a)\\Delta x$, the rise along the tangent line.</p><p><b>Try it.</b> The figure starts at the p. 5 example: $a = 3$, $\\Delta x = -0.2$. Read off $\\Delta y \\approx -5.6$ against the true $-5.248$. Then slide $\\Delta x$ toward 0 and watch the two segments become the same length.</p>`},
+    {type:"explore", title:"Rise along the curve vs rise along the tangent", fig:"diffapprox", ref:"p. 5", body:`<p>The thin vertical segment is the true change $\\Delta y$. The thick coloured segment is $f'(a)\\Delta x$, the rise along the tangent line.</p><p><b>Try it.</b> The figure starts at the p. 5 example: $a = 3$, $\\Delta x = -0.2$. Read off $\\Delta y \\approx -5.6$ against the true $-5.248$. Then slide $\\Delta x$ toward 0 and watch the two segments become the same length.</p>`},
     {type:"example", title:"Change in $y$ from 3 to 2.8", ex:{q:"Let $f(x) = x^3 + x + 3$. Approximate the change in $y$ if $x$ changes from 3 to 2.8.", ref:"p. 5",
       steps:[{t:"$f'(x) = 3x^2 + 1$",why:"Power rule."},{t:"$a = 3$",why:"$a$ is the original $x$ value."},{t:"$\\Delta x = x - a = 2.8 - 3 = -0.2$",why:"New minus original. $x$ goes down, so $\\Delta x$ is negative."},{t:"$\\Delta y \\approx f'(3)\\Delta x = (28)(-0.2) = -5.6$",why:"$f'(3) = 3(9) + 1 = 28$."}],
       ans:"$\\Delta y \\approx -5.6$ (the true change is $-5.248$)"}},
