@@ -194,7 +194,7 @@ ENGINE.reviewCard=function(r,opts={}){
   if(L) meta2.append(el("a",{class:"sbtn",href:M.lecURL(L.id)},"Open the lecture"));
   if(window.GUIDE) meta2.append(el("button",{class:"sbtn",type:"button",onclick:()=>GUIDE.open(String(r.q).replace(/<[^>]+>/g," ").slice(0,160))},"Ask Tan"));
   const rate=el("span",{class:"rate",role:"group","aria-label":"How well did you know this?"});
-  [["got","Got it"],["shaky","Shaky"],["no","No idea"]].forEach(([v,t])=>{ const b=el("button",{type:"button","data-v":v,"aria-pressed":String(rating()===v)},t); b.onclick=()=>{ const db=M.db(); if(db.review[r.id]===v) delete db.review[r.id]; else db.review[r.id]=v; M.save(); rate.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",String(db.review[r.id]===x.dataset.v))); opts.onRate&&opts.onRate(); }; rate.append(b); });
+  [["got","Got it"],["shaky","Shaky"],["no","No idea"]].forEach(([v,t])=>{ const b=el("button",{type:"button","data-v":v,"aria-pressed":String(rating()===v)},t); b.onclick=()=>{ const db=M.db(); if(db.review[r.id]===v) delete db.review[r.id]; else db.review[r.id]=v; db.rlec=db.rlec||{}; if(r.lec) db.rlec[r.id]=r.lec; M.save(); rate.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",String(db.review[r.id]===x.dataset.v))); opts.onRate&&opts.onRate(); }; rate.append(b); });
   meta2.append(rate); d.append(meta2);
   return d;
 };

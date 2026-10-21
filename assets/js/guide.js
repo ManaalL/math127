@@ -229,7 +229,7 @@ function weak(){
   const add=(lid,r,t,w=1)=>{ if(!lid) return; by[lid]=by[lid]||{lid,right:0,total:0,shaky:0}; by[lid].right+=r; by[lid].total+=t; };
   Object.values(db.exam||{}).forEach(e=>Object.entries(e.topics||{}).forEach(([lid,t])=>add(lid,t.right,t.total)));
   Object.entries(db.stats||{}).forEach(([gid,s])=>add(gid.split(".")[0],s.fr,s.ft));
-  Object.entries(db.review||{}).forEach(([rid,v])=>{ const r=(M.extras.review||[]).find(x=>x.id===rid)||(M.extras.longAnswer||[]).find(x=>x.id===rid); if(r&&r.lec&&(v==="shaky"||v==="no")){ by[r.lec]=by[r.lec]||{lid:r.lec,right:0,total:0,shaky:0}; by[r.lec].shaky+=v==="no"?2:1; } });
+  Object.entries(db.review||{}).forEach(([rid,v])=>{ const r=(M.extras.review||[]).find(x=>x.id===rid)||(M.extras.longAnswer||[]).find(x=>x.id===rid)||((db.rlec||{})[rid]?{lec:db.rlec[rid]}:null); if(r&&r.lec&&(v==="shaky"||v==="no")){ by[r.lec]=by[r.lec]||{lid:r.lec,right:0,total:0,shaky:0}; by[r.lec].shaky+=v==="no"?2:1; } });
   return Object.values(by).filter(t=>M.lec(t.lid)).map(t=>({...t,w:(t.total?(1-t.right/t.total)*Math.min(t.total,12):0)+t.shaky})).filter(t=>t.w>0).sort((a,b)=>b.w-a.w);
 }
 window.TAN_WEAK=weak;

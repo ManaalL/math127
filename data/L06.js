@@ -109,7 +109,7 @@ M127.lecture({
         const vl=G.line(0,0,0,0,{cls:"lt dash"}), p1=G.dot(0,0,{filled:true,r:4}), p2=G.dot(0,0,{r:4});
         const ro=PLOT.readout(host);
         const upd=x=>{ const s=Math.sqrt(x*x); vl.set(x,Math.min(0,x),x,Math.max(s,x)); p1.set(x,s); p2.set(x,x);
-          ro.innerHTML=`x = <b>${x.toFixed(2)}</b> &nbsp; √(x²) = √${(x*x).toFixed(4).replace(/\.?0+$/,"")} = <b>${s.toFixed(2)}</b> = |x| &nbsp; ${x<0?`(this is −x, not x)`:`(equal to x, since x ≥ 0)`}<br>(√x)² = ${x<0?"<b>not defined</b>: √x needs x ≥ 0":`<b>${x.toFixed(2)}</b>`}`; };
+          ro.innerHTML=`x = <b>${x.toFixed(2)}</b> &nbsp; √(x²) = √${(x*x).toFixed(4).replace(/\.?0+$/,"")} = <b>${s.toFixed(2)}</b> = |x| &nbsp; ${x<0?`(this is −x, not x)`:`(equal to x, since x ≥ 0)`}<br>(√x)² = ${x<0?"not defined: √x needs x ≥ 0":`<b>${x.toFixed(2)}</b>`}`; };
         G.handle(-2.5,0,{axis:"x",bounds:[-4,4],snap:0.25,label:"x value",onMove:x=>upd(x)}); upd(-2.5);
       }}
   },

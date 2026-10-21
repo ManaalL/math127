@@ -19,7 +19,7 @@ const load=f=>vm.runInContext(fs.readFileSync(path.join(ROOT,f),"utf8").replace(
 load("assets/js/core.js"); load("assets/js/mathcheck.js");
 /* --lec L07 tests one lecture file straight from data/ without a full build (handy when other files are mid-edit) */
 const li=process.argv.indexOf("--lec");
-if(li>0){ load("data/course.js"); process.argv[li+1].split(",").forEach(id=>load(`data/${id}.js`)); } else load("assets/js/studydata.js");
+if(li>0){ load("data/course.js"); process.argv[li+1].split(",").forEach(id=>load(`data/${id}.js`)); } else { load("assets/js/studydata.js"); load("assets/js/longanswer.js"); }
 const M=ctx.M127, MC=ctx.MC;
 const fails=[]; let nProb=0, nTex=0;
 const F2=(w,m)=>F(w,m);

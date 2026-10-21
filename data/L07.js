@@ -169,7 +169,7 @@ M.lecture({
           const tan=G.tangent(F.x,f(F.x),0);
           const upd=x=>{
             const u=F.u(x), du=F.du(x);
-            if(Math.abs(u)<0.03){ tan.style.display="none"; ro.innerHTML=`x = ${fmt(x,2)} &nbsp; u = ${F.ut} = ${fmt(u,2)}: the inside is 0 here, so there is a corner and <b>no derivative</b>`; return; }
+            if(Math.abs(u)<0.03){ tan.style.display="none"; ro.innerHTML=`x = ${fmt(x,2)} &nbsp; u = ${F.ut} = ${fmt(u,2)}: the inside is 0 here, so there is a corner and no derivative`; return; }
             const s=u/Math.abs(u), m=s*du; tan.style.display=""; tan.at(x,f(x),m);
             ro.innerHTML=`x = ${fmt(x,2)} &nbsp; u = ${F.ut} = ${fmt(u,2)} &nbsp; u/|u| = <b>${s>0?"1":"−1"}</b> &nbsp; u′ = ${fmt(du,2)} &nbsp; slope f′(x) = <b>${fmt(m,2)}</b>`;
           };

@@ -137,8 +137,8 @@ M.lecture({
     cancel:{title:"When the inverse cancels", cap:"<b>Fig. 9.3</b> The solid curve is $y=f^{-1}(f(x))$ and the dashed line is $y=x$. They agree only on the interval $I$ (marked on the axis). Outside $I$ you have to work it out by hand. (Lecture 9, pp. 5 to 6)",
       build(host,{PLOT}){
         const FN={
-          sq:{g:x=>-Math.abs(x),f:x=>x*x-2,fi:y=>-Math.sqrt(y+2),I:[-4.2,0],x:[-4,4],y:[-4.2,4.2],lab:"f(x) = x² − 2 on (−∞, 0], f⁻¹(y) = −√(y + 2)",x0:2,pi:false},
-          cos:{g:x=>Math.acos(Math.cos(x)),f:Math.cos,fi:Math.acos,I:[0,PI],x:[-2*PI,2*PI],y:[-1.5,4],lab:"cos on [0, π], inverse arccos",x0:2*PI,pi:true}
+          sq:{g:x=>-Math.abs(x),f:x=>x*x-2,fi:y=>-Math.sqrt(y+2),I:[-5.6,0],x:[-5.5,5.5],y:[-5.8,4.5],lab:"f(x) = x² − 2 on (−∞, 0], f⁻¹(y) = −√(y + 2)",x0:3,pi:false,il:-3.2},
+          cos:{g:x=>Math.acos(Math.cos(x)),f:Math.cos,fi:Math.acos,I:[0,PI],x:[-2*PI,2*PI],y:[-1.5,4],lab:"cos on [0, π], inverse arccos",x0:2*PI,pi:true,il:0.3}
         };
         let key="sq";
         const plot=document.createElement("div"); host.append(plot);
@@ -151,10 +151,10 @@ M.lecture({
           const G=PLOT.graph(plot,{x:F.x,y:F.y,c:"var(--u3)",xlabel:"x",ylabel:"y",piX:F.pi});
           G.fn(x=>x,{cls:"lt dash"});
           const sI=G.line(Math.max(F.I[0],F.x[0]),0,F.I[1],0,{cls:"tan"}); sI.style.strokeWidth=6; sI.style.strokeLinecap="round";
-          G.label(F.I[1],0,"I",{cls:"lblc",dx:-14,dy:16});
+          G.label(F.il,0,"I",{cls:"lblc",dy:-9});
           G.fn(F.g,{cls:"cv c"});
           const upd=x=>{ const y=F.f(x), back=F.g(x), inI=x>=F.I[0]-1e-9&&x<=F.I[1]+1e-9;
-            ro.innerHTML=`${F.lab}<br>x = ${fmt(x,3)} &nbsp; f(x) = ${fmt(y,3)} &nbsp; f⁻¹(f(x)) = <b>${fmt(back,3)}</b> &nbsp; ${inI?"x is in I, so it cancels":"x is not in I, so it does <b>not</b> cancel"}`; };
+            ro.innerHTML=`${F.lab}<br>x = ${fmt(x,3)} &nbsp; f(x) = ${fmt(y,3)} &nbsp; f⁻¹(f(x)) = <b>${fmt(back,3)}</b> &nbsp; ${inI?"x is in I, so it cancels":"x is not in I, so it does not cancel"}`; };
           G.handle(F.x0,F.g(F.x0),{f:F.g,bounds:F.x,label:"Input x",onMove:upd}); upd(F.x0);
         }
         build();
