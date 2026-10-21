@@ -187,7 +187,7 @@ M.lecture({
           const ft=`x^2${M.term(B,"x",1)}${M.term(C0,"x",0)}`;
           return {prompt:`Given that $f(x)=${ft}$ is invertible on $${I}$, what is $f^{-1}(${y})$?`, answer:{type:"num",answer:String(r1)}, verify:{value:r1},
             hint:"Solve $f(x)="+y+"$. You will get two solutions. Only one of them is in the interval.",
-            steps:[`$f^{-1}(${y})=x$ means $f(x)=${y}$ with $x$ in $${I}$.`,`$${ft}=${y}$ gives $x^2${M.term(B,"x",1)}${M.term(C0-y,"x",0)}=0$, so $(x${M.term(-r1,"x",0)})(x${M.term(-r2,"x",0)})=0$.`.replace("(x)","(x)"),`So $x=${r1}$ or $x=${r2}$. Only $x=${r1}$ is in $${I}$.`,`$f^{-1}(${y})=${r1}$.`],
+            steps:[`$f^{-1}(${y})=x$ means $f(x)=${y}$ with $x$ in $${I}$.`,`${y===0?`$${ft}=0$`:`$${ft}=${y}$ gives $x^2${M.term(B,"x",1)}${M.term(C0-y,"x",0)}=0$`}, so $${r1===0?"x":`(x${M.term(-r1,"x",0)})`}${r2===0?"x":`(x${M.term(-r2,"x",0)})`}=0$.`,`So $x=${r1}$ or $x=${r2}$. Only $x=${r1}$ is in $${I}$.`,`$f^{-1}(${y})=${r1}$.`],
             answerTeX:`$f^{-1}(${y})=${r1}$`};
         }
         const T=TRIG[R.pick(Object.keys(TRIG))];
@@ -217,7 +217,7 @@ M.lecture({
           opts=[right,`$${g}(${a})=${bt}$`,`$f\\left(${bt}\\right)=${a}$`,`$${g}\\left(${bt}\\right)=\\frac{1}{${a}}$`,`$${g}(${a})=\\frac{1}{${bt}}$`];
         } else {
           right=`$f(${c})\\ne ${bt}$`;
-          opts=[right,`$${g}(${a})=${bt}$`,`$f\\left(${bt}\\right)=${a}$`,`$${g}(${c})=${a}$`,`$f(${c})=${bt}$ for some other input $${c}$`];
+          opts=[right,`$${g}(${a})=${bt}$`,`$f\\left(${bt}\\right)=${a}$`,`$${g}(${c})=${a}$`,`$${g}\\left(${bt}\\right)=\\frac{1}{${a}}$`];
         }
         const sh=R.shuffle(opts);
         return {prompt:`Assume $f$ is invertible on $(-\\infty,\\infty)$ with inverse $${g}$, and $f(${a})=${bt}$. Which statement must be true?`,

@@ -73,7 +73,9 @@ All text fields accept HTML and `$...$` / `$$...$$` LaTeX (KaTeX). Inside JS tem
 }
 ```
 
-Answer types: `expr` (equivalent forms accepted by evaluating at random points in `domain`; add `plusC:true` for antiderivatives), `num` (with `tol` or `rel`), `interval` (`"(0,4]"`, `"(-inf,1) U [3,inf)"`), `list` (`"1, -3"`), `mc` (`options:[...]`, `correct:index`).
+Numbers in stored answers must not use `1.1e-16` notation (the checker reads `e` as Euler's number); round with `toFixed` first.
+
+Answer types: `expr` (equivalent forms accepted by evaluating at random points in `domain`; add `plusC:true` for antiderivatives; the stored answer may include `+ C`, and a student answer without a constant is marked "almost"), `num` (with `tol` or `rel`), `interval` (`"(0,4]"`, `"(-inf,1) U [3,inf)"`), `list` (`"1, -3"`), `mc` (`options:[...]`, `correct:index`).
 
 `verify` lets the fuzz test check the answer without trusting the generator: `{deriv:"f"}` (answer must be the derivative of f), `{antideriv:"g"}` (derivative of answer must be g), `{expr:"..."}` (same function, computed another way), `{value:n}`.
 

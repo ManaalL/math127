@@ -94,13 +94,13 @@ M127.lecture({
         function draw(){
           const s=S[key]; const lo=s.x[0]+0.2, hi=s.x[1]-0.2; if(xv<lo||xv>hi){ H.move(Math.max(lo,Math.min(hi,xv))); return; }
           const p=s.pieces.find(q=>q.cond(xv));
-          if(!p){ vl.set(xv,0,xv,0); pt.style.display="none"; ro.innerHTML=`x = <b>${xv.toFixed(2)}</b>: no condition includes this x, so it is not in the domain. f(${xv}) is undefined.`; return; }
+          if(!p){ vl.set(xv,0,xv,0); pt.style.display="none"; ro.innerHTML=`x = <b>${xv.toFixed(2)}</b>: no condition includes this x, so it is not in the domain. f has no value here.`; return; }
           const y=p.f(xv); pt.style.display=""; pt.set(xv,y); vl.set(xv,0,xv,y);
           ro.innerHTML=`x = <b>${xv.toFixed(2)}</b> satisfies <b>${p.ct}</b>, so use ${p.tex}: &nbsp; f(${xv.toFixed(2)}) = <b>${y.toFixed(3)}</b>`;
         }
         draw();
       }},
-    sqrtabs:{title:"The square root of a square", cap:"<b>Fig. 6.3</b> $y = \\sqrt{x^2}$ (colour) next to $y = x$ (dashed). They agree for $x \\ge 0$. For $x < 0$, $\\sqrt{x^2} = -x$, so $\\sqrt{x^2}$ is the graph of $|x|$. (Lecture 6, p. 4)",
+    sqrtabs:{title:"The square root of a square", cap:"<b>Fig. 6.3</b> y = √(x²) (colour) next to $y = x$ (dashed). They agree for $x \\ge 0$. For $x < 0$, √(x²) $= -x$, so y = √(x²) is the graph of $|x|$. (Lecture 6, p. 4)",
       build(host,{PLOT}){
         const G=PLOT.graph(host,{x:[-4.2,4.2],y:[-4.4,4.6],c:"var(--u2)",xlabel:"x",ylabel:"y",xstep:1,ystep:1});
         G.fn(x=>x,{cls:"ln dash"});
@@ -109,7 +109,7 @@ M127.lecture({
         const vl=G.line(0,0,0,0,{cls:"lt dash"}), p1=G.dot(0,0,{filled:true,r:4}), p2=G.dot(0,0,{r:4});
         const ro=PLOT.readout(host);
         const upd=x=>{ const s=Math.sqrt(x*x); vl.set(x,Math.min(0,x),x,Math.max(s,x)); p1.set(x,s); p2.set(x,x);
-          ro.innerHTML=`x = <b>${x.toFixed(2)}</b> &nbsp; √(x²) = √${(x*x).toFixed(4).replace(/\.?0+$/,"")} = <b>${s.toFixed(2)}</b> = |x| &nbsp; ${x<0?`(this is −x, not x)`:`(equal to x, since x ≥ 0)`}<br>(√x)² = ${x<0?"<b>undefined</b>: √x needs x ≥ 0":`<b>${x.toFixed(2)}</b>`}`; };
+          ro.innerHTML=`x = <b>${x.toFixed(2)}</b> &nbsp; √(x²) = √${(x*x).toFixed(4).replace(/\.?0+$/,"")} = <b>${s.toFixed(2)}</b> = |x| &nbsp; ${x<0?`(this is −x, not x)`:`(equal to x, since x ≥ 0)`}<br>(√x)² = ${x<0?"<b>not defined</b>: √x needs x ≥ 0":`<b>${x.toFixed(2)}</b>`}`; };
         G.handle(-2.5,0,{axis:"x",bounds:[-4,4],snap:0.25,label:"x value",onMove:x=>upd(x)}); upd(-2.5);
       }}
   },
@@ -304,7 +304,7 @@ M127.lecture({
     {id:"L06.q5", ref:"p. 2", q:"Select the first line with a mistake.<div class=\"box note\"><b class=\"t\">Problem</b>Solve $\\frac{dy}{dx} = 2x - 1$, $y(2) = 1$.</div><div class=\"box note\"><b class=\"t\">Answer</b>(1) $y = \\int (2x - 1)\\,dx$<br>(2) $y = x^2 - x + C$<br>(3) $2 = (1)^2 - 1 + C$<br>(4) $C = 2$<br>(5) Therefore $y = x^2 - x + 2$.</div>", opts:[
       ["Line (3)",1,"$y(2) = 1$ means $x = 2$ and $y = 1$. It should be $1 = (2)^2 - 2 + C$, so $C = -1$."],["Line (2)",0,"$\\frac{d}{dx}(x^2 - x) = 2x - 1$, so it is right."],["Line (4)",0,"It follows from line (3), but line (3) is already wrong."],["Line (1)",0,"Correct, with the $dx$."]]},
     {id:"L06.q6", ref:"p. 3", q:"$f(x) = \\begin{cases} 2x + 1 & \\text{if } x < 1 \\\\ 5 & \\text{if } 1 \\le x < 4 \\\\ x^2 & \\text{if } x > 4 \\end{cases}$. What is $f(1)$?", opts:[
-      ["5",1,"$x = 1$ satisfies $1 \\le x < 4$, the second piece."],["3",0,"That uses the first piece, but $1 < 1$ is false."],["1",0,"That is $x^2$ at $x = 1$; the third piece needs $x > 4$."],["Undefined",0,"$x = 1$ is covered by the second piece."]]},
+      ["5",1,"$x = 1$ satisfies $1 \\le x < 4$, the second piece."],["3",0,"That uses the first piece, but $1 < 1$ is false."],["1",0,"That is $x^2$ at $x = 1$; the third piece needs $x > 4$."],["Not defined",0,"$x = 1$ is covered by the second piece."]]},
     {id:"L06.q7", ref:"p. 3", q:"For the same $f$, what is the domain?", opts:[
       ["$(-\\infty, 4) \\cup (4, \\infty)$",1,"No piece includes $x = 4$: the second needs $x < 4$ and the third needs $x > 4$."],["$(-\\infty, \\infty)$",0,"Check $x = 4$: it fails every condition."],["$(-\\infty, 1) \\cup (1, \\infty)$",0,"$x = 1$ is in the second piece."],["$[1, 4)$",0,"That is only the second piece."]]},
     {id:"L06.q8", ref:"p. 4", q:"If $x < 0$, then $\\sqrt{x^2} =$", opts:[
@@ -312,7 +312,7 @@ M127.lecture({
     {id:"L06.q9", ref:"p. 4", q:"True or False: $|-a| = a$ for all real numbers $a$.", opts:[
       ["False",1,"Try $a = -2$: $|-(-2)| = |2| = 2 \\neq -2$. In general $|-a| = |a|$."],["True",0,"It fails when $a$ is negative."]]},
     {id:"L06.q10", ref:"p. 4", multi:true, q:"Which of these are true for all real $x$ and $y$? Select all that apply.", opts:[
-      ["$\\sqrt{x^2} = |x|$",1,"Property (i)."],["$|xy| = |x|\\,|y|$",1,"Property (ii)."],["$|-x| = |x|$",1,"By property (ii) with $-x = (-1)x$: $|-1|\\,|x| = |x|$."],["$(\\sqrt{x})^2 = x$",0,"Only for $x \\ge 0$; $\\sqrt{x}$ is undefined for $x < 0$."],["$|x| = x$",0,"Only for $x \\ge 0$."]]},
+      ["$\\sqrt{x^2} = |x|$",1,"Property (i)."],["$|xy| = |x|\\,|y|$",1,"Property (ii)."],["$|-x| = |x|$",1,"By property (ii) with $-x = (-1)x$: $|-1|\\,|x| = |x|$."],["$(\\sqrt{x})^2 = x$",0,"Only for $x \\ge 0$; $\\sqrt{x}$ is not defined for $x < 0$."],["$|x| = x$",0,"Only for $x \\ge 0$."]]},
     {id:"L06.q11", ref:"p. 4", q:"A question and three answers are shown. Which answer is correct?<div class=\"box note\"><b class=\"t\">Problem</b>Solve $x^2 - 4 = 12$.</div><div class=\"box note\"><b class=\"t\">Answer #1</b>$x^2 = 16$, so $x = 4$.</div><div class=\"box note\"><b class=\"t\">Answer #2</b>$x^2 = 16$, $\\sqrt{x^2} = \\sqrt{16}$, $x = 4$.</div><div class=\"box note\"><b class=\"t\">Answer #3</b>$x^2 = 16$, $\\sqrt{x^2} = \\sqrt{16}$, $|x| = 4$, $x = \\pm 4$.</div>", opts:[
       ["Answer #3",1,"It uses $\\sqrt{x^2} = |x|$, then property (iii) to get both solutions."],["Answer #1",0,"It misses $x = -4$."],["Answer #2",0,"$\\sqrt{x^2}$ is $|x|$, not $x$. That is the most common mistake (p. 4), and it loses $x = -4$."]]},
     {id:"L06.q12", ref:"p. 4", q:"$|x| < 3$ is the same as", opts:[
@@ -336,9 +336,9 @@ M127.lecture({
     {type:"try", title:"Your turn: solve an IVP", gen:"L06.g.ivp"},
     {type:"try", title:"Quiz style: spot the mistake", gen:"L06.g.ivperr"},
     {type:"read", title:"Piecewise defined functions", body:`<div class="box def"><b class="t">Definition (p. 3)</b>A piecewise defined function is a function which can have different definitions on different parts of its domain.</div><p>To evaluate one, first find the condition your $x$ satisfies, then use that piece. Watch the difference between $<$ and $\\le$ at the break points.</p><div class="box"><b class="t">Example (p. 3)</b>$$f(x) = \\begin{cases} x^2 - 3 & \\text{if } x < -1 \\\\ 7 & \\text{if } -1 \\le x < 3 \\\\ \\cos(x) & \\text{if } x > 3 \\end{cases}$$ (a) $f(-2) = (-2)^2 - 3 = 1$, since $-2 < -1$.<br>(b) $f(4) = \\cos(4)$, since $4 > 3$.<br>(c) The domain is $(-\\infty, 3) \\cup (3, \\infty)$. No piece includes $x = 3$: the second needs $x < 3$ and the third needs $x > 3$.</div>`, ref:"p. 3"},
-    {type:"explore", title:"Which piece does x use?", fig:"piecewise", body:`<p>A filled dot belongs to its piece; an open dot does not.</p><p><b>Try it.</b> Drag $x$ to $-1$: the readout uses the second piece and gives 7, not $(-1)^2 - 3 = -2$. Drag to $x = 3$: no piece applies, so $f(3)$ is undefined. Then switch to $|x|$ and drag to a negative $x$: the output is $-x$, a positive number.</p>`, ref:"p. 3"},
+    {type:"explore", title:"Which piece does x use?", fig:"piecewise", body:`<p>A filled dot belongs to its piece; an open dot does not.</p><p><b>Try it.</b> Drag $x$ to $-1$: the readout uses the second piece and gives 7, not $(-1)^2 - 3 = -2$. Drag to $x = 3$: no piece applies, so $f(3)$ has no value. Then switch to $|x|$ and drag to a negative $x$: the output is $-x$, a positive number.</p>`, ref:"p. 3"},
     {type:"mcq", title:"Recognize this function", q:"Let $f(x) = -x$ if $x < 0$ and $f(x) = x$ if $x \\ge 0$. What is $f(-\\sqrt{2})$? (p. 3 exercise)", opts:[
-      ["$\\sqrt{2}$",true,"$-\\sqrt2 < 0$, so $f(-\\sqrt2) = -(-\\sqrt2) = \\sqrt2$."],["$-\\sqrt{2}$",false,"That uses the second piece, but $-\\sqrt2 \\ge 0$ is false."],["$2$",false,"Nothing gets squared here."],["Undefined",false,"Every real number is covered by one of the two pieces."]],
+      ["$\\sqrt{2}$",true,"$-\\sqrt2 < 0$, so $f(-\\sqrt2) = -(-\\sqrt2) = \\sqrt2$."],["$-\\sqrt{2}$",false,"That uses the second piece, but $-\\sqrt2 \\ge 0$ is false."],["$2$",false,"Nothing gets squared here."],["Not defined",false,"Every real number is covered by one of the two pieces."]],
       after:"Also $f(-3) = 3$ and $f(4) = 4$. This function is the absolute value function."},
     {type:"try", title:"Your turn: piecewise functions", gen:"L06.g.piecewise"},
     {type:"read", title:"The absolute value function", body:`<p>The function in the last question is $|x|$ (p. 3).</p><div class="box def"><b class="t">Definition (p. 3)</b>$$|x| = \\begin{cases} -x & \\text{if } x < 0 \\\\ x & \\text{if } x \\ge 0 \\end{cases}$$</div><p>The $-x$ looks like it makes things negative, but when $x < 0$, $-x$ is positive. That is the point. In general (p. 4): if $f(x) < 0$ then $|f(x)| = -f(x)$, and if $f(x) \\ge 0$ then $|f(x)| = f(x)$.</p><div class="box"><b class="t">Properties to memorize (p. 4)</b>(i) $|x| = \\sqrt{x^2}$<br>(ii) $|xy| = |x|\\,|y|$<br>(iii) $|x| = a$ if and only if $x = \\pm a$, for any $a \\ge 0$<br>(iv) $|x| < a$ if and only if $-a < x < a$, for any $a > 0$<br>(v) $|x| > a$ if and only if $x < -a$ or $x > a$, for any $a > 0$</div><p>One exercise on p. 4 asks whether $|-a| = a$ for all real $a$. It doesn't: $a = -2$ gives $|2| = 2 \\neq -2$.</p>`, ref:"pp. 3 to 4"},
