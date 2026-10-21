@@ -99,7 +99,7 @@ M127.lecture({
     ftc:{title:"FTC Part 2: the area equals the rise in F", cap:"<b>Fig. 4.3</b> Bottom: the area under $y=f(x)$ from $a$ to $b$, computed by adding thin rectangles. Top: an antiderivative $F$ with $F'(x)=f(x)$. The rise $F(b)-F(a)$ matches the area. (Lecture 4, pp. 5 to 6)",
       build(host,{PLOT}){
         const PI=Math.PI;
-        const P={lin:{f:x=>2*x,F:x=>x*x,fl:"f(x) = 2x",Fl:"F(x) = x²",x:[-0.3,3.2],yF:[-1,9.6],yf:[-0.8,6.6],a:1,b:2,lo:0,hi:3,piX:false,ysF:2,ysf:2},
+        const P={lin:{f:x=>2*x,F:x=>x*x,fl:"f(x) = 2x",Fl:"F(x) = x²",x:[-0.3,3.35],yF:[-1,10.4],yf:[-0.8,6.8],a:1,b:2,lo:0,hi:Math.PI,piX:false,ysF:2,ysf:2},
                  cos:{f:Math.cos,F:Math.sin,fl:"f(x) = cos(x)",Fl:"F(x) = sin(x)",x:[-0.25,3.45],yF:[-1.3,1.3],yf:[-1.3,1.3],a:0,b:PI/4,lo:0,hi:PI,piX:true,ysF:0.5,ysf:0.5}};
         let key="lin", a=1, b=2;
         const oT={x:P.lin.x,y:P.lin.yF,h:230,c:"var(--u2)",xlabel:"x",ylabel:"F",ystep:2}, oB={x:P.lin.x,y:P.lin.yf,h:230,c:"var(--u2)",xlabel:"x",ylabel:"f",ystep:2};
@@ -108,16 +108,16 @@ M127.lecture({
         const area=B.area(P.lin.f,a,b);
         const ha=T.line(0,0,1,1,{cls:"lt dash"}), hb=T.line(0,0,1,1,{cls:"lt dash"}), rise=T.line(0,0,1,1,{cls:"tan"});
         const pa=T.dot(a,1,{filled:true,r:4}), pb=T.dot(b,4,{filled:true,r:4});
-        const rl=T.label(0,0,"F(b) − F(a)",{cls:"lblc",dx:6});
+        const rl=T.label(0,0,"F(b) − F(a)",{cls:"lblc",dx:-6,anchor:"end"});
         const ctl=PLOT.controls(host);
         PLOT.seg(ctl,{label:"Integrand",items:[["lin","f(x) = 2x"],["cos","f(x) = cos(x)"]],value:"lin",onchange:v=>{ key=v; const p=P[v]; a=p.a; b=p.b; oT.piX=oB.piX=p.piX; oT.ystep=p.ysF; oB.ystep=p.ysf; T.setView(p.x,p.yF); B.setView(p.x,p.yf); Fc.update(p.F); fc.update(p.f); Ha.move(a); Hb.move(b); draw(); }});
         const ro=PLOT.readout(host);
-        const Ha=B.handle(a,0,{axis:"x",bounds:[0,3.2],clickToMove:false,label:"Lower limit a",onMove:x=>{ a=Math.max(P[key].lo,Math.min(P[key].hi,x)); draw(); }});
-        const Hb=B.handle(b,0,{axis:"x",bounds:[0,3.2],clickToMove:false,label:"Upper limit b",onMove:x=>{ b=Math.max(P[key].lo,Math.min(P[key].hi,x)); draw(); }});
+        const Ha=B.handle(a,0,{axis:"x",bounds:[0,Math.PI],clickToMove:false,label:"Lower limit a",onMove:x=>{ a=Math.max(P[key].lo,Math.min(P[key].hi,x)); draw(); }});
+        const Hb=B.handle(b,0,{axis:"x",bounds:[0,Math.PI],clickToMove:false,label:"Upper limit b",onMove:x=>{ b=Math.max(P[key].lo,Math.min(P[key].hi,x)); draw(); }});
         function draw(){
           const p=P[key], Fa=p.F(a), Fb=p.F(b);
           area.update(p.f,a,b);
-          ha.set(T.x0,Fa,a,Fa); hb.set(T.x0,Fb,b,Fb); rise.set(b,Fa,b,Fb); pa.set(a,Fa); pb.set(b,Fb); rl.set(b,(Fa+Fb)/2);
+          ha.set(T.x0,Fa,a,Fa); hb.set(T.x0,Fb,b,Fb); rise.set(b,Fa,b,Fb); pa.set(a,Fa); pb.set(b,Fb); const rt=b<T.x1-1.1; rl.setAttribute("text-anchor",rt?"start":"end"); rl.setAttribute("x",T.X(b)+(rt?6:-6)); rl.setAttribute("y",T.Y((Fa+Fb)/2)+4);
           const h=(b-a)/400; let s=0; for(let i=0;i<400;i++) s+=p.f(a+(i+0.5)*h)*h;   // thin rectangles (midpoints)
           ro.innerHTML=`${p.fl}, ${p.Fl} &nbsp; a = <b>${a.toFixed(3)}</b> &nbsp; b = <b>${b.toFixed(3)}</b><br>area under f (signed) = <b>${s.toFixed(4)}</b> &nbsp; F(b) − F(a) = <b>${(Fb-Fa).toFixed(4)}</b>`;
         }
@@ -164,7 +164,7 @@ M127.lecture({
           hint:"Find $\\Delta t = \\frac{b-a}{n}$ and the points $t_i = a + i\\Delta t$ first. Then read only the columns for $t_0, \\dots, t_{n-1}$.",
           steps:[`$a = ${ttex(Q(a))}$, $b = ${ttex(b)}$, $n = ${n}$, so $\\Delta t = \\frac{b-a}{n} = \\frac{${ttex(b)} - ${ttex(Q(a))}}{${n}} = ${dtT}$.`,
             `$t_i = a + i\\Delta t$ for $0 \\le i \\le ${n}$: $${allT.join(",\\ ")}$.`,
-            `The left sum uses $t_0$ to $t_{${n-1}}$ only. `+(unused.length?`The columns at $t = ${unused.map(ttex).join(",\\ ")}$ are not used.`:`The last column, $t_{${n}} = ${ttex(b)}$, is not used.`),
+            `The left sum uses $t_0$ to $t_{${n-1}}$ only. `+(unused.length?`The column${unused.length>1?"s":""} at $t = ${unused.map(ttex).join(",\\ ")}$ ${unused.length>1?"are":"is"} not used.`:`The last column, $t_{${n}} = ${ttex(b)}$, is not used.`),
             `$\\Delta ${c.Qn} \\approx ${usedT.map((t,i)=>`r(t_{${i}})\\Delta t`).join(" + ")} = ${terms}$`,
             `$= ${dtT}\\left(${idx.map(i=>dec1(vals[i])).join(" + ").replace(/\+ -/g,"- ")}\\right) = ${qshow(res)}$ ${c.u}`],
           answerTeX:`$\\Delta ${c.Qn} \\approx ${qshow(res)}$ ${c.u}`};
@@ -179,7 +179,7 @@ M127.lecture({
           if(kind==="recip"){ fq=t=>Q(k*t.d,t.n); ff=t=>k/t; ftex=`\\frac{${k}}{t}`; }
           else { fq=t=>Q(k*t.d*t.d,t.n*t.n); ff=t=>k/(t*t); ftex=`\\frac{${k}}{t^2}`; }
           a=R.int(1,2); [span,n]=R.pick([[1,2],[1,3],[1,4],[2,4],[2,3],[3,3]]); }
-        const dt=Q(Math.round(span*2),2*n).n!==undefined?Q(Math.round(span*2),2*n):Q(span,n);
+        const dt=Q(Math.round(span*2),2*n);
         const b=qadd(Q(a),qmul(Q(n),dt));
         const ts=[]; for(let i=0;i<=n;i++) ts.push(qadd(Q(a),qmul(Q(i),dt)));
         const vs=ts.slice(0,n).map(fq);
@@ -199,14 +199,14 @@ M127.lecture({
     {id:"L04.g.meaning", title:"What does the integral of a rate mean?", skill:"Interpret $\\int_a^b r(t)\\,dt$ as a net change, with units and the right limits", ref:"pp. 4 to 5",
       gen(R,d){
         const C=[
-          {r:"r",F:"H",desc:"the rate of rainfall, in mm/h, $t$ hours after midnight",start:"A rain gauge already holds 4 mm of water at the start.",qn:"the depth of water in the rain gauge",qu:"mm",ru:"mm/h",wu:"mm/h²",tu:"h",tn:"hour"},
-          {r:"r",F:"V",desc:"the rate oxygen is transferred to the blood, in L/min, $t$ minutes after a test starts",start:"",qn:"the volume of oxygen transferred to the blood",qu:"L",ru:"L/min",wu:"L/min²",tu:"min",tn:"minute"},
-          {r:"v",F:"s",desc:"the velocity of a cyclist, in m/s, $t$ seconds after a timer starts",start:"The cyclist is 20 m past the start line when the timer starts.",qn:"the position of the cyclist",qu:"m",ru:"m/s",wu:"m/s²",tu:"s",tn:"second"},
-          {r:"a",F:"v",desc:"the acceleration of a car, in m/s², $t$ seconds after a timer starts",start:"The car is moving at 5 m/s when the timer starts.",qn:"the velocity of the car",qu:"m/s",ru:"m/s²",wu:"m/s³",tu:"s",tn:"second"},
-          {r:"R",F:"W",desc:"the rate water flows into a reservoir, in megalitres per day, $t$ days after a storm",start:"The reservoir holds 40 megalitres when the storm ends.",qn:"the volume of water in the reservoir",qu:"megalitres",ru:"megalitres/day",wu:"megalitres/day²",tu:"days",tn:"day"},
-          {r:"g",F:"N",desc:"the growth rate of a bacteria colony, in cells/h, $t$ hours after nutrients are added",start:"There are 100 cells when the nutrients are added.",qn:"the number of cells",qu:"cells",ru:"cells/h",wu:"cells/h²",tu:"h",tn:"hour"}];
+          {r:"r",F:"H",desc:"the rate of rainfall, in mm/h, $t$ hours after midnight",start:"A rain gauge already holds 4 mm of water at the start.",qn:"the depth of water in the rain gauge",qu:"mm",ru:"mm/h",wu:"mm/h²",tu:"h",tn:"hour",tw:"hours"},
+          {r:"r",F:"V",desc:"the rate oxygen is transferred to the blood, in L/min, $t$ minutes after a test starts",start:"",qn:"the volume of oxygen transferred to the blood",qu:"L",ru:"L/min",wu:"L/min²",tu:"min",tn:"minute",tw:"minutes"},
+          {r:"v",F:"s",desc:"the velocity of a cyclist, in m/s, $t$ seconds after a timer starts",start:"The cyclist is 20 m past the start line when the timer starts.",qn:"the position of the cyclist",qu:"m",ru:"m/s",wu:"m/s²",tu:"s",tn:"second",tw:"seconds"},
+          {r:"a",F:"v",desc:"the acceleration of a car, in m/s², $t$ seconds after a timer starts",start:"The car is moving at 5 m/s when the timer starts.",qn:"the velocity of the car",qu:"m/s",ru:"m/s²",wu:"m/s³",tu:"s",tn:"second",tw:"seconds"},
+          {r:"R",F:"W",desc:"the rate water flows into a reservoir, in megalitres per day, $t$ days after a storm",start:"The reservoir holds 40 megalitres when the storm ends.",qn:"the volume of water in the reservoir",qu:"megalitres",ru:"megalitres/day",wu:"megalitres/day²",tu:"days",tn:"day",tw:"days"},
+          {r:"g",F:"N",desc:"the growth rate of a bacteria colony, in cells/h, $t$ hours after nutrients are added",start:"There are 100 cells when the nutrients are added.",qn:"the number of cells",qu:"cells",ru:"cells/h",wu:"cells/h²",tu:"h",tn:"hour",tw:"hours"}];
         const c=R.pick(C);
-        const A=R.int(0,3), B=A+R.int(2,6);
+        const A=R.int(d===3?1:0,3), B=A+R.int(2,6);
         const I=`$\\int_{${A}}^{${B}} ${c.r}(t)\\,dt$`;
         if(d===1){
           const right=`The net change in ${c.qn} from $t = ${A}$ to $t = ${B}$`;
@@ -232,7 +232,7 @@ M127.lecture({
         const right=`$\\int_{${lo}}^{${hi}} ${c.F}'(t)\\,dt$`;
         const opts=[right, mode===0?`$\\int_{0}^{${k}} ${c.F}'(t)\\,dt$`:`$\\int_{0}^{${k}} ${c.F}'(t)\\,dt$`, `$\\int_{${lo}}^{${hi}} ${c.F}(t)\\,dt$`, `$${c.F}'(${hi}) - ${c.F}'(${lo})$`, mode===0?`$\\int_{${k}}^{${k+1}} ${c.F}'(t)\\,dt$`:`$\\int_{${A}}^{${A+k}} ${c.F}''(t)\\,dt$`];
         const o=R.shuffle([0,1,2,3,4]);
-        return {prompt:`$${c.F}(t)$ is ${c.qn} (in ${c.qu}), where $t$ is measured in ${c.tu}. Which expression gives the change in ${c.qn} ${ask}?`, parts:[{answer:{type:"mc",options:o.map(i=>opts[i]),correct:o.indexOf(0)}}],
+        return {prompt:`$${c.F}(t)$ is ${c.qn} (in ${c.qu}), where $t$ is measured in ${c.tw}. Which expression gives the change in ${c.qn} ${ask}?`, parts:[{answer:{type:"mc",options:o.map(i=>opts[i]),correct:o.indexOf(0)}}],
           hint:"Integrate the rate of change, $"+c.F+"'(t)$, and pick the limits from the time interval in words.",
           steps:[`The change in a quantity is the integral of its rate of change, so the integrand is $${c.F}'(t)$, not $${c.F}(t)$.`, mode===0?`The ${ORD[k]} ${c.tn} runs from $t = ${k-1}$ to $t = ${k}$ (the first runs from 0 to 1).`:`The interval is $t = ${A}$ to $t = ${A+k}$.`, `So the change is ${right} $= ${c.F}(${hi}) - ${c.F}(${lo})$.`],
           answerTeX:right};
@@ -244,7 +244,7 @@ M127.lecture({
           if(R.int(0,1)===0){ const k=R.nz(-6,9), a=R.int(-3,1), b=a+R.int(1,5); const kt=M.term(k,"t",1,true); const val=k*b-k*a;
             return {prompt:`Evaluate $\\int_{${a}}^{${b}} ${k}\\,dt$.`, answer:{type:"num",answer:String(val)}, verify:{value:simpson(()=>k,a,b)},
               hint:"Find a function whose derivative is the constant "+k+". Watch the variable: it is $t$.",
-              steps:[`The integrand is $f(t) = ${k}$. A function with $F'(t) = ${k}$ is $F(t) = ${kt}$.`,`$\\int_{${a}}^{${b}} ${k}\\,dt = ${kt}\\Big|_{${a}}^{${b}} = ${k}(${b}) - ${k}(${par(a)})$`,`$= ${k*b} - ${par(k*a)} = ${val}$`],
+              steps:[`The integrand is $f(t) = ${k}$. A function with $F'(t) = ${k}$ is $F(t) = ${kt}$.`,`$\\int_{${a}}^{${b}} ${k}\\,dt = ${kt}\\Big|_{${a}}^{${b}} = ${par(k)}(${b}) - ${par(k)}(${a})$`,`$= ${k*b} - ${par(k*a)} = ${val}$`],
               answerTeX:`$${val}$`}; }
           const m=R.pick([2,4,6]), a=R.int(0,2), b=a+R.int(1,3), h=m/2; const val=h*(b*b-a*a);
           return {prompt:`Evaluate $\\int_{${a}}^{${b}} ${m}x\\,dx$.`, answer:{type:"num",answer:String(val)}, verify:{value:simpson(x=>m*x,a,b)},
@@ -272,7 +272,7 @@ M127.lecture({
           const fin=li===0?U[2]:(U[3]==="1"?"\\frac{1}{2}":U[3]==="0"?"-\\frac{1}{2}":`${U[2]} - \\frac{1}{2}`);
           return {prompt:`Evaluate $\\int_{${L[0]}}^{${U[0]}} \\cos(x)\\,dx$.`, answer:{type:"num",answer:ans}, verify:{value:simpson(Math.cos,L[1],U[1])},
             hint:"Which function has derivative $\\cos(x)$? Then use exact values of sine.",
-            steps:[`A function with $F'(x) = \\cos(x)$ is $F(x) = \\sin(x)$.`,`$\\int_{${L[0]}}^{${U[0]}} \\cos(x)\\,dx = \\sin(x)\\Big|_{${L[0]}}^{${U[0]}} = \\sin\\left(${U[0]}\\right) - \\sin\\left(${L[0]}\\right)$`,`$= ${U[2]} - ${L[2]}${fin!==U[2]||li>0?` = ${fin}`:""}$`],
+            steps:[`A function with $F'(x) = \\cos(x)$ is $F(x) = \\sin(x)$.`,`$\\int_{${L[0]}}^{${U[0]}} \\cos(x)\\,dx = \\sin(x)\\Big|_{${L[0]}}^{${U[0]}} = \\sin\\left(${U[0]}\\right) - \\sin\\left(${L[0]}\\right)$`,`$= ${U[2]} - ${L[2]}${fin!==`${U[2]} - ${L[2]}`?` = ${fin}`:""}$`],
             answerTeX:`$${fin}$`};
         }
         if(kind==="exp"){ const c=R.int(1,3), a=R.pick([0,0,-1]);
@@ -316,7 +316,7 @@ M127.lecture({
             answerTeX:`$${val}$ ${C[4]}`};
         }
         const a=R.int(0,2), b=a+R.int(1,2);
-        const k=R.int(1,7), m=R.pick([2,3,4,5]);
+        const k=R.int(1,7), m=R.pick([3,4,5]);
         const cands=[["x^2",x=>x*x],[`x^2 + ${k}`,x=>x*x+k],[`${m}x`,x=>m*x],["x^3",x=>x*x*x],[`${m}x^2`,x=>m*x*x],[String(k+1),x=>k+1],["x",x=>x],["2x",x=>2*x],[`x^3 - ${k}`,x=>x*x*x-k]];
         const pick=R.int(0,cands.length-1); const V=cands[pick][1](b)-cands[pick][1](a);
         const wrong=R.shuffle(cands.filter((c,i)=>i!==pick && c[1](b)-c[1](a)!==V && c[0]!==cands[pick][0])).slice(0,4);

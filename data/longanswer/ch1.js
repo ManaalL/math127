@@ -1,6 +1,6 @@
 /* Long-answer bank: Course notes Chapter 1 (examples, exercises, end of section and end of chapter problems).
    Source: D. Wolczuk, Calculus for the Sciences (CC BY-NC 4.0), with the official exercise and problem solutions.
-   Generated from the catalogue in work/notes/coursenotes_ch1.md. */
+   Transcribed from the catalogue in work/notes/coursenotes_ch1.md. */
 M127.addLongAnswer([
   {id:"CN1.1.1-EX1", src:"Course notes 1.1, Example 1", lec:"L01", kind:"example", page:"p. 2",
    q:"Determine the derivative of $f(x) = 3x^2 + e^x + 2$.",
