@@ -280,7 +280,7 @@ M.lecture({
             answerTeX:`$f'(x) = 2x\\ln(${a})\\,${a}^{${inner}}$`}; }
         if(kind==="quot"){ const n=R.int(1,3); const xn=n===1?"x":`x^{${n}}`;
           const top=n===1?`${a}^x - x\\cdot ${a}^x\\ln(${a})`:`${n}x^{${n-1}}\\cdot ${a}^x - x^{${n}}\\cdot ${a}^x\\ln(${a})`;
-          const simp=n===1?`\\frac{1 - x\\ln(${a})}{${a}^x}`:`\\frac{x^{${n-1}}\\left(${n} - x\\ln(${a})\\right)}{${a}^x}`;
+          const simp=n===1?`\\frac{1 - x\\ln(${a})}{${a}^x}`:`\\frac{${n===2?"x":`x^{${n-1}}`}\\left(${n} - x\\ln(${a})\\right)}{${a}^x}`;
           return {prompt:`Differentiate $f(x) = \\frac{${xn}}{${a}^x}$.`, answer:{answer:`x^${n-1}*(${n} - x*ln(${a}))/${a}^x`,vars:["x"],domain:[-1.5,1.5]}, verify:{deriv:`x^${n}/${a}^x`},
             hint:"Quotient rule $\\frac{f'g - fg'}{g^2}$ with $g = a^x$. At the end, cancel one factor of $a^x$.",
             steps:[`Top $${xn}$ has derivative $${n===1?"1":`${n}x^{${n-1}}`}$; bottom $${a}^x$ has derivative $${a}^x\\ln(${a})$.`,`Quotient rule: $f'(x) = \\frac{${top}}{(${a}^x)^2}$.`,`$(${a}^x)^2 = ${a}^{2x}$. Factor $${a}^x$ out of the top and cancel: $f'(x) = ${simp}$.`],
@@ -289,7 +289,7 @@ M.lecture({
         const ek=`${a}^{${cc(k)}x}`;
         return {prompt:`Differentiate $g(x) = ${cc(c)}x^2\\cdot ${ek}$.`, answer:{answer:`${c}*(2x*${a}^(${k}x) + x^2*${a}^(${k}x)*ln(${a})*${k})`,vars:["x"],domain:[-1.2,1.2]}, verify:{deriv:`${c}*x^2*${a}^(${k}x)`},
           hint:"Product rule, and the chain rule for $"+ek+"$.",
-          steps:[`$\\frac{d}{dx}${ek} = ${a}^{${cc(k)}x}\\ln(${a})\\cdot ${k<0?`(${k})`:k}$ by the chain rule.`,`Product rule: $g'(x) = ${cc(c)}\\left[2x\\cdot ${ek} + x^2\\cdot ${k}\\ln(${a})\\,${ek}\\right]$.`],
+          steps:[`$\\frac{d}{dx}${ek} = ${a}^{${cc(k)}x}\\ln(${a})\\cdot ${k<0?`(${k})`:k}$ by the chain rule.`,`Product rule: $g'(x) = ${cc(c)}\\left[2x\\cdot ${ek} + x^2\\cdot ${k<0?`(${k})`:k}\\ln(${a})\\,${ek}\\right]$.`],
           answerTeX:`$g'(x) = ${cc(c)}\\left[2x\\cdot ${ek} ${k<0?"-":"+"} ${Math.abs(k)===1?"":Math.abs(k)}\\ln(${a})\\,x^2\\cdot ${ek}\\right]$`};
       }},
     {id:"L10.g.iax", title:"Integrals of $a^x$", skill:"Antiderivatives, definite integrals and IVPs with $a^x$", ref:"pp. 2 to 3",
@@ -314,7 +314,7 @@ M.lecture({
             steps:[`An antiderivative of $${c===1?"":c+"\\cdot "}${a}^x$ is $\\frac{${c===1?"":c+"\\cdot "}${a}^x}{\\ln(${a})}$.`,`$\\displaystyle\\int_{${L}}^{${m}} ${c===1?"":c+"\\cdot "}${a}^x\\,dx = \\left[\\frac{${c===1?"":c+"\\cdot "}${a}^x}{\\ln(${a})}\\right]_{${L}}^{${m}} = \\frac{${c===1?"":c+"\\cdot "}${Math.pow(a,m)} - ${c===1?"":c+"\\cdot "}${aL}}{\\ln(${a})}$`,`$= ${resT} \\approx ${val.toFixed(4)}$`],
             answerTeX:`$${resT}$`};
         }
-        const x0=R.pick([0,1,2,-1]), y0=R.int(-4,6), b=R.pick([0,R.nz(-4,4)]);
+        let x0, y0, b; do{ x0=R.pick([0,1,2,-1]); y0=R.int(-4,6); b=R.pick([0,R.nz(-4,4)]); }while(a===2&&x0===1&&y0===2&&b===0);
         const A=x0>=0?String(Math.pow(a,x0)):`\\frac{1}{${a}}`;
         const Aa=x0>=0?String(Math.pow(a,x0)):`(1/${a})`;
         const rhs=`${a}^x${b?M.term(b,"x",0):""}`;
@@ -337,7 +337,7 @@ M.lecture({
               steps:[`Take $\\ln$ of both sides: $\\ln(e^x) = \\ln(${m})$.`,`$\\ln(e^x) = x$, so $x = \\ln(${m})$.`], answerTeX:`$x = \\ln(${m})$`}; }
           const k=R.nz(-3,4);
           return {prompt:`Solve $\\ln(x) = ${k}$. Give the exact answer.`, answer:{type:"list",answer:`e^(${k})`}, hint:"$\\ln(x)=y$ if and only if $x=e^y$.",
-            steps:[`Apply $e^{(\\cdot)}$ to both sides: $e^{\\ln(x)} = e^{${k}}$.`,`So $x = e^{${k}}$, which is positive.`], answerTeX:`$x = e^{${k}}$`};
+            steps:[`Apply $e^{(\\cdot)}$ to both sides: $e^{\\ln(x)} = e^{${k}}$.`,`So $x = ${k===1?"e":`e^{${k}}`}$, which is positive.`], answerTeX:`$x = ${k===1?"e":`e^{${k}}`}$`};
         }
         if(d===2){
           let r, s; do{ r=R.int(1,7); s=R.int(1,6); }while(r===s);

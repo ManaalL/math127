@@ -286,8 +286,10 @@ M.lecture({
         }
         const caseSteps=(A,B,r1,r2)=>[`Case 1: if $x<0$, then $|x|=-x$, so $${A} ${r1} -x ${r2} ${B}$. Multiply by $-1$, which flips both signs: $-${A} ${flip[r1]} x ${flip[r2]} -${B}$.`,`Case 2: if $x\\ge0$, then $|x|=x$, so $${A} ${r1} x ${r2} ${B}$.`];
         if(d===2){
-          const c1=R.int(1,6), c2=c1+R.int(1,7), r1=R.pick(["<","\\le"]), r2=R.pick(["<","\\le"]);
+          const c1=R.int(1,6), r1=R.pick(["<","\\le"]), r2=R.pick(["<","\\le"]);
+          let c2=c1+R.int(1,7);
           const m=R.pick([1,1,2,3]), s=R.int(-4,4);
+          if(m===1&&s===0&&c1===2&&c2===5) c2=6;
           const k1=m*c1+s, k2=m*c2+s;
           const mid=`${m===1?"":m}x^2${M.term(s,"x",0)}`;
           const A=sqT(c1), B=sqT(c2), Aa=sqA(c1), Ba=sqA(c2);
@@ -385,7 +387,7 @@ M.lecture({
               :[`If $-${m}<x<${m}$, then $x^2<${c}$, so $${c}-x^2>0$.`,`By definition, $|u|=u$ when $u\\ge0$: $|${c}-x^2| = ${c}-x^2$.`],
             answerTeX:out?`$x^2-${c}$`:`$${c}-x^2$`};
         }
-        const k=R.int(1,9);
+        const k=R.int(2,9);
         if(kind==="c"){
           const neg=R.pick([true,true,false]);
           return {prompt:`Given that $x ${neg?"<":">"} 0$, fully simplify $\\dfrac{\\sqrt{x^4+${k===1?"":k}x^2}}{x}$.`,
@@ -488,7 +490,7 @@ M.lecture({
           else { L.push(`${A}\\le |x|\\le ${B}`); L.push(e===5?`\\text{Case 1, } x<0:\\ ${A}\\le -x\\le ${B},\\ \\text{so } -${A}\\le x\\le -${B}`:`\\text{Case 1, } x<0:\\ ${A}\\le -x\\le ${B},\\ \\text{so } -${A}\\ge x\\ge -${B}`); L.push(`\\text{Case 2, } x\\ge0:\\ ${A}\\le x\\le ${B}`); }
           note={1:"Line (1) keeps the absolute value bars after using property (iv).",4:"Line (4) writes $x$ where property (i) gives $|x|$. That loses the negative solutions.",5:"Line (5) multiplies by $-1$ without flipping the inequality signs."}[e];
         } else if(T==="T3"){
-          const k=R.int(1,9), e=R.pick([3,4,5]); bad=e;
+          const k=R.int(2,9), e=R.pick([3,4,5]); bad=e;
           prob=`Given that $x<0$, fully simplify $\\dfrac{\\sqrt{x^4+${k===1?"":k}x^2}}{x}$.`;
           L=[`\\frac{\\sqrt{x^4+${k===1?"":k}x^2}}{x}=\\frac{\\sqrt{x^2(x^2+${k})}}{x}`,`=\\frac{\\sqrt{x^2}\\sqrt{x^2+${k}}}{x}`];
           if(e===3){ L.push(`=\\frac{x\\sqrt{x^2+${k}}}{x}`); L.push(`=\\sqrt{x^2+${k}}`); }
