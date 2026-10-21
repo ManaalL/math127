@@ -139,7 +139,7 @@ M127.lecture({
             const e1=Q(e.n+e.d,e.d), coef=qmul(Q(c),Q(e1.d,e1.n)); const val=qmul(coef,Q(Math.pow(r,e1.n))), C=qsub(Q(y0),val);
             P={it:`${c===1?"":c}${E[2]}`, ia:`${c}*x^(${e.n}/${e.d})`, Ft:tT(coef,"x",e1,true), Fa:`(${coef.n}/${coef.d})*x^(${e1.n}/${e1.d})`, sub:`${qtex(coef)}(${x0})^{${e1.n}/${e1.d}}`, val:{t:qtex(val),a:qasc(val),q:val}, C:{t:qtex(C),a:qasc(C),q:C}, x0T:String(x0), y0, dom:[0.5,8], note:`Power rule: add 1 to the power, $${qtex(e)} + 1 = ${qtex(e1)}$, and divide by $${qtex(e1)}$. Then $(${x0})^{${e1.n}/${e1.d}} = ${Math.pow(r,e1.n)}$.`}; }
           else if(kind==="split"){ const a=R.nz(-4,4), y0=R.int(-5,8); const val=Q(1-a), C=qsub(Q(y0),val);
-            P={it:`\\frac{x^2 ${a<0?"-":"+"} ${Math.abs(a)}}{x^2}`, ia:`(x^2 + ${a})/x^2`, Ft:`x ${a<0?"+":"-"} \\frac{${Math.abs(a)}}{x}`, Fa:`x - ${a}/x`, sub:`1 ${a<0?"+":"-"} \\frac{${Math.abs(a)}}{1}`, val:{t:qtex(val),a:qasc(val),q:val}, C:{t:qtex(C),a:qasc(C),q:C}, x0T:"1", y0, dom:[0.4,3], note:`Split first: $\\frac{x^2 ${a<0?"-":"+"} ${Math.abs(a)}}{x^2} = 1 ${a<0?"-":"+"} ${Math.abs(a)}x^{-2}$.`}; }
+            P={it:`\\frac{x^2 ${a<0?"-":"+"} ${Math.abs(a)}}{x^2}`, ia:`(x^2 + ${a})/x^2`, Ft:`x ${a<0?"+":"-"} \\frac{${Math.abs(a)}}{x}`, Fa:`x - ${a}/x`, sub:`1 ${a<0?"+":"-"} \\frac{${Math.abs(a)}}{1}`, val:{t:qtex(val),a:qasc(val),q:val}, C:{t:qtex(C),a:qasc(C),q:C}, x0T:"1", y0, dom:[0.4,3], note:`Split first: $\\frac{x^2 ${a<0?"-":"+"} ${Math.abs(a)}}{x^2} = 1 ${a<0?"-":"+"} ${Math.abs(a)===1?"":Math.abs(a)}x^{-2}$.`}; }
           else { const a=R.nz(-3,3), b=R.int(1,4), y0=R.int(-5,8); v="t"; const val=Q(b), C=qsub(Q(y0),val);
             P={it:`${a===1?"":a===-1?"-":a}\\cos(t) + ${b===1?"":b}e^{t}`, ia:`${a}*cos(t) + ${b}e^t`, Ft:`${a===1?"":a===-1?"-":a}\\sin(t) + ${b===1?"":b}e^{t}`, Fa:`${a}*sin(t) + ${b}e^t`, sub:`${a===1?"":a===-1?"-":a}\\sin(0) + ${b===1?"":b}e^{0}`, val:{t:qtex(val),a:qasc(val),q:val}, C:{t:qtex(C),a:qasc(C),q:C}, x0T:"0", y0, dom:[-2,2]}; } }
         const dv=v==="t"?"t":"x";
@@ -205,7 +205,7 @@ M127.lecture({
         const it=`\\frac{${k}}{\\sqrt{x}}`.replace("\\frac{-","-\\frac{");
         const head=`$y = \\int ${it}\\,dx = ${2*k}\\sqrt{x} + C$<br>Using $y(${x0}) = ${y0}$: $${y0} = ${2*k}\\sqrt{${x0}} + C = ${val} + C$`;
         const good=`${head}, so $C = ${C}$.<br>Therefore $y = ${2*k}\\sqrt{x} ${sgn(C)}$.`;
-        const bads=R.shuffle([[`${head}, so $C = ${y0}$.<br>Therefore $y = ${2*k}\\sqrt{x} ${sgn(y0)}$.`,`sets $C = ${y0}$, the $y$-value, without subtracting $${val}$`],
+        const bads=R.shuffle([[`${head}, so $C = ${y0}$.<br>Therefore $y = ${2*k}\\sqrt{x} ${sgn(y0)}$.`,`sets $C = ${y0}$, the $y$-value, instead of solving $${y0} = ${val} + C$ for $C$`],
           [`${head}, so $C = ${C}$.<br>Therefore the solution is $${2*k}\\sqrt{x} ${sgn(C)}$.`,"never writes \"$y =$\", so the final answer is not an equation"],
           [`$y = \\int ${it}\\,dx = ${-k}\\cdot\\frac{1}{2}x^{-3/2} + C$<br>Using $y(${x0}) = ${y0}$ to find $C$, the solution is $y = ${2*k}\\sqrt{x} ${sgn(C)}$.`,"differentiates instead of integrating in the first line"],
           [`$y = \\int ${it}\\,dx = ${2*k}\\sqrt{x} + C$<br>Therefore $y = ${2*k}\\sqrt{x} + C$.`,"never uses the initial condition, so $C$ is still unknown"]]).slice(0,2);
@@ -232,7 +232,7 @@ M127.lecture({
           const ans=P.cos?`cos(${xs})`:String(val);
           return {prompt:`Let $$${fx}$$ Find $f(${xs})$.`, answer:{type:"num",answer:ans},
             hint:`Check each condition with $x = ${xs}$. Be careful with $<$ versus $\\le$ at the break points.`,
-            steps:[`$x = ${xs}$ satisfies $${c[i]}$${d===2?` (it fails the other conditions: ${c.filter((_,j)=>j!==i).map(s=>`$${s}$`).join(" and ")})`:""}.`,`So use the ${["first","second","third"][i]} piece: $f(${xs}) = ${P.s(xs)}${P.cos?"":` = ${val}`}$.`],
+            steps:[`$x = ${xs}$ satisfies $${c[i]}$${d===2?` (it fails the other conditions: ${c.filter((_,j)=>j!==i).map(s=>`$${s}$`).join(" and ")})`:""}.`,`So use the ${["first","second","third"][i]} piece: $f(${xs}) = ${P.s(xs)}${P.cos||P.s(xs)===String(val)?"":` = ${val}`}$.`],
             answerTeX:`$f(${xs}) = ${P.cos?`\\cos(${xs})`:val}$`};
         }
         const T=R.int(1,4), r=q+R.int(1,3);

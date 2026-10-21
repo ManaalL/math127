@@ -35,7 +35,7 @@ M.lecture({
     {id:"L09.f.notation", name:"Notation warning", tex:"f^{-1} \\ne \\frac{1}{f}", note:"$f^{-1}$ means the inverse of $f$.", ref:"p. 1"},
     {id:"L09.f.swap", name:"Inverse swaps the variables", tex:"f(x)=y \\iff f^{-1}(y)=x", ref:"p. 1",
       blank:{tex:"f(x)=y \\iff f^{-1}(y)=\\boxed{\\,?\\,}", text:true, accept:["x"]}},
-    {id:"L09.f.hlt", name:"Horizontal Line Test", tex:"\\text{invertible on } I \\iff \\text{every horizontal line crosses the graph over } I \\text{ at most once}", note:"The notes state it as \"invertible if every horizontal line crosses at most once\". It works because $f^{-1}$ swaps the variables, so a second crossing would make $f^{-1}$ fail the vertical line test.", ref:"p. 2"},
+    {id:"L09.f.hlt", name:"Horizontal Line Test", tex:"f \\text{ is invertible on } I \\text{ if every horizontal line crosses the graph over } I \\text{ at most once}", note:"It works because $f^{-1}$ swaps the variables, so a second crossing would make $f^{-1}$ fail the vertical line test.", ref:"p. 2"},
     {id:"L09.f.find", name:"Finding an inverse (example)", tex:"V=2t^3+1 \\;\\Rightarrow\\; t=v^{-1}(V)=\\sqrt[3]{\\frac{V-1}{2}}", note:"Solve for the independent variable. Do not swap the variable names.", ref:"p. 3",
       blank:{tex:"v(t)=2t^3+1 \\;\\Rightarrow\\; v^{-1}(V)=\\boxed{\\,?\\,}", answer:"((V-1)/2)^(1/3)", vars:["V"], domain:[1.5,9]}},
     {id:"L09.f.domran", name:"Domain and range of $f^{-1}$", tex:"\\text{dom}(f^{-1})=\\{f(x): x \\text{ in } I\\}, \\qquad \\text{ran}(f^{-1})=I", note:"The domain of $f^{-1}$ is the range of $f$ restricted to $I$.", ref:"pp. 3 to 4",
@@ -200,8 +200,11 @@ M.lecture({
       }},
     {id:"L09.g.defn", title:"Using the definition", skill:"Read $f(a)=b$ as $f^{-1}(b)=a$", ref:"p. 1",
       gen(R,d){
-        const a=R.nz(-6,9), q=R.pick([2,3,4,5,7]), p=R.nz(-9,9);
-        const b=fr(p,q), bt=b.includes("frac")?b:b;
+        let a=R.nz(-6,9); const q=R.pick([2,3,4,5,7]); let p=R.nz(-9,9);
+        if(Math.abs(a)===1) a*=2;                                   /* a=±1 would make "g(b)=1/a" true */
+        if(a===5&&p===3&&q===4) p=4;                                 /* keep clear of the real Quiz 4 numbers */
+        while(Math.abs(p)===q||p===a*q) p+=p>0?1:-1;                 /* b must not be ±1 or equal to a */
+        const b=fr(p,q), bt=b;
         const gname=R.pick(["g","h","f^{-1}"]);
         if(d===1){
           return {prompt:`Assume $f$ is invertible on $(-\\infty,\\infty)$ and $f(${a})=${bt}$. What is $f^{-1}\\left(${bt}\\right)$?`, answer:{type:"num",answer:String(a)}, verify:{value:a},
@@ -210,7 +213,7 @@ M.lecture({
             answerTeX:`$f^{-1}\\left(${bt}\\right)=${a}$`};
         }
         const g=gname==="f^{-1}"?"g":gname;
-        let c=R.nz(-6,9); if(c===a) c=a+1;
+        let c=R.nz(-6,9); while(c===a||c*q===p) c++;                 /* c=b would make "g(c)=a" true */
         let right, opts;
         if(d===2){
           right=`$${g}\\left(${bt}\\right)=${a}$`;
@@ -249,7 +252,7 @@ M.lecture({
         if(d===2){
           const kind=R.pick(["sqc","sqc","shift","expanded"]), neg=R.pick([true,false]);
           if(kind==="sqc"){
-            const c=R.int(1,9), ft=`x^2-${c}`, I=neg?"(-\\infty,0]":"[0,\\infty)";
+            const c=R.int(2,9), ft=`x^2-${c}`, I=neg?"(-\\infty,0]":"[0,\\infty)";
             return {prompt:`Find the inverse $f^{-1}(y)$ of $f(x)=${ft}$ on the interval $${I}$.`, answer:{answer:`${neg?"-":""}sqrt(y+${c})`,vars:["y"],domain:[-c+0.2,-c+8]},
               hint:"Solve for $x$. When you take the square root of $x^2$, write $|x|$, then use the interval to remove the bars.",
               steps:[`$y=x^2-${c}$, so $y+${c}=x^2$.`,`$\\sqrt{y+${c}}=\\sqrt{x^2}=|x|$ (property (i)).`,neg?`$\\sqrt{y+${c}}=-x$ since $x\\le0$, so $-\\sqrt{y+${c}}=x$.`:`$\\sqrt{y+${c}}=x$ since $x\\ge0$.`,`Thus $f^{-1}(y)=${neg?"-":""}\\sqrt{y+${c}}$.`],
@@ -309,7 +312,7 @@ M.lecture({
         const pickLin=()=>{ const m=R.pick([2,3,4,-2,-3]), k=R.int(-12,12), a=R.int(-3,5), b=a+R.int(2,6); return {t:`${m}x${M.term(k,"x",0)}`,f:x=>m*x+k,a,b,dir:m>0?"inc":"dec",why:`$f$ is a line with slope ${m}, so it is ${m>0?"increasing":"decreasing"}.`}; };
         if(d===1){
           if(R.int(0,1)){ C=pickLin(); }
-          else { const c=R.int(1,9), neg=R.pick([true,false]); C={t:`x^2-${c}`,inf:true,neg,c}; }
+          else { const c=R.int(2,9), neg=R.pick([true,false]); C={t:`x^2-${c}`,inf:true,neg,c}; }
         } else if(d===2){
           const k=R.pick(["cub","cubneg","sqrt","lin"]);
           if(k==="lin") C=pickLin();
@@ -390,7 +393,7 @@ M.lecture({
         const T=d===1?"A":d===2?R.pick(["A","D"]):R.pick(["B","D","A"]);
         let prob, L, bad, note;
         if(T==="A"){
-          const c=R.int(1,9), e=R.pick([3,5,6]); bad=e;
+          const c=R.int(2,9), e=R.pick([3,5,6]); bad=e;
           prob=`Find the inverse $f^{-1}(y)$ of $f(x)=x^2-${c}$ on the interval $(-\\infty,0]$.`;
           L=[`y=x^2-${c}`,`y+${c}=x^2`];
           if(e===3){ L.push(`\\sqrt{y+${c}}=x`); L.push(`\\text{Thus } f^{-1}(y)=\\sqrt{y+${c}}`); }
@@ -399,7 +402,7 @@ M.lecture({
             else { L.push(`\\sqrt{y+${c}}=-x\\ \\text{ since } x\\le0`); L.push(`-\\sqrt{x+${c}}=y, \\text{ so } f^{-1}(x)=-\\sqrt{x+${c}}`); } }
           note={3:"Line (3) takes $\\sqrt{x^2}=x$. Property (i) gives $|x|$, and the interval then decides the sign.",5:"Line (5) uses $|x|=x$, but $x\\le0$ means $|x|=-x$.",6:"Line (6) swaps the variable names. From line (5), $x=-\\sqrt{y+"+c+"}$, so $f^{-1}(y)=-\\sqrt{y+"+c+"}$."}[e];
         } else if(T==="B"){
-          const p=R.int(1,5), q=R.int(-4,4), e=R.pick([1,3,5]); bad=e;
+          const p=R.int(1,5), q=R.nz(-4,4), e=R.pick([1,3,5]); bad=e;
           const xp=`x+${p}`, rhs=`y${M.term(-q,"y",0)}`;
           prob=`Find the inverse $f^{-1}(y)$ of $f(x)=x^2+${2*p}x${M.term(p*p+q,"x",0)}$ on the interval $[-${p},\\infty)$.`;
           L=[e===1?`y=(x+${2*p})^2${M.term(q,"x",0)}`:`y=(${xp})^2${M.term(q,"x",0)}`];
@@ -409,7 +412,7 @@ M.lecture({
           L.push(e===5?`\\sqrt{x${M.term(-q,"x",0)}}-${p}=y, \\text{ so } f^{-1}(x)=\\sqrt{x${M.term(-q,"x",0)}}-${p}`:e===3?`x=-\\sqrt{${rhs}}-${e===1?2*p:p}, \\text{ so } f^{-1}(y)=-\\sqrt{${rhs}}-${p}`:`x=\\sqrt{${rhs}}-${e===1?2*p:p}, \\text{ so } f^{-1}(y)=\\sqrt{${rhs}}-${e===1?2*p:p}`);
           note={1:`Line (1) completes the square wrong: $x^2+${2*p}x+${p*p}=(x+${p})^2$.`,3:`Line (3) has the wrong sign: $x\\ge-${p}$ means $x+${p}\\ge0$, so $|x+${p}|=x+${p}$.`,5:"Line (5) swaps the variable names. The inverse is $f^{-1}(y)=\\sqrt{"+rhs+"}-"+p+"$."}[e];
         } else {
-          const c=R.int(1,9), e=R.pick([1,2,3]); bad=e;
+          const c=R.int(2,9), e=R.pick([1,2,3]); bad=e;
           prob=`$f(x)=x^2-${c}$ is invertible on $(-\\infty,0]$ with inverse $f^{-1}(y)=-\\sqrt{y+${c}}$. State the domain and range of $f^{-1}$.`;
           if(e===1) L=[`\\text{The domain of } f^{-1} \\text{ is } (-\\infty,0], \\text{ the interval } I`,`\\text{For } x\\le0,\\ f(x) \\text{ takes every value } \\ge -${c}`,`\\text{So the range of } f^{-1} \\text{ is } [-${c},\\infty)`];
           else if(e===2) L=[`\\text{The range of } f^{-1} \\text{ is } (-\\infty,0], \\text{ the interval } I`,`\\text{For } x\\le0,\\ f(x) \\text{ takes every value } \\le -${c}`,`\\text{So the domain of } f^{-1} \\text{ is } (-\\infty,-${c}]`];
@@ -445,11 +448,11 @@ M.lecture({
   ],
   exam:[
     {id:"L09.q1", ref:"p. 1", multi:true, q:"Assume $f$ is invertible on $(-\\infty,\\infty)$ with inverse $g$, and $f(-2)=7$. Select all statements that must be true.", opts:[["$g(7)=-2$",1,"$f(x)=y$ if and only if $g(y)=x$."],["$g(-2)=7$",0,"That swaps the roles. We only know where $g$ sends 7."],["$f(4)\\ne7$",1,"If $f(4)=7$ too, the line $y=7$ would cross the graph twice."],["$f(7)=-2$",0,"Nothing tells us $f(7)$."],["$g(7)=\\frac{1}{7}$",0,"$g$ is the inverse, not the reciprocal."]]},
-    {id:"L09.q2", ref:"p. 1", keep:true, q:"True or false: $f^{-1}(x)=\\frac{1}{f(x)}$.", opts:[["True",0,"Try $f(x)=x+1$: $f^{-1}(y)=y-1$, which is not $\\frac{1}{x+1}$."],["False",1,"$f^{-1}$ means the inverse of $f$. It does not mean $\\frac1f$."]]},
+    {id:"L09.q2", ref:"p. 1", keep:true, q:"True or false: $f^{-1}(x)=\\frac{1}{f(x)}$.", opts:[["True",0,"Try $f(x)=x+1$. Then $f^{-1}(y)=y-1$, so $f^{-1}(1)=0$, but $\\frac{1}{f(1)}=\\frac12$."],["False",1,"$f^{-1}$ means the inverse of $f$. It does not mean $\\frac1f$."]]},
     {id:"L09.q3", ref:"p. 2", q:"On which interval is $f(x)=(x-2)^2$ invertible?", opts:[["$[2,5]$",1,"$f$ is increasing there, so every horizontal line crosses at most once."],["$[0,5]$",0,"$f(1)=f(3)=1$: the line $y=1$ crosses twice."],["$[1,3]$",0,"Same problem: $f(1)=f(3)$."],["$(-\\infty,\\infty)$",0,"A parabola fails the horizontal line test on its whole domain."]]},
     {id:"L09.q4", ref:"pp. 3 to 4", q:"$f(x)=x^3+1$ is invertible on $I=[-1,2]$. The domain and range of $f^{-1}$ are", opts:[["Domain $[0,9]$, range $[-1,2]$",1,"$f(-1)=0$, $f(2)=9$, and $f$ is increasing. The range of $f^{-1}$ is $I$."],["Domain $[-1,2]$, range $[0,9]$",0,"Swapped. The interval $I$ is the range of $f^{-1}$."],["Domain $[-1,2]$, range $[-1,2]$",0,"The domain of $f^{-1}$ is the set of values of $f$ on $I$."],["Domain $(-\\infty,\\infty)$, range $[-1,2]$",0,"$f^{-1}$ only takes the values $f$ reaches on $I$."]]},
     {id:"L09.q5", ref:"p. 3", q:"The inverse of $f(x)=5x-3$ is", opts:[["$f^{-1}(y)=\\frac{y+3}{5}$",1,"$y=5x-3$, so $y+3=5x$ and $x=\\frac{y+3}{5}$."],["$f^{-1}(y)=\\frac{y-3}{5}$",0,"Moving $-3$ across gives $+3$."],["$f^{-1}(y)=\\frac{1}{5y-3}$",0,"That is the reciprocal, not the inverse."],["$f^{-1}(y)=5y+3$",0,"Divide by 5, do not multiply."]]},
-    {id:"L09.q6", ref:"p. 3", q:"The inverse of $f(x)=x^2-4$ on $(-\\infty,0]$ is", opts:[["$f^{-1}(y)=-\\sqrt{y+4}$",1,"$\\sqrt{y+4}=|x|=-x$ because $x\\le0$."],["$f^{-1}(y)=\\sqrt{y+4}$",0,"That is the inverse on $[0,\\infty)$. Its outputs are not $\\le0$."],["$f^{-1}(y)=\\pm\\sqrt{y+4}$",0,"A function gives one output. The interval decides the sign."],["$f^{-1}(y)=-\\sqrt{y-4}$",0,"$y=x^2-4$ gives $y+4=x^2$."]]},
+    {id:"L09.q6", ref:"p. 3", q:"The inverse of $f(x)=x^2-4$ on $(-\\infty,0]$ is", opts:[["$f^{-1}(y)=-\\sqrt{y+4}$",1,"$\\sqrt{y+4}=|x|=-x$ because $x\\le0$."],["$f^{-1}(y)=\\sqrt{y+4}$",0,"That is the inverse on $[0,\\infty)$. Its outputs are $\\ge0$, but on $(-\\infty,0]$ the inverse has to output values $\\le0$."],["$f^{-1}(y)=\\pm\\sqrt{y+4}$",0,"A function gives one output. The interval decides the sign."],["$f^{-1}(y)=-\\sqrt{y-4}$",0,"$y=x^2-4$ gives $y+4=x^2$."]]},
     {id:"L09.q7", ref:"pp. 5 to 6", multi:true, q:"$f(x)=x^2$ is invertible on $(-\\infty,0]$ with $f^{-1}(y)=-\\sqrt{y}$. Select all true statements.", opts:[["$f^{-1}(f(-3))=-3$",1,"$-3$ is in $(-\\infty,0]$, so it cancels."],["$f^{-1}(f(3))=3$",0,"3 is not in the interval: $f^{-1}(9)=-\\sqrt9=-3$."],["$f^{-1}(f(3))=-3$",1,"Worked out by hand: $f(3)=9$ and $f^{-1}(9)=-3$."],["$f(f^{-1}(4))=4$",1,"4 is in the range of $f$ on the interval, so it cancels."]]},
     {id:"L09.q8", ref:"p. 6", multi:true, q:"$\\cos(x)$ is invertible on $[0,\\pi]$ with inverse $\\arccos(x)$. Select all true statements.", opts:[["$\\arccos\\left(\\cos\\left(-\\frac{\\pi}{3}\\right)\\right)=\\frac{\\pi}{3}$",1,"$\\cos(-\\frac\\pi3)=\\frac12$ and $\\arccos(\\frac12)=\\frac\\pi3$."],["$\\arccos\\left(\\cos\\left(\\frac{4\\pi}{3}\\right)\\right)=\\frac{4\\pi}{3}$",0,"$\\frac{4\\pi}{3}$ is not in $[0,\\pi]$. $\\cos(\\frac{4\\pi}{3})=-\\frac12$ and $\\arccos(-\\frac12)=\\frac{2\\pi}{3}$."],["$\\cos\\left(\\arccos\\left(\\frac{2}{7}\\right)\\right)=\\frac{2}{7}$",1,"$\\frac27$ is in $[-1,1]$, the range of cos on $[0,\\pi]$."],["$\\arccos\\left(\\cos\\left(\\frac{\\pi}{2}\\right)\\right)=\\frac{\\pi}{2}$",1,"$\\frac\\pi2$ is in $[0,\\pi]$."]]},
     {id:"L09.q9", ref:"p. 3", keep:true, q:"A problem and an answer are shown. The answer would not get a perfect score. Select the first line with a mistake.<br><b>Problem.</b> Find the inverse of $f(x)=x^2+4x+4$ on $(-\\infty,-2]$.$$y=(x+2)^2\\qquad(1)$$$$\\sqrt{y}=|x+2|\\qquad(2)$$$$\\sqrt{y}=x+2\\ \\text{ since } x\\le-2\\qquad(3)$$$$f^{-1}(y)=\\sqrt{y}-2\\qquad(4)$$", opts:[["Line (1)",0,"$x^2+4x+4=(x+2)^2$."],["Line (2)",0,"Property (i)."],["Line (3)",1,"$x\\le-2$ means $x+2\\le0$, so $|x+2|=-(x+2)$. The inverse is $-\\sqrt{y}-2$."],["Line (4)",0,"It follows from line (3), but line (3) is already wrong."]]},

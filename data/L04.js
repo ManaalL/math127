@@ -130,7 +130,7 @@ M127.lecture({
         const ctxs=[
           {desc:"the rate water flows into a tank, in L/min", qn:"volume of water in the tank", Qn:"V", u:"L", neg:true},
           {desc:"the rate the temperature of a lake changes, in °C/h", qn:"temperature of the lake", Qn:"T", u:"°C", neg:true},
-          {desc:"the rate of rainfall, in mm/h", qn:"rainfall", Qn:"H", u:"mm", neg:false},
+          {desc:"the rate rain collects in a rain gauge, in mm/h", qn:"depth of water in the rain gauge", Qn:"H", u:"mm", neg:false},
           {desc:"the rate a cell culture grows, in thousand cells/h", qn:"number of cells (in thousands)", Qn:"N", u:"thousand cells", neg:true},
           {desc:"the rate a patient absorbs a drug, in mg/h", qn:"amount of drug absorbed", Qn:"D", u:"mg", neg:false}];
         const c=R.pick(ctxs);
@@ -212,7 +212,7 @@ M127.lecture({
           const right=`The net change in ${c.qn} from $t = ${A}$ to $t = ${B}$`;
           const opts=[right,`${c.qn[0].toUpperCase()+c.qn.slice(1)} at time $t = ${B}$`,`The rate of change of ${c.qn} at time $t = ${B}$`,`The net change in the rate $${c.r}(t)$ from $t = ${A}$ to $t = ${B}$`,`The time it takes for ${c.qn} to change by ${B-A} ${c.qu}`];
           const o=R.shuffle([0,1,2,3,4]);
-          return {prompt:`Let $${c.r}(t)$ be ${c.desc}. ${c.start} What does ${I} represent?`, parts:[{answer:{type:"mc",options:o.map(i=>opts[i]),correct:o.indexOf(0)}}],
+          return {prompt:`Let $${c.r}(t)$ be ${c.desc}. ${c.start?c.start+" ":""}What does ${I} represent?`, parts:[{answer:{type:"mc",options:o.map(i=>opts[i]),correct:o.indexOf(0)}}],
             hint:`$${c.r}(t)$ is a rate of change. What does integrating a rate give you?`,
             steps:[`$${c.r}(t)$ is the rate of change of ${c.qn}: if $${c.F}(t)$ is ${c.qn}, then $${c.F}'(t) = ${c.r}(t)$.`,`By definition, ${I} $= ${c.F}(${B}) - ${c.F}(${A})$, the net change in ${c.qn} from $t=${A}$ to $t=${B}$.`,`It is not the amount at $t = ${B}$: that would also need the starting amount $${c.F}(${A})$.`],
             answerTeX:right+"."};
@@ -305,7 +305,7 @@ M127.lecture({
             answerTeX:`$${val}$ ${C[4]}`};
         }
         if(d===2){
-          const C=R.pick([["v(t)","m/s","the change in position","s","m"],["a(t)","m/s²","the change in velocity","v","m/s"],["r(t)","L/min","the change in the volume of water in a tank","V","L"]]);
+          const C=R.pick([["v(t)","m/s","the change in position","s","m"],["a(t)","m/s²","the change in velocity","v","m/s"],["r(t)","L/min","the change in the volume of water in the tank","V","L"]]);
           let p,q,r; do{ p=R.int(0,2); q=R.int(-3,3); r=R.int(-4,6); }while(p===0&&q===0);
           const co=[3*p,2*q,r]; const ftex=M.poly(co,"t"); const Fp=t=>p*t*t*t+q*t*t+r*t; const Ftex=M.poly([p,q,r,0],"t");
           const a=R.int(0,2), b=a+R.int(1,3); const val=Fp(b)-Fp(a);
@@ -361,7 +361,10 @@ M127.lecture({
           const nodx=`$\\int_{${a}}^{${b}} (${ftex}) = \\left(${Ftex}\\right)\\Big|_{${a}}^{${b}} = ${F(b)} - ${par(F(a))} = ${V}$`;
           const nobr=`$\\int_{${a}}^{${b}} (${ftex})\\,dx = ${Ftex}\\Big|_{${a}}^{${b}} = ${F(b)} - ${par(F(a))} = ${V}$`;
           const rev=`$\\int_{${a}}^{${b}} (${ftex})\\,dx = \\left(${Ftex}\\right)\\Big|_{${a}}^{${b}} = ${F(a)} - ${par(F(b))} = ${-V}$`;
-          const bad=R.shuffle([[nodx,"is missing the $dx$ on the integral"],[nobr,"has no brackets around $"+Ftex+"$, so the bar only applies to the last term"],[rev,"subtracts $F(b)$ from $F(a)$, which flips the sign"]]).slice(0,2);
+          const badAll=[[nodx,"is missing the $dx$ on the integral"]];
+          if(q!==0) badAll.push([nobr,"has no brackets around $"+Ftex+"$, so the bar only applies to the last term"]);   // a one-term F needs no brackets
+          if(V!==0) badAll.push([rev,"subtracts $F(b)$ from $F(a)$, which flips the sign"]);
+          const bad=R.shuffle(badAll).slice(0,2);
           const order=R.shuffle([0,1,2]); const ans=[[good,""],...bad];
           const shown=order.map(i=>ans[i]);
           return {prompt:`A question and three answers are shown. Select the correct answer.<div class="box note"><b class="t">Problem</b>Evaluate $\\int_{${a}}^{${b}} (${ftex})\\,dx$.</div>${shown.map((s,i)=>`<div class="box note"><b class="t">Answer #${i+1}</b>${s[0]}</div>`).join("")}`,

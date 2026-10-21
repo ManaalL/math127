@@ -224,7 +224,7 @@ M.lecture({
         const fns=d===1?["sin","cos"]:d===2?["tan","sec","csc","cot","sin","cos"]:["sin","cos","tan","sec","csc","cot"];
         const pool=[]; for(let j=1;j<24;j++) if((j%2===0||j%3===0)&&(d>1||j%6!==0||R.int(1,4)===1)) pool.push(j);
         let fn, j, e, guard=0;
-        do{ fn=R.pick(fns); j=R.pick(pool); if(d===1&&j%6===0&&R.int(1,3)>1) j=R.pick(pool.filter(x=>x%6)); if(d===3){ j = R.int(0,1)? j-24 : j+24; } e=exact(fn,j); guard++; }while((!e||(d===2&&jinfo(j).q===1))&&guard<50);
+        do{ fn=R.pick(fns); j=R.pick(pool); if(d===1&&j%6===0&&R.int(1,3)>1) j=R.pick(pool.filter(x=>x%6)); if(d===3){ j = R.int(0,1)? j-24 : j+24; } e=exact(fn,j); guard++; }while((!e||(d===2&&jinfo(j).q===1)||(fn==="cos"&&j===10))&&guard<50);
         if(!e){ fn="sin"; j=d===3?-20:14; e=exact(fn,j); }
         const I=jinfo(j), m=I.m, ang=jT(j);
         const check=FN[fn](j*PI/12); if(Math.abs(check-e.v)>1e-9) throw new Error("exact table mismatch");
@@ -321,7 +321,7 @@ M.lecture({
         let t=tpl[R.pick(names)]();
         if(d===1&&t.qn!=="I") t=tpl.tanKx();
         const [gn,gd]=RATIO[t.F];
-        const tg=R.pick(["sin","cos","tan","csc","sec","cot"].filter(f=>f!==t.F&&RATIO[f].includes(t.miss)));
+        const tg=R.pick(["sin","cos","tan","csc","sec","cot"].filter(f=>f!==t.F&&RATIO[f].includes(t.miss)&&!(t.g==="-x"&&t.qn==="III"&&f==="sin")));
         const [tn,td]=RATIO[tg];
         const S={o:V(t.s.o[0],t.s.o[1]),a:V(t.s.a[0],t.s.a[1]),h:V(t.s.h[0],t.s.h[1])};
         const steps=[`Rewrite as a ratio of sides: $\\${t.F}(\\theta) = ${t.frac} = \\frac{${gn}}{${gd}}$, so $${gn} = ${S[gn].t}$ and $${gd} = ${S[gd].t}$. Draw the triangle in quadrant ${t.qn}.${t.why||""}`,
@@ -384,7 +384,7 @@ M.lecture({
             steps.push(`Use $\\sin(2x) = 2\\sin(x)\\cos(x)$: $\\ ${aT}\\sin(x) ${b<0?"-":"+"} ${2*Math.abs(b)}\\sin(x)\\cos(x) = 0$.`);
             steps.push(`Factor out $\\sin(x)$ (do not divide by it, or you lose solutions): $\\sin(x)\\left(${a} ${b<0?"-":"+"} ${2*Math.abs(b)}\\cos(x)\\right) = 0$. So $\\sin(x) = 0$ or $\\cos(x) = ${KV[key].t}$.`);
             conds=[["sin","0"],["cos",key]]; f=x=>a*Math.sin(x)+b*Math.sin(2*x);
-          } else if(kind==="sin2c"){ const [a,b,key]=R.pick([[2,1,"-1"],[-2,1,"1"],[1,1,"-1/2"],[-1,1,"1/2"],[1,-1,"1/2"],[2,-1,"1"]]);
+          } else if(kind==="sin2c"){ const [a,b,key]=R.pick([[-2,1,"1"],[1,1,"-1/2"],[-1,1,"1/2"],[1,-1,"1/2"],[2,-1,"1"]]);
             const aT=a===1?"":a===-1?"-":String(a), bT=b===1?"+":b===-1?"-":(b<0?"-":"+")+Math.abs(b);
             eq=`${aT}\\cos(x) ${bT} \\sin(2x) = 0`;
             steps.push(`Use $\\sin(2x) = 2\\sin(x)\\cos(x)$: $\\ ${aT}\\cos(x) ${b<0?"-":"+"} ${2*Math.abs(b)}\\sin(x)\\cos(x) = 0$.`);
@@ -428,7 +428,7 @@ M.lecture({
         let prob, L, bad, why, fix;
         const pick=d===1?R.pick(["val","tri"]):d===2?R.pick(["tri","dbl","val"]):R.pick(["div","proof","dbl"]);
         if(pick==="val"){
-          const j=R.pick([8,10,14,15,16,20,21,22,9]); const I=jinfo(j); const fn=R.pick(["sin","cos"]); const e=exact(fn,j);
+          const j=R.pick([8,10,14,15,16,20,21,22,9]); const I=jinfo(j); const fn=j===10?"sin":R.pick(["sin","cos"]); const e=exact(fn,j);
           const sides={2:["\\sqrt{3}","1","2"],3:["1","1","\\sqrt{2}"],4:["1","\\sqrt{3}","2"]}[I.ref];
           const sgn=fn==="sin"?I.ss:I.cs, leg=fn==="sin"?sides[1]:sides[0];
           const wrongRef=R.int(0,1)===1&&I.ref!==3;
@@ -473,9 +473,9 @@ M.lecture({
           }
         } else if(pick==="div"){
           const usecos=R.int(0,1)===1;
-          if(usecos){ prob=`Find all $x$ in $[0, 2\\pi]$ with $2\\cos(x) + \\sin(2x) = 0$.`;
-            L=[`$2\\cos(x) + 2\\sin(x)\\cos(x) = 0$`,`Divide both sides by $2\\cos(x)$: $1 + \\sin(x) = 0$`,`$\\sin(x) = -1$`,`$x = \\frac{3\\pi}{2}$`];
-            bad=1; why=`Dividing by $2\\cos(x)$ throws away the solutions of $\\cos(x) = 0$. Factor instead: $2\\cos(x)(1+\\sin(x)) = 0$ gives $x = \\frac{\\pi}{2}, \\frac{3\\pi}{2}$.`; }
+          if(usecos){ prob=`Find all $x$ in $[0, 2\\pi]$ with $\\sin(2x) - \\cos(x) = 0$.`;
+            L=[`$2\\sin(x)\\cos(x) - \\cos(x) = 0$`,`Divide both sides by $\\cos(x)$: $2\\sin(x) - 1 = 0$`,`$\\sin(x) = \\frac{1}{2}$`,`$x = \\frac{\\pi}{6}, \\frac{5\\pi}{6}$`];
+            bad=1; why=`Dividing by $\\cos(x)$ throws away the solutions of $\\cos(x) = 0$. Factor instead: $\\cos(x)(2\\sin(x)-1) = 0$ gives $x = \\frac{\\pi}{6}, \\frac{\\pi}{2}, \\frac{5\\pi}{6}, \\frac{3\\pi}{2}$.`; }
           else { prob=`Find all $x$ in $[0, 2\\pi]$ with $\\sin(x) + \\sin(2x) = 0$.`;
             L=[`$\\sin(x) + 2\\sin(x)\\cos(x) = 0$`,`Divide both sides by $\\sin(x)$: $1 + 2\\cos(x) = 0$`,`$\\cos(x) = -\\frac{1}{2}$`,`$x = \\frac{2\\pi}{3}, \\frac{4\\pi}{3}$`];
             bad=1; why=`Dividing by $\\sin(x)$ loses $\\sin(x) = 0$, which gives $x = 0, \\pi, 2\\pi$. The full answer is $x = 0, \\frac{2\\pi}{3}, \\pi, \\frac{4\\pi}{3}, 2\\pi$.`; }
@@ -507,7 +507,7 @@ M.lecture({
     {id:"L12.q11", ref:"pp. 4 to 5", q:"A student solves $\\sin(x)\\cos(x) = \\frac{1}{4}$ on $[0, 2\\pi]$. Which is the first correct step?", opts:[["Multiply by 2: $\\sin(2x) = \\frac{1}{2}$",1,"$2\\sin(x)\\cos(x) = \\sin(2x)$ (p. 4)."],["$\\sin(x) = \\frac{1}{4}$ or $\\cos(x) = \\frac{1}{4}$",0,"That rule only works when the product equals 0."],["$\\sin(2x) = \\frac{1}{4}$",0,"$\\sin(x)\\cos(x)$ is half of $\\sin(2x)$, so you must multiply both sides by 2."],["$\\sin^2(x) = \\frac{1}{4}$",0,"$\\cos(x)$ is not $\\sin(x)$."]]}
   ],
   steps:[
-    {type:"read", title:"What you should know", body:`<p>Section 2.5.1 is mostly review, but the quiz tests it hard (p. 1):</p><ol><li>Radians. Calculus is done entirely in radians. A full turn is $2\\pi$.</li><li>All six trig functions: sin, cos, tan, csc, sec, cot.</li><li>The graphs of sin, cos and tan.</li><li>The values of all six at the basic angles in any quadrant.</li></ol><p>If you know the values at $0, \\frac{\\pi}{6}, \\frac{\\pi}{4}, \\frac{\\pi}{3}, \\frac{\\pi}{2}$, you can get every other quadrant by copying the special triangles, or by reading the graphs.</p><div class="box def"><b class="t">Special triangles</b>For $\\frac{\\pi}{6}$ and $\\frac{\\pi}{3}$: legs $1$ and $\\sqrt{3}$, hypotenuse $2$. For $\\frac{\\pi}{4}$: legs $1$ and $1$, hypotenuse $\\sqrt{2}$. The side across from $\\frac{\\pi}{6}$ is the short one, $1$.</div>`, ref:"p. 1"},
+    {type:"read", title:"What you should know", body:`<p>Section 2.5.1 is mostly review, but the quizzes test it often. The notes list what you should know (p. 1):</p><ol><li>Radians. Calculus is done entirely in radians. A full turn is $2\\pi$.</li><li>All six trig functions: sin, cos, tan, csc, sec, cot.</li><li>The graphs of sin, cos and tan.</li><li>The values of all six at the basic angles in any quadrant.</li></ol><p>If you know the values at $0, \\frac{\\pi}{6}, \\frac{\\pi}{4}, \\frac{\\pi}{3}, \\frac{\\pi}{2}$, you can get every other quadrant by copying the special triangles, or by reading the graphs.</p><div class="box def"><b class="t">Special triangles</b>For $\\frac{\\pi}{6}$ and $\\frac{\\pi}{3}$: legs $1$ and $\\sqrt{3}$, hypotenuse $2$. For $\\frac{\\pi}{4}$: legs $1$ and $1$, hypotenuse $\\sqrt{2}$. The side across from $\\frac{\\pi}{6}$ is the short one, $1$.</div>`, ref:"p. 1"},
     {type:"explore", title:"The unit circle", fig:"circle", body:`<p>On a circle of radius 1, the point at angle $\\theta$ is $(\\cos\\theta, \\sin\\theta)$. That is the special triangle with hypotenuse 1: the horizontal leg is cosine and the vertical leg is sine. The signs of the coordinates are the signs of cos and sin in that quadrant.</p><p><b>Try it.</b> Drag the point to $\\frac{7\\pi}{6}$ (just past the negative $x$-axis). Check that $\\sin\\theta = -\\frac{1}{2}$. Then go to $\\frac{5\\pi}{6}$ and $\\frac{11\\pi}{6}$: same reference angle, different signs.</p>`},
     {type:"example", title:"An angle in the third quadrant", ex:{q:"Determine $\\sin\\left(\\frac{7\\pi}{6}\\right)$.", ref:"p. 1",
       steps:[{t:"Draw $\\frac{7\\pi}{6}$ in the $xy$-plane. It sweeps past the negative $x$-axis by $\\frac{\\pi}{6}$, so it ends in the third quadrant.",why:"$\\frac{7\\pi}{6} = \\pi + \\frac{\\pi}{6}$."},{t:"Relate it to $\\frac{\\pi}{6}$ in the first quadrant: special triangle with horizontal leg $\\sqrt{3}$, vertical leg $1$, hypotenuse $2$.",why:"The triangle for the reference angle has the right side lengths."},{t:"Copy it into the third quadrant: horizontal leg $-\\sqrt{3}$, vertical leg $-1$, hypotenuse $2$.",why:"In quadrant III both $x$ and $y$ are negative. The hypotenuse stays positive."},{t:"$\\sin\\left(\\frac{7\\pi}{6}\\right) = \\frac{o}{h} = \\frac{-1}{2}$.",why:"Sine is opposite over hypotenuse."}], ans:"$\\sin\\left(\\frac{7\\pi}{6}\\right) = -\\frac{1}{2}$"}},

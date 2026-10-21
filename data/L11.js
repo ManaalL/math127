@@ -212,14 +212,14 @@ M.lecture({
           const r=F(q,p), val=k*Math.log(q/p);
           return {prompt:`Evaluate $\\displaystyle\\int_{${p}}^{${q}}${kx(k)}\\,dx$. Give the exact value.`, answer:{type:"num",answer:`${k}*(ln(${q}) - ln(${p}))`}, verify:{value:simpson(x=>k/x,p,q)},
             hint:"Antiderivative $k\\ln(\\lvert x\\rvert)$, then top limit minus bottom limit.",
-            steps:[`$\\displaystyle\\int_{${p}}^{${q}}${kx(k)}\\,dx = \\Big[${k}\\ln(\\lvert x\\rvert)\\Big]_{${p}}^{${q}}$`,`$= ${k}\\left(\\ln(${q}) - \\ln(${p})\\right)$`+(p===1?` $= ${k}\\ln(${q})$ since $\\ln(1)=0$.`:` $= ${k}\\ln\\left(${Ft(r)}\\right)$`),`$\\approx ${val.toFixed(4)}$`],
-            answerTeX:`$${k}\\ln\\left(${Ft(r)}\\right)$`}; }
+            steps:[`$\\displaystyle\\int_{${p}}^{${q}}${kx(k)}\\,dx = \\Big[${cc(k)}\\ln(\\lvert x\\rvert)\\Big]_{${p}}^{${q}}$`,`$= ${cc(k)}\\left(\\ln(${q}) - \\ln(${p})\\right)$`+(p===1?` $= ${cc(k)}\\ln(${q})$ since $\\ln(1)=0$.`:` $= ${cc(k)}\\ln\\left(${Ft(r)}\\right)$`),`$\\approx ${val.toFixed(4)}$`],
+            answerTeX:`$${cc(k)}\\ln\\left(${Ft(r)}\\right)$`}; }
         if(d===2){ let p, q; do{ p=R.int(1,4); q=R.int(2,8); }while(q<=p); const k=R.nz(-5,5);
           const val=k*(Math.log(p)-Math.log(q));
           return {prompt:`Evaluate $\\displaystyle\\int_{-${q}}^{-${p}}${kx(k,"t")}\\,dt$. Give the exact value.`, answer:{type:"num",answer:`${k}*(ln(${p}) - ln(${q}))`}, verify:{value:simpson(t=>k/t,-q,-p)},
             hint:"An antiderivative of $\\frac1t$ is $\\ln(\\lvert t\\rvert)$. Without the absolute value you would be taking $\\ln$ of a negative number.",
-            steps:[`$\\displaystyle\\int_{-${q}}^{-${p}}${kx(k,"t")}\\,dt = \\Big[${k}\\ln(\\lvert t\\rvert)\\Big]_{-${q}}^{-${p}}$`,`$= ${k}\\left(\\ln(\\lvert -${p}\\rvert) - \\ln(\\lvert -${q}\\rvert)\\right) = ${k}\\left(\\ln(${p}) - \\ln(${q})\\right)$`,`$= ${k}\\ln\\left(${Ft(F(p,q))}\\right) \\approx ${val.toFixed(4)}$`+(p===1?` (here $\\ln(1)=0$, so it is $${-k}\\ln(${q})$)`:"")],
-            answerTeX:`$${k}\\ln\\left(${Ft(F(p,q))}\\right)$`}; }
+            steps:[`$\\displaystyle\\int_{-${q}}^{-${p}}${kx(k,"t")}\\,dt = \\Big[${cc(k)}\\ln(\\lvert t\\rvert)\\Big]_{-${q}}^{-${p}}$`,`$= ${cc(k)}\\left(\\ln(\\lvert -${p}\\rvert) - \\ln(\\lvert -${q}\\rvert)\\right) = ${cc(k)}\\left(\\ln(${p}) - \\ln(${q})\\right)$`,`$= ${cc(k)}\\ln\\left(${Ft(F(p,q))}\\right) \\approx ${val.toFixed(4)}$`+(p===1?` (here $\\ln(1)=0$, so it is $${cc(-k)}\\ln(${q})$)`:"")],
+            answerTeX:`$${cc(k)}\\ln\\left(${Ft(F(p,q))}\\right)$`}; }
         if(R()<0.5){ const c=R.int(1,4), side=R.pick([-1,1]); let l, m; do{ l=R.int(1,3); m=R.int(2,5); }while(m<=l);
           const A=side<0?-c-m:-c+l, B=side<0?-c-l:-c+m;   // |A+c| and |B+c|
           const uA=Math.abs(A+c), uB=Math.abs(B+c), val=Math.log(uB)-Math.log(uA);
@@ -239,12 +239,12 @@ M.lecture({
         const x0=R()<0.75?-R.int(1,5):R.int(1,4), y0=R.int(-5,6), m=Math.abs(x0);
         const dom=x0<0?[-6,-0.3]:[0.3,6];
         const lnm=v=>`\\ln(\\lvert ${v}\\rvert)`;
-        if(d===1){ const k=R.nz(-5,5);
+        if(d===1){ let k=R.nz(-5,5); if(k===1&&x0===-2&&y0===4) k=2;
           const Cv=m===1?`${y0}`:`${y0} ${k>0?"-":"+"} ${Math.abs(k)===1?"":Math.abs(k)}\\ln(${m})`;
           const yT=`y = ${sgnLn(k,"\\lvert x\\rvert",true)} ${m===1?M.pm(y0):`${M.pm(y0)} ${k>0?"-":"+"} ${Math.abs(k)===1?"":Math.abs(k)}\\ln(${m})`}`;
           return {prompt:`Solve the initial value problem $y' = ${kx(k)}$, $y(${x0}) = ${y0}$.`, answer:{answer:`${k}*ln(abs(x)) + ${y0} - ${k}*ln(${m})`,vars:["x"],domain:dom}, verify:{antideriv:`${k}/x`},
             hint:"All solutions are $y=\\int "+kx(k)+"\\,dx$. Use $\\ln(\\lvert x\\rvert)$: the starting point "+(x0<0?"is negative":"may be anywhere")+".",
-            steps:[`All solutions of the differential equation are given by $y = \\displaystyle\\int ${kx(k)}\\,dx = ${sgnLn(k,"\\lvert x\\rvert",true)} + C$.`,`The initial condition says that $y = ${y0}$ when $x = ${x0}$. Hence, $${y0} = ${k}${lnm(x0)} + C$.`,m===1?`$\\ln(1) = 0$, so $${y0} = C$.`:`$${lnm(x0)} = \\ln(${m})$, so $C = ${Cv}$.`,`Hence, the solution is $${yT}$.`],
+            steps:[`All solutions of the differential equation are given by $y = \\displaystyle\\int ${kx(k)}\\,dx = ${sgnLn(k,"\\lvert x\\rvert",true)} + C$.`,`The initial condition says that $y = ${y0}$ when $x = ${x0}$. Hence, $${y0} = ${cc(k)}${lnm(x0)} + C$.`,m===1?`$\\ln(1) = 0$, so $${y0} = C$.`:`$${lnm(x0)} = \\ln(${m})$, so $C = ${Cv}$.`,`Hence, the solution is $${yT}$.`],
             answerTeX:`$${yT}$`}; }
         if(d===2){ const k=R.nz(-4,4), b=R.nz(-4,4);
           // y' = k/x + b/x^2  ->  y = k ln|x| - b/x + C

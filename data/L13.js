@@ -42,7 +42,7 @@ M.lecture({
     {ref:"p. 5", text:"The section heading on p. 5 reads \"2.5.1 Modelling with Trigonometry\". It should be 2.5.2. The content list on p. 1 and the Quiz 5 announcement (\"covers up to end of section 2.5.2\") both use 2.5.2."},
     {ref:"p. 6", text:"The sine graph used to find $c$ for the body temperature model is drawn against an axis labelled $x$. The model's variable is $t$ (hours). Read the axis as $t$."},
     {ref:"p. 2", text:"The sketch of $\\tan(x)$ passes a little below the point $\\left(\\frac{\\pi}{4}, 1\\right)$. The exact value is $\\tan\\left(\\frac{\\pi}{4}\\right) = 1$, so do not read values off that sketch."},
-    {ref:"p. 2", text:"The course notes (Example 2.5.9, book p. 95) write $U(t) = a\\cos(bt) + c$, where $c$ is the average. In the lecture notes $c$ is the horizontal shift and $d$ is the average. Use the lecture letters: $y = a\\cos(b(x-c)) + d$."}
+    {ref:"p. 2", text:"The course notes (section 2.5.2, Example 9, book p. 95) write $U(t) = a\\cos(bt) + c$, where $c$ is the average. In the lecture notes $c$ is the horizontal shift and $d$ is the average. Use the lecture letters: $y = a\\cos(b(x-c)) + d$."}
   ],
   formulas:[
     {id:"L13.f.sin", name:"Key features of $y = \\sin(x)$", tex:"\\text{period } 2\\pi,\\quad \\text{range } [-1, 1],\\quad \\text{invertible on } \\left[-\\frac{\\pi}{2}, \\frac{\\pi}{2}\\right]", ref:"p. 1",
@@ -183,7 +183,8 @@ M.lecture({
           if(kind==="pik"){ const k=R.int(2,8); bTeX=`\\frac{\\pi}{${k}}${v}`; Pt=String(2*k); Pa=String(2*k); bStep=`\\frac{\\pi}{${k}}${v} = 2\\pi \\Rightarrow ${v} = ${2*k}`; }
           else if(kind==="inv"){ bTeX=`\\frac{${v}}{\\pi}`; Pt="2\\pi^2"; Pa="2pi^2"; bStep=`\\frac{${v}}{\\pi} = 2\\pi \\Rightarrow ${v} = 2\\pi^2`; }
           else { const k=R.int(2,4); bTeX=`${k}\\pi ${v}`; Pt=M.frac(2,k); Pa=M.fracA(2,k); bStep=`${k}\\pi ${v} = 2\\pi \\Rightarrow ${v} = ${Pt}`; }
-          dd=R.pick([null,null,rq(R.int(-4,4),2)]); }
+          dd=R.pick([null,null,rq(R.int(-4,4),2)]);
+          if(kind==="inv"&&fn==="sin"&&a[0]===-1&&a[1]===2&&dd&&dd[0]===0) dd=null; }
         const A=rq(Math.abs(a[0]),a[1]);
         let D, Mx, Mn;
         if(dd){ D={t:rT(dd),a:rA(dd),v:rV(dd)}; const mx=radd(dd,A), mn=rsub(dd,A); Mx={t:rT(mx),a:rA(mx)}; Mn={t:rT(mn),a:rA(mn)}; }
@@ -326,7 +327,7 @@ M.lecture({
         const pick=d===1?"amp":d===2?R.pick(["per","build"]):R.pick(["build","three","three"]);
         if(pick==="amp"){
           const a=-R.int(2,5), b=R.int(2,4), dv=R.int(-3,4), fn=R.pick(["sin","cos"]);
-          prob=`Determine the max, average, amplitude and period of $f(x) = ${a}\\${fn}(${b}x) ${dv<0?"-":"+"} ${Math.abs(dv)}$.`;
+          prob=`Determine the max, average, amplitude and period of $f(x) = ${a}\\${fn}(${b}x)${dv===0?"":` ${dv<0?"-":"+"} ${Math.abs(dv)}`}$.`;
           const v=R.int(0,1);
           if(v===0){ L=[`Period: $${b}x = 2\\pi$, so the period is $${piT(2,b)}$.`,`Average: $d = ${dv}$.`,`Amplitude: $a = ${a}$.`,`Max $= d + a = ${dv+a}$.`];
             bad=2; why=`Amplitude is $|a| = ${-a}$, never negative. Then max $= ${dv} + ${-a} = ${dv-a}$.`; }
@@ -335,7 +336,7 @@ M.lecture({
         } else if(pick==="per"){
           const k=R.int(2,6), a=R.int(2,4), dv=R.int(-2,3);
           const inv=R.int(0,1)===1;
-          if(inv){ prob=`Determine the amplitude, average and period of $f(\\theta) = ${a}\\cos\\left(\\frac{\\theta}{\\pi}\\right) ${dv<0?"-":"+"} ${Math.abs(dv)}$.`;
+          if(inv){ prob=`Determine the amplitude, average and period of $f(\\theta) = ${a}\\cos\\left(\\frac{\\theta}{\\pi}\\right)${dv===0?"":` ${dv<0?"-":"+"} ${Math.abs(dv)}`}$.`;
             L=[`Amplitude: $|a| = ${a}$.`,`Average: $d = ${dv}$.`,`Here $b = \\frac{1}{\\pi}$.`,`Period: $\\left|\\frac{2\\pi}{b}\\right| = \\frac{2\\pi}{1/\\pi} = 2$.`];
             bad=3; why=`$\\frac{2\\pi}{1/\\pi} = 2\\pi\\cdot\\pi = 2\\pi^2$.`; }
           else { prob=`Determine the amplitude and period of $f(t) = ${a}\\sin\\left(\\frac{\\pi}{${k}}t\\right)$.`;

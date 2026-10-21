@@ -424,10 +424,12 @@ M.lecture({
         const S=R.pick([["v","the velocity of an asteroid","km/s",[8,14],[0.2,0.9]],["m","the mass of a sample","g",[2,9],[0.1,0.5]],["T","a patient's temperature","°C",[36,39],[0.1,0.4]],["L","the length of a leaf","cm",[4,12],[0.2,0.8]],["D","a drug dose","mg",[20,60],[1,4]]]);
         const [sym,what,unit,[b0,b1],[r0,r1]]=S;
         const big=r1>=1;
-        const b=big?R.int(b0,b1):R.int(b0*10,b1*10)/10, r=big?R.int(r0,r1):R.int(r0*10,r1*10)/10;
+        const b=big?R.int(b0,b1):R.int(b0*10,b1*10)/10;
+        let r=big?R.int(r0,r1):R.int(r0*10,r1*10)/10;
+        if(sym==="v"&&b===11.2&&r===0.6) r=0.5;  /* keep clear of the real Quiz 3 numbers */
         const dp=big?0:1, lo=(b-r).toFixed(dp), hi=(b+r).toFixed(dp);
         if(d===2){
-          return {prompt:`Data predicts ${what} to be ${b} ${unit}, with an absolute error of at most ${r} ${unit}. Write this as an absolute value inequality and give every possible true value $${sym}$ as an interval.`,
+          return {prompt:`A model predicts that ${what} is ${b} ${unit}, with an absolute error of at most ${r} ${unit}. Write this as an absolute value inequality and give every possible true value $${sym}$ as an interval.`,
             answer:{type:"interval",answer:`[${lo}, ${hi}]`},
             hint:"\"At most\" means $\\le$. The error is the distance between the true value and the prediction: $|"+sym+"-"+b+"|$.",
             steps:[`The error is $|${sym}-${b}|$, and "at most ${r}" means $|${sym}-${b}|\\le ${r}$.`,`Property (iv): $-${r}\\le ${sym}-${b}\\le ${r}$.`,`Add ${b}: $${lo}\\le ${sym}\\le ${hi}$.`],
@@ -435,7 +437,7 @@ M.lecture({
         }
         const right=`$|${sym}-${b}|\\le ${r}$`;
         const opts=R.shuffle([right,`$|${sym}+${b}|\\le ${r}$`,`$|${sym}-${r}|\\le ${b}$`,`$${sym}-${b}\\le ${r}$`,`$|${sym}|-${b}\\le ${r}$`]);
-        return {prompt:`Data predicts ${what} to be ${b} ${unit}, with an absolute error of at most ${r} ${unit}. Which inequality describes every possible true value $${sym}$?`,
+        return {prompt:`A model predicts that ${what} is ${b} ${unit}, with an absolute error of at most ${r} ${unit}. Which inequality describes every possible true value $${sym}$?`,
           parts:[{answer:{type:"mc",options:opts,correct:opts.indexOf(right)}}],
           hint:"The error is the distance between the true value and the prediction. Distance is an absolute value of a difference.",
           steps:[`The error in the prediction is $|${sym}-${b}|$ (true value minus prediction).`,`"At most ${r}" means $\\le ${r}$.`,`So ${right}. $${sym}-${b}\\le${r}$ alone is not enough: it allows values far below ${b}.`],
@@ -455,7 +457,7 @@ M.lecture({
         const name=mode==="erf"?`\\operatorname{erf}(${bT})`:`f(${bT})`;
         const dtT=qv(dt)<0?`\\left(${qt(dt)}\\right)`:qt(dt);
         const pre=mode==="erf"?"\\frac{2}{\\sqrt{\\pi}}\\cdot":"";
-        const setup=mode==="erf"?`Recall $\\operatorname{erf}(x)=\\frac{2}{\\sqrt\\pi}\\int_0^x e^{-t^2}\\,dt$, so $${name} = \\frac{2}{\\sqrt\\pi}\\int_0^{${bT}} e^{-t^2}\\,dt$. Approximate the integral, then multiply by $\\frac{2}{\\sqrt\\pi}$.`:`$f(${bT}) = \\int_0^{${bT}} e^{-t^2}\\,dt$, so $g(t)=e^{-t^2}$, $a=0$, $b=${bT}$.`;
+        const setup=mode==="erf"?`Recall $\\operatorname{erf}(x)=\\frac{2}{\\sqrt\\pi}\\int_0^x e^{-t^2}\\,dt$, so $${name} = \\frac{2}{\\sqrt\\pi}\\int_0^{${bT}} e^{-t^2}\\,dt$. Approximate the integral with $g(t)=e^{-t^2}$, $a=0$, $b=${bT}$, then multiply by $\\frac{2}{\\sqrt\\pi}$.`:`$f(${bT}) = \\int_0^{${bT}} e^{-t^2}\\,dt$, so $g(t)=e^{-t^2}$, $a=0$, $b=${bT}$.`;
         return {prompt:mode==="erf"?`Use the Left Riemann Sum Approximation with $n=${n}$ subdivisions to approximate $\\operatorname{erf}(${bT})$. You can leave your answer as an exact sum or give 4 decimals.`
             :`Let $f(x)=\\int_0^x e^{-t^2}\\,dt$. Use the Left Riemann Sum Approximation with $n=${n}$ subdivisions to approximate $f(${bT})$. You can leave your answer as an exact sum or give 4 decimals.`,
           answer:{type:"num",answer:ansA}, verify:{value:val},

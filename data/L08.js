@@ -16,10 +16,10 @@ const simpson=(f,a,b,n=240)=>{ if(a===b) return 0; const h=(b-a)/n; let s=f(a)+f
 
 /* integrands written as functions of a symbol: t(tex symbol), a(ascii symbol), anti(ascii) when elementary */
 const INT={
-  poly:{t:S=>`${pw(S)}^2+${S}-1`, a:S=>`(${S})^2+(${S})-1`, anti:S=>`(${S})^3/3+(${S})^2/2-(${S})`},
+  poly:{t:S=>`${pw(S)}^2+${S}-1`, a:S=>`(${S})^2+(${S})-1`, anti:S=>`(${S})^3/3+(${S})^2/2-(${S})`, m:true},
   sqrt:{t:S=>`\\sqrt{${S}}`, a:S=>`sqrt(${S})`, anti:S=>`2/3*(${S})^(3/2)`, need:"pos"},
   tcos:{t:S=>`${pw(S)}\\cos(${S})`, a:S=>`(${S})*cos(${S})`, anti:S=>`(${S})*sin(${S})+cos(${S})`},
-  exp1:{t:S=>`e^{${S}}+1`, a:S=>`e^(${S})+1`, anti:S=>`e^(${S})+(${S})`},
+  exp1:{t:S=>`e^{${S}}+1`, a:S=>`e^(${S})+1`, anti:S=>`e^(${S})+(${S})`, m:true},
   texp:{t:S=>`${pw(S)} e^{${S}}`, a:S=>`(${S})*e^(${S})`, anti:S=>`((${S})-1)*e^(${S})`},
   gauss:{t:S=>`e^{${pw(S)}^2}`, a:S=>`e^((${S})^2)`},
   sinsq:{t:S=>`\\sin\\left(${pw(S)}^2\\right)`, a:S=>`sin((${S})^2)`},
@@ -46,6 +46,8 @@ const H={
   poly2:{t:"2x^2+3x",a:"2x^2+3x",dt:"4x+3",da:"4x+3",multi:true,dom:[-2,1]}
 };
 const dB=h=>(h.multi||h.neg)?`\\left(${h.dt}\\right)`:h.dt;
+/* brackets around an integrand (or g(h(x))) with more than one term, as the notes write (t^2+t-1)dt */
+const br=(I,s)=>I.m?`\\left(${s}\\right)`:s;
 
 M.lecture({
   id:"L08", n:8, date:"2026-09-25", added:"2026-10-21", unit:"u3", quiz:"Q4",
@@ -186,7 +188,8 @@ M.lecture({
       gen(R,d){
         if(d===1){
           const c=R.nz(-4,4), k=R.int(0,3), a=R.int(-2,2), b=R.int(-1,4);
-          const B=a===b?b+1:b;
+          let B=a===b?b+1:b;
+          if(c===1&&k===2&&a===1&&B===2) B=3;  /* keep clear of the real Quiz 4 question */
           const gT=k===0?String(c):M.term(c,"t",k,true), GT=k===0?`${cf(c)}t`:`${cf(c,k+1)}t^{${k+1}}`;
           const val=Q(c*(B**(k+1)-a**(k+1)),k+1);
           return {prompt:`Let $f(x)=\\int_{${a}}^x ${gT}\\,dt$. What is $f(${B})$?`, answer:{type:"num",answer:qa(val)}, verify:{value:qv(val)},
@@ -257,16 +260,16 @@ M.lecture({
         const c=R.nz(-5,5), k=R.int(2,4), m=R.int(1,9);
         const low=R.pick(d===3?[17,-7,96,-3,5]:[0,1,-2,3,2,-1]);
         const F=R.pick([
-          {t:S=>`${M.term(c,S,k,true)}+${m}`,a:S=>`${c}*(${S})^${k}+${m}`,anti:S=>`${c}/${k+1}*(${S})^${k+1}+${m}*(${S})`},
-          {t:S=>`${S} e^{${S}}+${S}`,a:S=>`(${S})*e^(${S})+(${S})`,anti:S=>`((${S})-1)*e^(${S})+(${S})^2/2`},
-          {t:S=>`\\cos(${S})+${pw(S)}^2`,a:S=>`cos(${S})+(${S})^2`,anti:S=>`sin(${S})+(${S})^3/3`},
+          {t:S=>`${M.term(c,S,k,true)}+${m}`,a:S=>`${c}*(${S})^${k}+${m}`,anti:S=>`${c}/${k+1}*(${S})^${k+1}+${m}*(${S})`,m:true},
+          {t:S=>`${S} e^{${S}}+${S}`,a:S=>`(${S})*e^(${S})+(${S})`,anti:S=>`((${S})-1)*e^(${S})+(${S})^2/2`,m:true},
+          {t:S=>`\\cos(${S})+${pw(S)}^2`,a:S=>`cos(${S})+(${S})^2`,anti:S=>`sin(${S})+(${S})^3/3`,m:true},
           {t:S=>`${m}\\sin(${S})`,a:S=>`${m}*sin(${S})`,anti:S=>`-${m}*cos(${S})`},
           {t:S=>`\\sqrt{${pw(S)}^2+${m}}`,a:S=>`sqrt((${S})^2+${m})`},
           {t:S=>`\\ln\\left(${pw(S)}^2+1\\right)`,a:S=>`ln((${S})^2+1)`},
           {t:S=>`e^{\\cos(${S})}`,a:S=>`e^(cos(${S}))`},
           {t:S=>`\\frac{${S}}{${pw(S)}^2+${m}}`,a:S=>`(${S})/((${S})^2+${m})`,anti:S=>`ln((${S})^2+${m})/2`}]);
         const fn=v==="x"?"f":R.pick(["f","g","h"]);
-        const prompt=d===1?`Evaluate $\\frac{d}{dx}\\int_{${low}}^{x} ${F.t("t")}\\,dt$.`:`Find $${fn}'(${v})$ where $${fn}(${v})=\\int_{${low}}^{${v}} ${F.t(s)}\\,d${s}$.`;
+        const prompt=d===1?`Evaluate $\\frac{d}{dx}\\int_{${low}}^{x} ${br(F,F.t("t"))}\\,dt$.`:`Find $${fn}'(${v})$ where $${fn}(${v})=\\int_{${low}}^{${v}} ${br(F,F.t(s))}\\,d${s}$.`;
         const out={prompt, answer:{answer:F.a(vA),vars:[vA],domain:[-2,2]},
           hint:"FTC Part 1: the derivative cancels the integral. Write the integrand with the function's own variable in place of the variable of integration.",
           steps:[d===1?`FTC Part 1 with $F(x)=\\int_{${low}}^x g(t)\\,dt$ and $g(t)=${F.t("t")}$: $F'(x)=g(x)$.`:`Here $${v}$ is the independent variable and $${s}$ is the variable of integration.`,
@@ -289,13 +292,14 @@ M.lecture({
         const ansA=`(${I.a(h.a)})*(${h.da})`;
         const gH=I.t(h.t);
         const special=(I===INT.sqrt&&h===H.sq)?[`Since $\\sqrt{x^2}=|x|$ (property (i)), this is $f'(x)=2x|x|$. It is not $2x^2$: that is wrong for $x<0$.`]:[];
-        const out={prompt:`Let $f(x)=\\int_{${lowT}}^{${h.t}} ${I.t(s)}\\,d${s}$. Find $f'(x)$.`,
+        const iS=br(I,I.t(s)), gHb=br(I,gH);
+        const out={prompt:`Let $f(x)=\\int_{${lowT}}^{${h.t}} ${iS}\\,d${s}$. Find $f'(x)$.`,
           answer:{answer:ansA,vars:["x"],domain:h.dom},
-          hint:"Write $f(x)=g(h(x))$ with $g(x)=\\int_{"+lowT+"}^x "+I.t(s)+"\\,d"+s+"$ and $h(x)="+h.t+"$. FTC Part 1 gives $g'$, then use the Chain Rule.",
-          steps:[`Let $g(x)=\\int_{${lowT}}^{x} ${I.t(s)}\\,d${s}$ and $h(x)=${h.t}$. Then $f(x)=g(h(x))$.`,
+          hint:"Write $f(x)=g(h(x))$ with $g(x)=\\int_{"+lowT+"}^x "+iS+"\\,d"+s+"$ and $h(x)="+h.t+"$. FTC Part 1 gives $g'$, then use the Chain Rule.",
+          steps:[`Let $g(x)=\\int_{${lowT}}^{x} ${iS}\\,d${s}$ and $h(x)=${h.t}$. Then $f(x)=g(h(x))$.`,
             `By FTC Part 1, $g'(x)=${I.t("x")}$.`,`$h'(x)=${h.dt}$.`,
-            `Chain Rule: $f'(x)=g'(h(x))\\cdot h'(x)=${gH}\\cdot ${dB(h)}$.`].concat(special),
-          answerTeX:`$f'(x)=${gH}\\cdot ${dB(h)}$`};
+            `Chain Rule: $f'(x)=g'(h(x))\\cdot h'(x)=${gHb}\\cdot ${dB(h)}$.${I.m?" Keep the brackets around $g'(h(x))$.":""}`].concat(special),
+          answerTeX:`$f'(x)=${gHb}\\cdot ${dB(h)}$`};
         if(I.anti) out.verify={deriv:I.anti(h.a)};
         return out;
       }},
@@ -324,13 +328,13 @@ M.lecture({
           const hk=R.pick(["quad","sin","exp","poly2","sq1"]), h=H[hk];
           const I=INT[R.pick(["gauss","sinsq","hyp","recip","exp1"])];
           const a=R.pick([0,1,2,-1]), e=R.pick([2,3,4]); bad=e;
-          prob=`Let $f(x)=\\int_{${a}}^{${h.t}} ${I.t("t")}\\,dt$. Find $f'(x)$.`;
-          const l1=`\\text{Let } g(x)=\\int_{${a}}^{x} ${I.t("t")}\\,dt \\text{ and } h(x)=${h.t}, \\text{ so } f(x)=g(h(x))`;
+          prob=`Let $f(x)=\\int_{${a}}^{${h.t}} ${br(I,I.t("t"))}\\,dt$. Find $f'(x)$.`;
+          const l1=`\\text{Let } g(x)=\\int_{${a}}^{x} ${br(I,I.t("t"))}\\,dt \\text{ and } h(x)=${h.t}, \\text{ so } f(x)=g(h(x))`;
           const l2=e===2?`g'(x)=${I.t("x")}-${pw(I.t(String(a)))}\\ \\text{ by FTC Part 1}`:`g'(x)=${I.t("x")}\\ \\text{ by FTC Part 1}`;
           const l3=e===3?`f'(x)=g'(x)\\cdot h'(x)`:`f'(x)=g'(h(x))\\cdot h'(x)`;
           let l4;
-          if(e===4){ l4=h.multi?`=${I.t(h.t)}\\cdot ${h.dt}`:`=${I.t(h.t)}`; }
-          else if(e===3){ l4=`=${I.t("x")}\\cdot ${dB(h)}`; }
+          if(e===4){ l4=h.multi?`=${br(I,I.t(h.t))}\\cdot ${h.dt}`:`=${I.t(h.t)}`; }
+          else if(e===3){ l4=`=${br(I,I.t("x"))}\\cdot ${dB(h)}`; }
           else { l4=`=\\left(${I.t(h.t)}-${pw(I.t(String(a)))}\\right)\\cdot ${dB(h)}`; }
           L=[l1,l2,l3,l4];
           note={2:"Line (2) subtracts the integrand at the lower limit. FTC Part 1 gives just $g'(x)="+I.t("x")+"$: the lower limit does not affect the derivative.",3:"Line (3) uses $g'(x)$ where the Chain Rule needs $g'(h(x))$.",4:h.multi?"Line (4) is missing brackets around $h'(x)="+h.dt+"$.":"Line (4) drops the factor $h'(x)="+h.dt+"$."}[e];
@@ -347,7 +351,7 @@ M.lecture({
     {id:"L08.q1", ref:"p. 1", q:"If $f(x)=\\int_2^x t\\,dt$, what is $f(4)$?", opts:[["$6$",1,"$\\left[\\frac{t^2}{2}\\right]_2^4=8-2=6$."],["$8$",0,"That is $\\frac{t^2}{2}$ at $t=4$. You still subtract the value at the lower limit 2."],["$4$",0,"That is the integrand at $t=4$, not the integral."],["$2$",0,"Check the antiderivative: it is $\\frac{t^2}{2}$."]]},
     {id:"L08.q2", ref:"pp. 1 to 4", multi:true, q:"Let $f(x)=\\int_1^x g(t)\\,dt$, where $g$ is continuous. Select all statements that are true.", opts:[["$f(1)=0$",1,"An integral from 1 to 1 is 0."],["$f'(x)=g(x)$",1,"FTC Part 1."],["$f'(x)=g(x)-g(1)$",0,"The lower limit does not change the derivative."],["$f(x)$ depends on $t$",0,"$t$ is the variable of integration. Only $x$ is left after integrating."],["$f(3)-f(2)=\\int_2^3 g(t)\\,dt$",1,"Area from 1 to 3 minus area from 1 to 2."]]},
     {id:"L08.q3", ref:"p. 3", q:"Let $g(x)=\\int_0^x \\sin(t^3)\\,dt$ and $h(x)=e^x$. Then $(g\\circ h)(x)=$", opts:[["$\\int_0^{e^x}\\sin(t^3)\\,dt$",1,"Replace the top bound $x$ with $e^x$."],["$\\int_0^{x}\\sin(e^{3t})\\,dt$",0,"The integrand does not change."],["$e^{\\int_0^x \\sin(t^3)\\,dt}$",0,"That is $(h\\circ g)(x)$."],["$\\int_0^{e^x}\\sin(e^{3x})\\,dx$",0,"Only the top bound changes. The integrand stays in $t$."]]},
-    {id:"L08.q4", ref:"p. 5", q:"$\\frac{d}{dx}\\int_5^x \\left(t^3-125\\right)dt=$", opts:[["$x^3-125$",1,"FTC Part 1: put $x$ in for $t$."],["$x^3$",0,"The $-125$ is part of the integrand, so it stays."],["$3x^2$",0,"FTC Part 1 does not differentiate the integrand."],["$x^3-125-(5^3-125)$",0,"The lower limit never shows up in the derivative. (Here that term is 0 anyway.)"]]},
+    {id:"L08.q4", ref:"p. 5", q:"$\\frac{d}{dx}\\int_5^x \\left(t^3-125\\right)dt=$", opts:[["$x^3-125$",1,"FTC Part 1: put $x$ in for $t$."],["$x^3$",0,"The $-125$ is part of the integrand, so it stays."],["$3x^2$",0,"FTC Part 1 does not differentiate the integrand."],["$\\frac{x^4}{4}-125x+\\frac{1875}{4}$",0,"That is the integral function itself. FTC Part 1 asks for its derivative, which gives back the integrand."]]},
     {id:"L08.q5", ref:"p. 5", q:"If $g(w)=\\int_{-2}^{w} x e^{x}\\,dx$, then $g'(w)=$", opts:[["$we^w$",1,"The variable of integration is $x$. The answer is in $w$."],["$xe^x$",0,"The answer must use the function's own variable, $w$."],["$e^w+we^w$",0,"That differentiates the integrand. FTC Part 1 just returns it."],["$we^w+2e^{-2}$",0,"The lower limit does not appear in the derivative."]]},
     {id:"L08.q6", ref:"p. 5", q:"If $f(x)=\\int_1^{x^2}\\cos(t)\\,dt$, then $f'(x)=$", opts:[["$2x\\cos(x^2)$",1,"$g'(h(x))h'(x)$ with $h(x)=x^2$."],["$\\cos(x^2)$",0,"Missing the Chain Rule factor $h'(x)=2x$."],["$2x\\cos(x)$",0,"Evaluate the integrand at $h(x)=x^2$, not at $x$."],["$\\sin(x^2)-\\sin(1)$",0,"That is $f(x)$, not $f'(x)$."]]},
     {id:"L08.q7", ref:"p. 5", q:"If $f(x)=\\int_0^x e^{t^3}\\,dt$ and $\\frac{d}{dx}f(g(x))=3x^2e^{x^9}$, what is $g(x)$?", opts:[["$x^3$",1,"$f'(g(x))g'(x)=e^{(x^3)^3}\\cdot3x^2=3x^2e^{x^9}$."],["$x^9$",0,"Then the factor would be $9x^8$."],["$3x^2$",0,"Then the exponent would be $(3x^2)^3=27x^6$."],["$x^2$",0,"Then you would get $2xe^{x^6}$."]]},

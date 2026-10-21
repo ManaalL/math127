@@ -356,7 +356,7 @@ M.lecture({
           const inner=`${M.term(k,"x",1,true)}${M.term(b,"x",0)}`;
           return {prompt:`Solve $${c}e^{${inner}} = ${m}$. Give the exact answer.`, answer:{type:"list",answer:`(ln(${t}) - (${b}))/(${k})`},
             hint:"Get the exponential alone first, then take $\\ln$ of both sides.",
-            steps:[`Divide by ${c}: $e^{${inner}} = ${t}$.`,`Take $\\ln$ of both sides: $${inner} = \\ln(${t})$.`,b?`$${cc(k)}x = \\ln(${t}) ${M.pm(-b)}$`:`$${cc(k)}x = \\ln(${t})$`,`$x = \\frac{\\ln(${t})${b?M.pm(-b):""}}{${k}}$`],
+            steps:[`Divide by ${c}: $e^{${inner}} = ${t}$.`,`Take $\\ln$ of both sides: $${inner} = \\ln(${t})$.`].concat(b?[`$${cc(k)}x = \\ln(${t}) ${M.pm(-b)}$`]:[]).concat([`$x = \\frac{\\ln(${t})${b?M.pm(-b):""}}{${k}}$`]),
             answerTeX:`$x = \\frac{\\ln(${t})${b?M.pm(-b):""}}{${k}}$`}; }
         const a=R.pick([2,3,5]), k=R.int(2,4), m=R.pick([5,6,7,10,11,12].filter(v=>Math.abs(Math.log(v)/Math.log(a)-Math.round(Math.log(v)/Math.log(a)))>1e-9));
         return {prompt:`Solve $${a}^{${k}x} = ${m}$. Give the exact answer.`, answer:{type:"list",answer:`ln(${m})/(${k}*ln(${a}))`},
@@ -439,7 +439,7 @@ M.lecture({
     {id:"L10.q1", ref:"p. 3", multi:true, q:"Assume $a>1$, $x>0$ and $y>0$. Select all of the valid properties.", opts:[
       ["$\\log_a\\left(\\frac{x}{y}\\right) = \\log_a(x) - \\log_a(y)$",1,"Quotient rule (p. 3)."],
       ["$\\log_a(x)\\log_a(y) = \\log_a(x+y)$",0,"No rule turns a product of logs into anything simple. Try $a=10$, $x=y=10$: $1\\cdot 1 \\ne \\log_{10}(20)$."],
-      ["$a^{\\log_a(x)} = x$",1,"$\\log_a$ undoes $a^x$ (p. 3)."],
+      ["$a^{\\log_a(x)} = x$",1,"$a^x$ and $\\log_a(x)$ undo each other (p. 3)."],
       ["$(a^x)^y = a^{x+y}$",0,"Power of a power multiplies: $(a^x)^y = a^{xy}$ (p. 2)."],
       ["$\\log_a(x^3) = 3\\log_a(x)$",1,"Power rule with $y=3$ (p. 3)."]]},
     {id:"L10.q2", ref:"p. 4", q:"What does $e^{3\\ln(2)}$ simplify to?", opts:[

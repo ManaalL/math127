@@ -210,7 +210,7 @@ M127.lecture({
           else if(T==="sin"){ const k=R.int(2,4); f=`\\sin(${k}x)`; right=withK(`-\\frac{1}{${k}}\\cos(${k}x)`); dr=`$\\frac{d}{dx}\\left(-\\frac{1}{${k}}\\cos(${k}x)\\right) = -\\frac{1}{${k}}\\cdot(-\\sin(${k}x))\\cdot ${k} = \\sin(${k}x)$`; wrong=[[`-\\cos(${k}x)`,`has derivative $${k}\\sin(${k}x)$, ${k} times too big`],[`${k}\\cos(${k}x)`,`is the derivative of $f$`],[`\\frac{1}{${k}}\\cos(${k}x)`,"has the wrong sign"]]; }
           else if(T==="cos"){ const k=R.int(2,4); f=`\\cos(${k}x)`; right=withK(`\\frac{1}{${k}}\\sin(${k}x)`); dr=`$\\frac{d}{dx}\\frac{1}{${k}}\\sin(${k}x) = \\frac{1}{${k}}\\cos(${k}x)\\cdot ${k} = \\cos(${k}x)$`; wrong=[[`\\sin(${k}x)`,`has derivative $${k}\\cos(${k}x)$`],[`-${k}\\sin(${k}x)`,"is the derivative of $f$"],[`-\\frac{1}{${k}}\\sin(${k}x)`,"has the wrong sign"]]; }
           else { f="2x\\cos(x^2)"; right=withK("\\sin(x^2)"); dr="$\\frac{d}{dx}\\sin(x^2) = \\cos(x^2)\\cdot 2x$ by the chain rule"; wrong=[["x^2\\sin(x^2)","needs the product rule and does not give $2x\\cos(x^2)$"],["-\\sin(x^2)","has the wrong sign"],["\\cos(x^2)","has derivative $-2x\\sin(x^2)$"]]; } }
-        { const j=R.int(0,wrong.length-1); if(!/\+ \d$/.test(wrong[j][0])) wrong[j]=[withK(wrong[j][0]),wrong[j][1]]; }
+        { const j=R.int(0,wrong.length-1); if(!/\+ \d$/.test(wrong[j][0])) wrong[j]=[withK(wrong[j][0]),(wrong[j][1].startsWith("is ")?`without the constant $${K}$ `:"")+wrong[j][1]]; }
         const opts=[right,...wrong.map(w=>w[0])].map(s=>`$F(x) = ${s}$`);
         const o=R.shuffle(opts.map((_,i)=>i));
         return {prompt:`Which of these is an antiderivative of $f(x) = ${f}$?`,
@@ -237,15 +237,16 @@ M127.lecture({
         }
         if(d===2){
           const A=R.int(1,6), B=R.int(2,6), e=R.int(1,4);
+          const cx=(q,p)=>{ const t=qtex(q); return (t==="1"?"":t)+`x^${p}`; };
           const L=[e===1?`$\\int \\frac{${A} + ${B}x^3}{x^2}\\,dx = \\int\\left(\\frac{${A}}{x^2} + ${B}x^3\\right)dx$`:`$\\int \\frac{${A} + ${B}x^3}{x^2}\\,dx = \\int\\left(\\frac{${A}}{x^2} + \\frac{${B}x^3}{x^2}\\right)dx$`,
             e===2?`$= \\int\\left(${A}x^{2} + ${B}x\\right)dx$`:`$= \\int\\left(${A}x^{-2} + ${B}x\\right)dx$`,
             e===3?`$= \\frac{${A}x^{-3}}{-3} + \\frac{${B}x^2}{2} + C$`:e===2?`$= \\frac{${A}x^{3}}{3} + \\frac{${B}x^2}{2} + C$`:`$= \\frac{${A}x^{-1}}{-1} + \\frac{${B}x^2}{2} + C$`,
-            e===4?`$= \\frac{${A}}{x} + ${qtex(Q(B,2))}x^2 + C$`:e===3?`$= -\\frac{${A}}{3x^3} + ${qtex(Q(B,2))}x^2 + C$`:e===2?`$= ${qtex(Q(A,3))}x^3 + ${qtex(Q(B,2))}x^2 + C$`:`$= -\\frac{${A}}{x} + ${qtex(Q(B,2))}x^2 + C$`];
+            e===4?`$= \\frac{${A}}{x} + ${cx(Q(B,2),2)} + C$`:e===3?`$= -\\frac{${A}}{3x^3} + ${cx(Q(B,2),2)} + C$`:e===2?`$= ${cx(Q(A,3),3)} + ${cx(Q(B,2),2)} + C$`:`$= -\\frac{${A}}{x} + ${cx(Q(B,2),2)} + C$`];
           const why={1:`Line (1) only divides the first term by $x^2$. Both terms on top must be divided: $\\frac{${B}x^3}{x^2} = ${B}x$.`,2:`Line (2) has the wrong sign on the exponent: $\\frac{1}{x^2} = x^{-2}$, not $x^2$.`,3:"Line (3) subtracts 1 from the power. Integrating adds 1: $x^{-2}$ becomes $\\frac{x^{-1}}{-1}$.",4:"Line (4) lost the minus sign: $\\frac{x^{-1}}{-1} = -\\frac{1}{x}$."};
           return {prompt:`A problem and answer are shown. The answer would not get a perfect score. Select the first line that has a mistake.<div class="box note"><b class="t">Problem</b>Evaluate $\\int \\frac{${A} + ${B}x^3}{x^2}\\,dx$.</div><div class="box note"><b class="t">Answer</b><ol>${L.map(s=>`<li>${s}</li>`).join("")}</ol></div>`,
             parts:[{answer:{type:"mc",options:lineOpts(4),correct:e-1,keep:true}}],
             hint:"Split the fraction (every term on top gets divided), rewrite $\\frac{1}{x^2}$ as a power, then add 1 to each power.",
-            steps:[why[e],`Correct: $\\int \\frac{${A} + ${B}x^3}{x^2}\\,dx = \\int\\left(${A}x^{-2} + ${B}x\\right)dx = -\\frac{${A}}{x} + ${qtex(Q(B,2))}x^2 + C$.`],
+            steps:[why[e],`Correct: $\\int \\frac{${A} + ${B}x^3}{x^2}\\,dx = \\int\\left(${A}x^{-2} + ${B}x\\right)dx = -\\frac{${A}}{x} + ${cx(Q(B,2),2)} + C$.`],
             answerTeX:`Line (${e})`};
         }
         const k=R.int(2,6), m=R.int(2,6);
