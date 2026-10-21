@@ -50,7 +50,7 @@ p{margin:0 0 .8em}
 .btn.sm{padding:6px 12px;font-size:.9rem}
 .btn:hover{filter:brightness(1.06)}
 .btn[disabled]{opacity:.45;cursor:not-allowed;filter:none}
-.counts{display:flex;gap:26px;flex-wrap:wrap;margin-top:24px;padding-top:16px;border-top:1px solid var(--rule)}
+.counts{display:flex;gap:14px 24px;flex-wrap:wrap;margin-top:24px;padding-top:16px;border-top:1px solid var(--rule)}
 .counts span{font-family:var(--mono);font-size:.72rem;letter-spacing:.05em;text-transform:uppercase;color:var(--ink2)}
 .counts b{display:block;font-family:var(--display);font-size:1.7rem;color:var(--head);font-weight:600;letter-spacing:0;text-transform:none}
 
@@ -343,13 +343,17 @@ select,input[type=search],input[type=date],input[type=number]{font:inherit;paddi
   .mods{grid-template-columns:1fr} .mod.mid,.mod.wide2{grid-column:auto}
   .how{grid-template-columns:1fr} .how div{border-right:0;border-bottom:1px solid var(--rule)}
   .nav .wrap{gap:8px}
-  .nav nav{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;mask-image:linear-gradient(90deg,#000 88%,transparent)}
+  .nav nav{flex-wrap:nowrap;overflow-x:auto;justify-content:flex-start;scrollbar-width:none;-webkit-overflow-scrolling:touch;mask-image:linear-gradient(90deg,#000 88%,transparent)}
   .nav nav::-webkit-scrollbar{display:none}
   .nav nav a,.nav nav button{padding:6px 8px;font-size:.88rem;white-space:nowrap}
   .hero{padding-top:26px}
   .logo span{display:none}
   .grid2,.grid3{grid-template-columns:1fr}
   .subnav{top:56px}
+  .subnav .wrap{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+  .subnav .wrap::-webkit-scrollbar{display:none}
+  .subnav .tab{white-space:nowrap;flex:none}
+  .subnav label{white-space:nowrap;flex:none}
   .tab{padding:5px 9px;font-size:.9rem}
   .chlist{grid-template-columns:1fr}
   .acc{grid-template-columns:minmax(0,1fr) 70px 54px}

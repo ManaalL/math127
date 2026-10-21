@@ -69,23 +69,25 @@ M127.lecture({
           const f=`${M.term(a,"x",n,true)}${M.term(b,"x",1)}${M.term(c,"x",0)}`;
           return {prompt:`Find $f'(x)$ for $f(x) = ${f}$.`, answer:{answer:`${a*n}x^${n-1}+${b}`,vars:["x"]}, verify:{deriv:`${a}x^${n}+${b}x+${c}`},
             hint:"Use the power rule $\\frac{d}{dx}x^n = nx^{n-1}$ on each term. The derivative of a constant is 0.",
-            steps:[`Differentiate term by term (sum rule and constant rule).`,`$\\frac{d}{dx}\\left(${M.term(a,"x",n,true)}\\right) = ${a}\\cdot ${n}x^{${n-1}} = ${M.term(a*n,"x",n-1,true)}$`,`$\\frac{d}{dx}\\left(${M.term(b,"x",1,true)}\\right) = ${b}$ and $\\frac{d}{dx}(${c}) = 0$.`],
+            steps:[`Differentiate term by term (sum rule and constant rule).`,`$\\frac{d}{dx}\\left(${M.term(a,"x",n,true)}\\right) = ${a}\\cdot ${n}x^{${n-1}} = ${M.term(a*n,"x",n-1,true)}$`,`$\\frac{d}{dx}\\left(${M.term(b,"x",1,true)}\\right) = ${b}$`+(c?` and $\\frac{d}{dx}(${c}) = 0$.`:".")],
             answerTeX:`$f'(x) = ${M.term(a*n,"x",n-1,true)}${M.term(b,"x",0)}$`};
         }
         // negative and fractional powers: a/x^m + b*sqrt(x) (+ c x^k at hard)
         const a=R.nz(-5,5), m=R.int(1,3), b=R.nz(-6,6);
         const root=d===3?R.pick([3,2]):2;
         const k=d===3?R.int(2,4):null, c=d===3?R.nz(-4,4):0;
-        const sq= root===2?`\\sqrt{x}`:`\\sqrt[3]{x}`;
-        let f=`\\frac{${a}}{x^{${m}}} ${b<0?"-":"+"} ${Math.abs(b)===1?"":Math.abs(b)}${sq}`+(k?` ${c<0?"-":"+"} ${Math.abs(c)===1?"":Math.abs(c)}x^{${k}}`:"");
+        const sq= root===2?`\\sqrt{x}`:`\\sqrt[3]{x}`, cf=v=>Math.abs(v)===1?"":String(Math.abs(v));
+        const t1=(a<0?"-":"")+`\\frac{${Math.abs(a)}}{${m===1?"x":`x^{${m}}`}}`;
+        let f=`${t1} ${b<0?"-":"+"} ${cf(b)}${sq}`+(k?` ${c<0?"-":"+"} ${cf(c)}x^{${k}}`:"");
         const ans=`${-a*m}*x^(${-m-1}) + ${b}/${root}*x^(1/${root}-1)`+(k?` + ${c*k}*x^${k-1}`:"");
-        const dsq = root===2?`\\frac{${b}}{2\\sqrt{x}}`:`\\frac{${b}}{3x^{2/3}}`;
+        const g=M.gcd(Math.abs(b),root), bp=b/g, bq=root/g;
+        const dsqA=`\\frac{${Math.abs(bp)}}{${bq===1?"":bq}${root===2?"\\sqrt{x}":"x^{2/3}"}}`, dsq=(bp<0?"-":"")+dsqA;
         return {prompt:`Find $\\frac{dy}{dx}$ for $y = ${f}$.`, answer:{answer:ans,vars:["x"],domain:[0.3,3]}, verify:{deriv:`${a}/x^${m}+${b}*x^(1/${root})`+(k?`+${c}x^${k}`:"")},
           hint:"Rewrite every term as a power of $x$ first: $\\frac{1}{x^m} = x^{-m}$ and $\\sqrt{x}=x^{1/2}$, $\\sqrt[3]{x} = x^{1/3}$.",
-          steps:[`Rewrite with exponents: $y = ${a}x^{${-m}} ${b<0?"-":"+"} ${Math.abs(b)}x^{1/${root}}`+(k?` ${c<0?"-":"+"} ${Math.abs(c)}x^{${k}}`:"")+`$.`,
-            `Power rule on the first term: $${a}\\cdot(${-m})x^{${-m-1}} = ${-a*m}x^{${-m-1}}$.`,
+          steps:[`Rewrite with exponents: $y = ${M.term(a,"x",-m,true)} ${b<0?"-":"+"} ${cf(b)}x^{1/${root}}`+(k?` ${c<0?"-":"+"} ${cf(c)}x^{${k}}`:"")+`$.`,
+            `Power rule on the first term: $${a}\\cdot(${-m})x^{${-m-1}} = ${M.term(-a*m,"x",-m-1,true)}$.`,
             `Power rule on the root: $${b}\\cdot\\frac{1}{${root}}x^{\\frac{1}{${root}}-1} = ${dsq}$.`].concat(k?[`Last term: $${c}\\cdot ${k}x^{${k-1}} = ${M.term(c*k,"x",k-1,true)}$.`]:[]),
-          answerTeX:`$\\frac{dy}{dx} = ${M.frac(-a*m)}x^{${-m-1}} + ${dsq}`+(k?` ${M.term(c*k,"x",k-1)}`:"")+`$`};
+          answerTeX:`$\\frac{dy}{dx} = ${M.term(-a*m,"x",-m-1,true)} ${bp<0?"-":"+"} ${dsqA}`+(k?` ${M.term(c*k,"x",k-1)}`:"")+`$`};
       }},
     {id:"L01.g.rules", title:"Product, quotient and chain rules", skill:"Choose and apply the right derivative rule", ref:"p. 3",
       gen(R,d){
@@ -111,15 +113,16 @@ M127.lecture({
         }
         if(kind==="quotient"){ const a=R.nz(-6,6), b=R.int(1,9), p=R.pick([1,2]);
           const den = p===1?`x+${b}`:`x^2+${b}`; const dden=p===1?"1":"2x";
-          return {prompt:`Differentiate $f(t) = \\frac{${a}t}{${den.replace(/x/g,"t")}}$.`, answer:{answer:`(${a}*(${den.replace(/x/g,"t")}) - ${a}t*(${dden.replace(/x/g,"t")}))/(${den.replace(/x/g,"t")})^2`,vars:["t"],domain:[0,3]}, verify:{deriv:`${a}t/(${den.replace(/x/g,"t")})`,v:"t"},
+          const at=M.term(a,"t",1,true), dT=den.replace(/x/g,"t"), ddT=dden.replace(/x/g,"t");
+          return {prompt:`Differentiate $f(t) = \\frac{${at}}{${dT}}$.`, answer:{answer:`(${a}*(${dT}) - ${a}t*(${ddT}))/(${dT})^2`,vars:["t"],domain:[0,3]}, verify:{deriv:`${a}t/(${dT})`,v:"t"},
             hint:"Quotient rule: $\\left(\\frac{f}{g}\\right)' = \\frac{f'g - fg'}{g^2}$. Watch the variable: it is $t$ here.",
-            steps:[`Top: $f(t) = ${a}t$, so $f'(t) = ${a}$. Bottom: $g(t) = ${den.replace(/x/g,"t")}$, so $g'(t) = ${dden.replace(/x/g,"t")}$.`,`Quotient rule: $\\frac{${a}(${den.replace(/x/g,"t")}) - ${a}t\\cdot ${dden.replace(/x/g,"t")}}{(${den.replace(/x/g,"t")})^2}$.`,
-              p===1?`Simplify the top: $${a}t + ${a*b} - ${a}t = ${a*b}$.`:`Simplify the top: $${a}t^2 + ${a*b} - ${2*a}t^2 = ${M.term(-a,"t",2,true)} ${M.pm(a*b)}$.`],
+            steps:[`Top: $${at}$, with derivative $${a}$. Bottom: $${dT}$, with derivative $${ddT}$.`,`Quotient rule: $f'(t) = \\frac{(${a})(${dT}) - (${at})(${ddT})}{(${dT})^2}$.`,
+              p===1?`Simplify the top: $${M.term(a,"t",1,true)} ${M.pm(a*b)} ${M.term(-a,"t",1)} = ${a*b}$.`:`Simplify the top: $${M.term(a,"t",2,true)} ${M.pm(a*b)} ${M.term(-2*a,"t",2)} = ${M.term(-a,"t",2,true)} ${M.pm(a*b)}$.`],
             answerTeX: p===1?`$f'(t) = \\frac{${a*b}}{(t+${b})^2}$`:`$f'(t) = \\frac{${M.term(-a,"t",2,true)}${M.pm(a*b)}}{(t^2+${b})^2}$`};
         }
         if(kind==="chain2"){ const a=R.nz(-4,4), b=R.int(1,5), outer=R.pick(["sin","cos","exp","sqrt"]);
           const inner=`${a===1?"":a===-1?"-":a}x^2+${b}`, innerA=`(${a}x^2+${b})`;
-          const map={sin:[`\\sin(${inner})`,`cos${innerA}*${2*a}x`,`${2*a}x\\cos(${inner})`],cos:[`\\cos(${inner})`,`-sin${innerA}*${2*a}x`,`${-2*a}x\\sin(${inner})`],exp:[`e^{${inner}}`,`e^${innerA}*${2*a}x`,`${2*a}xe^{${inner}}`],sqrt:[`\\sqrt{${inner}}`,`${a}x/sqrt${innerA}`,`\\frac{${a}x}{\\sqrt{${inner}}}`]};
+          const map={sin:[`\\sin(${inner})`,`cos${innerA}*${2*a}x`,`${2*a}x\\cos(${inner})`],cos:[`\\cos(${inner})`,`-sin${innerA}*${2*a}x`,`${-2*a}x\\sin(${inner})`],exp:[`e^{${inner}}`,`e^${innerA}*${2*a}x`,`${2*a}xe^{${inner}}`],sqrt:[`\\sqrt{${inner}}`,`${a}x/sqrt${innerA}`,`${a<0?"-":""}\\frac{${Math.abs(a)===1?"":Math.abs(a)}x}{\\sqrt{${inner}}}`]};
           const [ft,ans,at]=map[outer];
           return {prompt:`Find $\\frac{dy}{dx}$ for $y = ${ft}$.`, answer:{answer:ans,vars:["x"],domain:outer==="sqrt"&&a<0?[-Math.sqrt(b/-a)*0.9,Math.sqrt(b/-a)*0.9]:[-1.2,1.2]}, verify:{deriv:{sin:`sin${innerA}`,cos:`cos${innerA}`,exp:`e^${innerA}`,sqrt:`sqrt${innerA}`}[outer]},
             hint:"Chain rule: differentiate the outside function, keep the inside the same, then multiply by the derivative of the inside.",
@@ -128,28 +131,29 @@ M127.lecture({
         }
         // prodchain: x * (ax+b)^n
         const a=R.nz(-3,3), b=R.nz(-5,5), n=R.int(2,4);
-        return {prompt:`Differentiate $g(x) = x(${M.term(a,"x",1,true)}${M.term(b,"x",0)})^{${n}}$.`, answer:{answer:`(${a}x+${b})^${n} + x*${n*a}*(${a}x+${b})^${n-1}`,vars:["x"],domain:[-1,1]}, verify:{deriv:`x*(${a}x+${b})^${n}`},
+        const lin=`${M.term(a,"x",1,true)}${M.term(b,"x",0)}`, pw=n-1===1?`(${lin})`:`(${lin})^{${n-1}}`;
+        return {prompt:`Differentiate $h(x) = x(${lin})^{${n}}$.`, answer:{answer:`(${a}x+${b})^${n} + x*${n*a}*(${a}x+${b})^${n-1}`,vars:["x"],domain:[-1,1]}, verify:{deriv:`x*(${a}x+${b})^${n}`},
           hint:"Product rule first, then the chain rule for the bracket.",
-          steps:[`Product rule with $f=x$ and $g=(${M.term(a,"x",1,true)}${M.term(b,"x",0)})^{${n}}$.`,`$f' = 1$ and $g' = ${n}(${M.term(a,"x",1,true)}${M.term(b,"x",0)})^{${n-1}}\\cdot ${a<0?`(${a})`:a}$ by the chain rule.`,`So $g'(x) = (${M.term(a,"x",1,true)}${M.term(b,"x",0)})^{${n}} + ${n*a}x(${M.term(a,"x",1,true)}${M.term(b,"x",0)})^{${n-1}}$.`],
-          answerTeX:`$g'(x) = (${M.term(a,"x",1,true)}${M.term(b,"x",0)})^{${n}} + ${n*a}x(${M.term(a,"x",1,true)}${M.term(b,"x",0)})^{${n-1}}$`};
+          steps:[`Product rule with $f(x)=x$ and $g(x)=(${lin})^{${n}}$.`,`$f'(x) = 1$ and $g'(x) = ${n}${pw}\\cdot ${a<0?`(${a})`:a}$ by the chain rule.`,`So $h'(x) = (${lin})^{${n}} ${M.term(n*a,"x",1)}${pw}$.`],
+          answerTeX:`$h'(x) = (${lin})^{${n}} ${M.term(n*a,"x",1)}${pw}$`};
       }},
     {id:"L01.g.units", title:"Units of a derivative", skill:"Read the units of a derivative from the notation", ref:"p. 4",
       gen(R,d){
         const S=R.pick([
-          ["P","pressure","kPa","t","time","s","the rate the pressure is changing with respect to time"],
-          ["V","volume of a balloon","cm^3","r","radius","cm","the rate the volume changes as the radius grows"],
-          ["N","number of bacteria","bacteria","t","time","hours","the growth rate of the colony"],
-          ["C","drug concentration","mg/L","t","time","min","how fast the concentration is changing"],
-          ["T","temperature","°C","x","depth","m","how fast temperature changes with depth"],
-          ["D","cost","dollars","T","ore extracted","tons","the extra cost per extra ton"],
-          ["h","height of a plant","cm","w","water given","mL","the change in height per extra mL of water"]]);
-        const [Q,qn,qu,v,vn,vu,mean]=S;
-        const right=`${qu}/${vu}`;
-        const opts=R.shuffle([right,`${vu}/${qu}`,qu,`${qu}·${vu}`]);
-        return {prompt:`$${Q}(${v})$ is the ${qn} in ${qu.replace("^3","³")} when the ${vn} is $${v}$ ${vu}. What are the units of $\\frac{d${Q}}{d${v}}$?`,
+          ["P","pressure","kPa","t","time","s","s","the rate the pressure is changing with respect to time"],
+          ["V","volume of a balloon","cm^3","r","radius","cm","cm","the rate the volume changes as the radius grows"],
+          ["M","mass of a bacteria culture","mg","t","time","hours","hour","the growth rate of the culture"],
+          ["C","drug concentration","mg/L","t","time","min","min","how fast the concentration is changing"],
+          ["T","temperature","°C","x","depth","m","m","how fast temperature changes with depth"],
+          ["D","cost","dollars","T","ore extracted","tons","ton","the extra cost per extra ton"],
+          ["h","height of a plant","cm","w","water given","mL","mL","the change in height per extra mL of water"]]);
+        const [Q,qn,qu,v,vn,vu,v1,mean]=S;
+        const right=`${qu}/${v1}`;
+        const opts=R.shuffle([right,`${v1}/${qu}`,qu,`${qu}·${v1}`]);
+        return {prompt:`$${Q}(${v})$ is the ${qn}, in ${qu.replace("^3","³")}, when the ${vn} is $${v}$ ${vu}. What are the units of $\\frac{d${Q}}{d${v}}$?`,
           parts:[{answer:{type:"mc",options:opts.map(o=>o.replace("^3","³")),correct:opts.indexOf(right)}}],
           hint:`The notation tells you: $\\frac{d${Q}}{d${v}}$ is a change in $${Q}$ divided by a change in $${v}$.`,
-          steps:[`$\\frac{d${Q}}{d${v}} = \\lim \\frac{\\Delta ${Q}}{\\Delta ${v}}$, a change in ${qn} divided by a change in ${vn}.`,`So the units are (units of $${Q}$)/(units of $${v}$) = ${right.replace("^3","³")}.`,`It means ${mean}.`],
+          steps:[`$\\frac{d${Q}}{d${v}} = \\lim_{\\Delta ${v}\\to 0} \\frac{\\Delta ${Q}}{\\Delta ${v}}$, a change in ${qn} divided by a change in ${vn}.`,`So the units are (units of $${Q}$)/(units of $${v}$) = ${right.replace("^3","³")}.`,`It means ${mean}.`],
           answerTeX:right.replace("^3","³")};
       }},
     {id:"L01.g.meaning", title:"What does $f'(a)=b$ mean?", skill:"Interpret a derivative value in words", ref:"p. 5",
@@ -180,10 +184,11 @@ M127.lecture({
             hint:"Differentiate first, then substitute.", steps:[`$f'(x) = ${M.term(c*n,"x",n-1,true)}${M.term(b,"x",0)}$.`,`$f'(${a}) = ${c*n}(${a})^{${n-1}} ${M.pm(b)} = ${val}$.`], answerTeX:`$${val}$`}; }
         const val=c*k; // f(x)=c e^{k(x-a)} + x^n => f'(a)= c k + n a^{n-1}
         const tot=val+n*Math.pow(a,n-1);
-        const xa=a===0?"x":`x ${a<0?"+":"-"} ${Math.abs(a)}`, cc=c===1?"":c===-1?"-":String(c);
-        return {prompt:`Let $f(x) = ${cc}e^{${k}(${xa})} + x^{${n}}$. Find $f'(${a})$.`, answer:{type:"num",answer:tot},
+        const xa=a===0?"x":`x ${a<0?"+":"-"} ${Math.abs(a)}`, cc=c===1?"":c===-1?"-":String(c), kc=k===1?"":k===-1?"-":String(k);
+        const ex=a===0?`${kc}x`:`${kc}(${xa})`;
+        return {prompt:`Let $f(x) = ${cc}e^{${ex}} + x^{${n}}$. Find $f'(${a})$.`, answer:{type:"num",answer:tot},
           hint:"Chain rule on the exponential. At $x="+a+"$ the exponent is 0, and $e^0=1$.",
-          steps:[`$f'(x) = ${c}\\cdot ${k<0?"("+k+")":k}\\,e^{${k}(${xa})} + ${n}x^{${n-1}}$.`,`At $x=${a}$: $e^{0}=1$, so $f'(${a}) = ${c*k} + ${n}(${a})^{${n-1}} = ${tot}$.`], answerTeX:`$${tot}$`};
+          steps:[`$f'(x) = ${c}\\cdot ${k<0?"("+k+")":k}\\,e^{${ex}} + ${n}x^{${n-1}}$.`,`At $x=${a}$: $e^{0}=1$, so $f'(${a}) = ${c*k} + ${n}(${a})^{${n-1}} = ${tot}$.`], answerTeX:`$${tot}$`};
       }}
   ],
   exam:[

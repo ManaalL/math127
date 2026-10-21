@@ -287,14 +287,14 @@ M.lecture({
           return {prompt:`Use the tangent line for $f(x) = ${fT}$ at $a = ${a}$ to approximate $${tgt}$.`,
             answer:{type:"num",answer:qA(ans)}, verify:{value:1+nd(x=>Math.pow(x+k,1/n),a)*(X-a)},
             hint:`Solve $x + ${k} = ${base}$ for the $x$ to plug in.`,
-            steps:[`$f'(x) = \\frac{1}{${n}}(${ins})^{-\\frac{${n-1}}{${n}}}$, so $f(${a}) = 1^{1/${n}} = 1$ and $f'(${a}) = \\frac{1}{${n}}$.`,`$f(x) \\approx 1 + \\frac{1}{${n}}(${xm(a)})$ for $x$ near ${a}.`,`Take $x = ${dec(X)}$ because $f(${dec(X)}) = ${n===2?`\\sqrt{${dec(X)} + ${k}}`:`(${dec(X)} + ${k})^{1/${n}}`} = ${tgt}$.`,`$${tgt} = f(${dec(X)}) \\approx 1 + \\frac{1}{${n}}(${dec(X)} + ${-a}) = 1 + \\frac{1}{${n}}(${dec(h)}) = ${qT(ans)}$.`],
+            steps:[`$f'(x) = \\frac{1}{${n}}(${ins})^{-\\frac{${n-1}}{${n}}}$, so $f(${a}) = 1^{1/${n}} = 1$ and $f'(${a}) = \\frac{1}{${n}}$.`,`$f(x) \\approx 1 + \\frac{1}{${n}}(${xm(a)})$ for $x$ near $${a}$.`,`Take $x = ${dec(X)}$ because $f(${dec(X)}) = ${n===2?`\\sqrt{${dec(X)} + ${k}}`:`(${dec(X)} + ${k})^{1/${n}}`} = ${tgt}$.`,`$${tgt} = f(${dec(X)}) \\approx 1 + \\frac{1}{${n}}(${dec(X)} + ${-a}) = 1 + \\frac{1}{${n}}(${dec(h)}) = ${qT(ans)}$.`],
             answerTeX:`$${tgt} \\approx ${qT(ans)}$`};
         }
         if(kind==="shiftsqrt"){ const k=R.int(1,5), s=R.int(2,4), a=s*s-k, dl=R.pick([1,-1]), N=s*s+dl, X=N-k, ans=qadd(Q(s),Q(dl,2*s));
           return {prompt:`Use the tangent line for $f(x) = \\sqrt{${xp(k)}}$ at $a = ${a}$ to approximate $\\sqrt{${N}}$.`,
             answer:{type:"num",answer:qA(ans)}, verify:{value:s+nd(x=>Math.sqrt(x+k),a)*(X-a)},
             hint:`Which $x$ gives $x + ${k} = ${N}$?`,
-            steps:[`$f'(x) = \\frac{1}{2\\sqrt{${xp(k)}}}$, so $f(${a}) = \\sqrt{${s*s}} = ${s}$ and $f'(${a}) = ${M.frac(1,2*s)}$.`,`$f(x) \\approx ${s} + ${M.frac(1,2*s)}(${xm(a)})$.`,`Take $x = ${X}$ because $f(${X}) = \\sqrt{${X} + ${k}} = \\sqrt{${N}}$ (make sure $f(x)$ is the value you want, p. 5).`,`$\\sqrt{${N}} \\approx ${s} + ${M.frac(1,2*s)}(${X} - ${a}) = ${qT(ans)}$.`],
+            steps:[`$f'(x) = \\frac{1}{2\\sqrt{${xp(k)}}}$, so $f(${a}) = \\sqrt{${s*s}} = ${s}$ and $f'(${a}) = ${M.frac(1,2*s)}$.`,`$f(x) \\approx ${s} + ${M.frac(1,2*s)}(${xm(a)})$.`,`Take $x = ${X}$ because $f(${X}) = \\sqrt{${X} + ${k}} = \\sqrt{${N}}$ (make sure $f(x)$ is the value you want, p. 5).`,`$\\sqrt{${N}} \\approx ${s} + ${M.frac(1,2*s)}(${X} ${a<0?"+":"-"} ${Math.abs(a)}) = ${qT(ans)}$.`],
             answerTeX:`$\\sqrt{${N}} \\approx ${qT(ans)}$`};
         }
         if(kind==="shiftsin"){ const [tT,tA,tv,sumT]=R.pick([["\\frac{\\pi}{12}","pi/12",Math.PI/12,"\\frac{13\\pi}{12}"],["\\frac{\\pi}{10}","pi/10",Math.PI/10,"\\frac{11\\pi}{10}"],["\\frac{\\pi}{8}","pi/8",Math.PI/8,"\\frac{9\\pi}{8}"],["\\frac{\\pi}{6}","pi/6",Math.PI/6,"\\frac{7\\pi}{6}"]]);
@@ -420,7 +420,7 @@ M.lecture({
           return {prompt:`A problem and an answer are below. The answer would not get full marks. Which is the first line with a mistake?<p>Problem: ${prob}</p>${box(L)}`,
             parts:[{answer:{type:"mc",options:lineOpts(4),correct:bad,keep:true}}],
             hint:"Check each line on its own: the derivative, the slope at $a$, the form of the tangent line (does it start with $y =$?), and the $x$ that is plugged in.",
-            steps:[`Line (${bad+1}) is the first mistake.`,why].concat(bad>0?[`Lines (1) to (${bad}) are correct.`]:[]),
+            steps:[`Line (${bad+1}) is the first mistake.`,why].concat(bad===1?["Line (1) is correct."]:bad>1?[`Lines (1) to (${bad}) are correct.`]:[]),
             answerTeX:`Line (${bad+1})`};
         }
         // d = 3: three student answers for a differential approximation

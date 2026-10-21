@@ -463,7 +463,7 @@ M.lecture({
       opts:[["1",false,"$\\frac{d^2y}{dx^2}$ is a second derivative, and it appears."],["2",true,"The highest derivative is $\\frac{d^2y}{dx^2}$. The cube is a power."],["3",false,"The 3 is an exponent, not a third derivative."],["6",false,"Order is not found by multiplying powers."]],
       after:"Part (a) of the same exercise, $\\frac{dy}{dx} + y^2 = x^3$, has order 1."},
     {type:"mcq", title:"Check a solution", q:"Is $y = e^x - x - 1$ a solution of $\\frac{dy}{dx} - y = x$? (p. 4 exercise)", keep:true,
-      opts:[["Yes: $(e^x - 1) - (e^x - x - 1) = x$",true,"$\\frac{dy}{dx} = e^x - 1$. Subtract all of $y$, with brackets, and you get $x$."],["No: the left hand side is $e^x - 1$",false,"That is only $\\frac{dy}{dx}$. You still have to subtract $y$."],["No: $(e^x - 1) - e^x - x - 1 = -2x - 2$",false,"Missing brackets around $y$. The minus must hit every term."],["Only when $x = 0$",false,"The two sides are equal for every $x$."]],
+      opts:[["Yes: $(e^x - 1) - (e^x - x - 1) = x$",true,"$\\frac{dy}{dx} = e^x - 1$. Subtract all of $y$, with brackets, and you get $x$."],["No: the left hand side is $e^x - 1$",false,"That is only $\\frac{dy}{dx}$. You still have to subtract $y$."],["No: $(e^x - 1) - e^x - x - 1 = -x - 2$",false,"Missing brackets around $y$. The minus must hit every term."],["Only when $x = 0$",false,"The two sides are equal for every $x$."]],
       after:"Left hand side: $(e^x - 1) - (e^x - x - 1) = x$, which is the right hand side, so it is a solution."},
     {type:"formulas", title:"Lecture 3 formulas"}
   ]

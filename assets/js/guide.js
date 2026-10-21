@@ -73,7 +73,7 @@ const css=`
 .tan-typing{display:inline-flex;gap:3px}.tan-typing i{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:tandot 1s infinite}.tan-typing i:nth-child(2){animation-delay:.15s}.tan-typing i:nth-child(3){animation-delay:.3s}
 @keyframes tandot{0%,100%{opacity:.25}50%{opacity:1}}
 .tan-msg .prob{margin:6px 0 0;padding:12px}
-@media (max-width:600px){ body{padding-bottom:76px} .tan-dock{width:150px;height:70px;left:6px;bottom:calc(6px + env(safe-area-inset-bottom,0px))} .tan-dock::before{inset:14px 0 0 0} .tan-dock svg.track{top:14px;height:56px} .tan-me{width:42px;height:42px;transform:translate(-21px,-21px)} .tan-me svg{width:42px;height:42px} .tan-ro{font-size:9.5px;right:6px;bottom:3px} .tan-cap{display:none} .tan-panel{left:8px;right:8px;width:auto;bottom:calc(84px + env(safe-area-inset-bottom,0px));height:min(72vh,580px)} }
+@media (max-width:600px){ body{padding-bottom:76px} .tan-dock{width:52px;height:52px;left:10px;bottom:calc(10px + env(safe-area-inset-bottom,0px))} .tan-dock::before{inset:0;border-radius:50%} .tan-dock svg.track,.tan-ro,.tan-cap{display:none} .tan-me{left:26px!important;top:26px!important;width:44px;height:44px;transform:translate(-22px,-22px)} .tan-me svg{width:44px;height:44px} .tan-panel{left:8px;right:8px;width:auto;bottom:calc(84px + env(safe-area-inset-bottom,0px));height:min(72vh,580px)} }
 @media (prefers-reduced-motion: reduce){ .tan-typing i{animation:none} }
 `;
 
