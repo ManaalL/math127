@@ -278,7 +278,11 @@ function sameExpr(userAst, rightAst, spec={}){
     if(spec.plusC) diffs.push(a-b);
     else { const tol=1e-6*Math.max(1,Math.abs(a),Math.abs(b)); if(Math.abs(a-b)>tol) return {ok:false}; }
   }
-  if(good<4) return {ok:false,why:"I couldn't evaluate your answer at enough points. Check brackets and the domain."};
+  if(good<4){
+    const hasAbs=n=>!!n&&(n.k==="fn"&&n.f==="abs"||["a","b","base"].some(k=>hasAbs(n[k])));
+    if(hasAbs(rightAst)&&!hasAbs(userAst)) return {ok:false,why:"Your answer isn't defined everywhere the right answer is. Check for missing absolute value bars, for example ln|x| instead of ln(x)."};
+    return {ok:false,why:"I couldn't evaluate your answer at enough points. Check brackets and the domain."};
+  }
   if(spec.plusC){
     const d0=diffs[0]; const ok=diffs.every(d=>Math.abs(d-d0)<=1e-6*Math.max(1,Math.abs(d0)));
     if(!ok) return {ok:false};

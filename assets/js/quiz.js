@@ -76,4 +76,5 @@ function formulas(){
   view.append(el("p",{class:"muted",html:`Drill these with flashcards on the <a href="formulas.html#mode=flash">formula sheet</a>.`}),g);
 }
 const h=location.hash.slice(1); go(TABS.some(t=>t[0]===h)?h:"quiz");
+window.addEventListener("hashchange",()=>{ const k=location.hash.slice(1); if(TABS.some(t=>t[0]===k)&&k!==cur) go(k); });
 })();

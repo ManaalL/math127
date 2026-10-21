@@ -181,4 +181,5 @@ function plan(){
 }
 
 const h=location.hash.slice(1); go(TABS.some(t=>t[0]===h)?h:"exam");
+window.addEventListener("hashchange",()=>{ const k=location.hash.slice(1); if(TABS.some(t=>t[0]===k)) go(k); });
 })();

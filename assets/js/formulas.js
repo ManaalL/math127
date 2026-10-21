@@ -137,4 +137,5 @@ function draw(){
   history.replaceState(null,"","#mode="+prefs.mode);
 }
 draw();
+window.addEventListener("hashchange",()=>{ const h=new URLSearchParams(location.hash.slice(1)); if(h.get("u")){ prefs.units=[h.get("u")]; } if(h.get("mode")&&h.get("mode")!==prefs.mode){ prefs.mode=h.get("mode"); draw(); } else if(h.get("u")) draw(); });
 })();
