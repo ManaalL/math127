@@ -121,7 +121,8 @@ M.lecture({
   title:"Limits as x Approaches a", sections:["3.1.1"], pages:7,
   summary:"What one-sided, two-sided and infinite limits mean, how to read them off a graph, the limit laws and direct substitution, piecewise and absolute value limits, and how to reason out a determinate form like $\\frac{3}{0^-}$ by asking what the top and bottom approach and with what sign.",
   flags:[
-    {ref:"p. 3", text:"The limit laws start with \"Suppose the limits $\\lim_{x\\to a^+} f(x)$ and $\\lim_{x\\to a^+} g(x)$ exist\" and the notes then say \"We have stated the limit laws for right-hand limits\", but all seven laws are printed with $x \\to a$, not $x \\to a^+$. The laws work the same way for $x \\to a^+$, $x \\to a^-$ and $x \\to a$, as long as the limits you split into exist (and, for law 6, the bottom limit is not 0). The course notes (p. 131) print them with $x \\to a^+$."}
+    {ref:"p. 3", text:"The limit laws start with \"Suppose the limits $\\lim_{x\\to a^+} f(x)$ and $\\lim_{x\\to a^+} g(x)$ exist\" and the notes then say \"We have stated the limit laws for right-hand limits\", but all seven laws are printed with $x \\to a$, not $x \\to a^+$. The laws work the same way for $x \\to a^+$, $x \\to a^-$ and $x \\to a$, as long as the limits you split into exist (and, for law 6, the bottom limit is not 0). The course notes (p. 131) print them with $x \\to a^+$."},
+    {ref:"p. 6", text:"$0^\\infty$ is listed as a determinate form without saying the base approaches 0 through positive values. It gives 0 when the base is $0^+$, like $0.1^{10}$. With a negative base, most real powers are not defined."}
   ],
   formulas:[
     {id:"L18.f.right", name:"Right-hand limit", tex:"\\lim_{x\\to a^+} f(x) = L", note:"The values of $f(x)$ can be made as close to $L$ as we want by taking $x$ sufficiently close to $a$ where $x > a$.", ref:"p. 1",
@@ -497,7 +498,7 @@ M.lecture({
         const ds=F.dS(s), zs=ds>0?"+":"-";
         const zOpts=["$0^+$ (through positive values)","$0^-$ (through negative values)"];
         const pre=F.tan?"Write $\\tan(x) = \\frac{\\sin(x)}{\\cos(x)}$. ":"";
-        return {prompt:`Evaluate $$${limT(F.aT,s)}${F.fT}.$$`,
+        return {prompt:`Evaluate $$${limT(F.aT,s)}${F.fT}.$$<p class="small muted">If the limit is $\\infty$ or $-\\infty$, pick that instead of "does not exist".</p>`,
           parts:[{label:`${pre}As $x\\to ${F.aT}^${sgnT(s)}$, the bottom $${F.botT}$ approaches`,answer:{type:"mc",options:zOpts,correct:ds>0?0:1}},
             {label:`$${limT(F.aT,s)}${F.fT} =$`,answer:{type:"mc",options:limOpts,correct:limOpts.indexOf(vO(ans))}}],
           hint:"Ask the four questions from p. 6: what do the top and bottom approach? Is the bottom positive or negative near $a$ on this side? Then the size grows without bound, and the sign is (sign of top) divided by (sign of bottom).",
@@ -560,7 +561,7 @@ M.lecture({
           if(e==="c3"){ l4=`So $${limT(b,-1)}${E} = ${wrongAns}$.`; first=4; why=`$\\frac{${L}}{0^+}$ is ${signWord(L)} divided by positive, so the limit is $${ans}$.`; }
           lines=[l1,l2,l3,l4]; prompt=`A student evaluates $${limT(b,-1)}${E}$:`;
         } else if(T==="D"){ // the 0/0 trap
-          const a=R.int(1,5), E=`\\frac{x^2 - ${a*a}}{${xm(a)}}`, v=R.int(0,1);
+          const a=R.pick([1,3,4,5]), E=`\\frac{x^2 - ${a*a}}{${xm(a)}}`, v=R.int(0,1);
           lines=[`As $x\\to ${a}$, the top $x^2 - ${a*a} \\to 0$.`,`As $x\\to ${a}$, the bottom $${xm(a)} \\to 0$.`, v?`So $${limT(a,0)}${E} = \\frac{0}{0}$.`:`So the limit has the form $\\frac{0}{0}$.`,`Therefore the limit does not exist.`];
           first=v?3:4; why=(v?"Line (3) writes the limit as equal to $\\frac{0}{0}$, an expression that is not defined. ":"")+`$\\frac{0}{0}$ is not one of the determinate forms on p. 6, so getting it tells you nothing yet, and you cannot conclude the limit does not exist. (In fact $\\frac{x^2 - ${a*a}}{${xm(a)}} = x + ${a}$ for $x \\ne ${a}$, so the limit is $${2*a}$.)`;
           prompt=`A student evaluates $${limT(a,0)}${E}$:`;
