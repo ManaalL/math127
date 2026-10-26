@@ -53,7 +53,7 @@ M127.COURSE = {
     ["L14","2026-10-09","Inverse trig functions","2.5.3"],
     ["L15","2026-10-19","Calculus of trig functions","2.5.4"],
     ["L16","2026-10-21","Factorial function, implicitly defined functions","2.6, 2.7.1"],
-    ["L17","2026-10-23","Logarithmic differentiation","2.7.2"],
+    ["L17","2026-10-23","Derivatives of inverse functions, logarithmic differentiation","2.7.1, 2.7.2"],
     ["L18","2026-10-26","Limits","3.1.1"],
     ["L19","2026-10-28","Continuity","3.1.2"],
     ["L20","2026-10-30","IVT, classifying discontinuities","3.1.3, 3.1.4"],
