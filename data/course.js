@@ -17,7 +17,9 @@ M127.COURSE = {
     {id:"u5", n:5, title:"Trigonometric Functions", short:"Trig and inverse trig", lectures:["L12","L13","L14","L15"],
       topics:["Radians and the unit circle","Modelling with sine and cosine","Inverse trig functions","Derivatives and integrals of trig"]},
     {id:"u6", n:6, title:"Factorials and Implicit Differentiation", short:"Implicit and log differentiation", lectures:["L16","L17"],
-      topics:["The factorial function","Implicit differentiation","Logarithmic differentiation"]}
+      topics:["The factorial function","Implicit differentiation","Logarithmic differentiation"]},
+    {id:"u7", n:7, title:"Limits, Continuity and Indeterminate Forms", short:"Limits and continuity", lectures:["L18","L19","L20","L21","L22","L23"],
+      topics:["One-sided, two-sided and infinite limits","Continuity, the IVT and types of discontinuity","Limits at infinity, indeterminate forms and L'Hospital's Rule"]}
   ],
   /* quiz blocks: which lectures each quiz adds (quizzes are cumulative) */
   quizzes:[

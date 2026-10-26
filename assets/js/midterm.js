@@ -30,7 +30,7 @@ function go(k){ M.$$(".tab",sw).forEach(b=>b.setAttribute("aria-selected",String
 
 function unitPicker(key,onChange){
   const box=el("div",{class:"chips",style:"margin:8px 0 12px"}); const sel=prefs[key]||(prefs[key]=C.units.map(u=>u.id));
-  C.units.forEach(u=>{ if(!u.lectures.some(id=>M.lec(id))) return; const b=el("button",{class:"chip",type:"button",style:`--c:var(--${u.id})`,"aria-pressed":String(sel.includes(u.id))},`Unit ${u.n}: ${u.short}`);
+  C.units.forEach(u=>{ if(!u.lectures.some(id=>M.lec(id)&&MT.lectures.includes(id))) return; const b=el("button",{class:"chip",type:"button",style:`--c:var(--${u.id})`,"aria-pressed":String(sel.includes(u.id))},`Unit ${u.n}: ${u.short}`);
     b.onclick=()=>{ const i=sel.indexOf(u.id); if(i>=0){ if(sel.length>1) sel.splice(i,1); } else sel.push(u.id); M.save(); onChange(); }; box.append(b); });
   return box;
 }
@@ -38,7 +38,7 @@ function unitPicker(key,onChange){
 /* ---------- practice midterm ---------- */
 function exam(){
   const host=el("div"); view.append(host);
-  const items=()=>{ const out=[]; M.lectures.forEach(L=>{ if(!prefs.units.includes(L.unit)) return; (L.exam||[]).forEach(q=>out.push({...q,kind:"mc",lec:L.id})); (L.gens||[]).forEach(g=>out.push({kind:"gen",gid:g.id,lec:L.id,diff:R3(),id:g.id})); }); return out; };
+  const items=()=>{ const out=[]; M.lectures.forEach(L=>{ if(!prefs.units.includes(L.unit)||!MT.lectures.includes(L.id)) return; (L.exam||[]).forEach(q=>out.push({...q,kind:"mc",lec:L.id})); (L.gens||[]).forEach(g=>out.push({kind:"gen",gid:g.id,lec:L.id,diff:R3(),id:g.id})); }); return out; };
   const R3=()=>2+Math.round(Math.random());
   EXAM.mount(host,{key:"midterm",title:"Practice midterm",intro:"12 multiple choice like the real thing, then 8 problems you answer in the box (medium and hard). Pick the units to include. For the full long-answer experience, do a set on the Long answer tab afterwards.",
     items, fixedSize:20, allowTimer:true, timeLimit:110,
@@ -58,7 +58,7 @@ function long(){
   PLOT.seg(mode,{items:[["set","Practice set of 8"],["browse","Browse all"]],value:m,onchange:v=>{ prefs.laMode=v; M.save(); go("long"); }});
   intro.append(unitPicker("laUnits",()=>go("long")));
   const lnRow=el("label",{class:"row small",style:"gap:6px"}); const lb=el("input",{type:"checkbox"}); lb.checked=!!prefs.showLN; lb.onchange=()=>{ prefs.showLN=lb.checked; M.save(); go("long"); }; lnRow.append(lb,document.createTextNode("Include section 2.4.5 (exponential growth and decay), which was not lectured")); intro.append(lnRow);
-  const pool=LA.filter(r=>{ const u=unitOfLec(r.lec); return u&&prefs.laUnits.includes(u.id)&&(prefs.showLN||!r.notLectured); });
+  const pool=LA.filter(r=>{ const u=unitOfLec(r.lec); return u&&prefs.laUnits.includes(u.id)&&MT.lectures.includes(r.lec)&&(prefs.showLN||!r.notLectured); });
   const host=el("div"); view.append(host);
   if(m==="set"){
     const key="laSet"; let set=(prefs[key]||[]).filter(id=>pool.some(r=>r.id===id));
